@@ -75,11 +75,24 @@ export function buildGroupKey(metadata) {
     .replace(/[^a-z0-9]+/gi, '-')
     .replace(/^-|-$/g, '')
     .toLowerCase();
+  const timestampSource = String(metadata.recordedAt || metadata.filename || '');
+  const compactTimestamp = timestampSource.match(/(\d{8})T?(\d{6})Z/i);
+  const isoTimestamp = timestampSource.match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z/i);
+  const normalizedTimestamp = compactTimestamp
+    ? `${compactTimestamp[1]}T${compactTimestamp[2]}Z`
+    : isoTimestamp
+      ? `${isoTimestamp[1]}${isoTimestamp[2]}${isoTimestamp[3]}T${isoTimestamp[4]}${isoTimestamp[5]}${isoTimestamp[6]}Z`
+      : '';
 
   if (metadata.site && metadata.deployment) {
-    return `${metadata.site}-${metadata.deployment}-${cleanedSlug || 'unknown'}`;
+    return [
+      metadata.site,
+      metadata.deployment,
+      cleanedSlug || 'unknown',
+      normalizedTimestamp,
+    ].filter(Boolean).join('-');
   }
-  return cleanedSlug || 'unknown';
+  return [cleanedSlug || 'unknown', normalizedTimestamp].filter(Boolean).join('-');
 }
 
 export function applyOverrides(tracks, overrides = {}) {
@@ -206,7 +219,7 @@ export function mergeCatalogs(generated, curated) {
       ...track,
       sanctuary: local.sanctuary || track.sanctuary,
       category: local.category || track.category,
-      label: local.label || track.label,
+      label: track.variant === 'enhanced' ? normalizeLabel(local.label || track.label, true) : local.label || track.label,
       description: local.description || track.description,
     };
   });

@@ -123,19 +123,59 @@ test('builds matching group keys for original and enhanced variants', () => {
       site: 'CI05',
       deployment: '04',
       soundSlug: 'finwhale',
+      recordedAt: '2019-12-28T13:41:33Z',
       filename: 'SanctSound_CI05_04_finwhale_20191228T134133Z.mp4',
     }),
-    'CI05-04-finwhale',
+    'CI05-04-finwhale-20191228T134133Z',
   );
   assert.equal(
     buildGroupKey({
       site: 'CI05',
       deployment: '04',
       soundSlug: 'finwhale',
+      recordedAt: '2019-12-28T13:41:33Z',
       filename: 'SanctSound_CI05_04_finwhale_20191228T134133Z_6xSpeed.wav',
     }),
-    'CI05-04-finwhale',
+    'CI05-04-finwhale-20191228T134133Z',
   );
+});
+
+test('builds distinct group keys for same site deployment and slug at different timestamps', () => {
+  assert.notEqual(
+    buildGroupKey({
+      site: 'PM02',
+      deployment: '02',
+      soundSlug: 'soundscape',
+      recordedAt: '2020-12-26T09:30:02Z',
+      filename: 'SanctSound_PM02_02_soundscape_20201226093002Z.mp4',
+    }),
+    buildGroupKey({
+      site: 'PM02',
+      deployment: '02',
+      soundSlug: 'soundscape',
+      recordedAt: '2021-01-04T11:12:13Z',
+      filename: 'SanctSound_PM02_02_soundscape_20210104111213Z.mp4',
+    }),
+  );
+});
+
+test('keeps generated enhanced label when existing generated catalog has stale plain label', () => {
+  const [merged] = mergeCatalogs([{
+    filename: 'SanctSound_CI05_04_finwhale_20191228T134133Z_6xSpeed.wav',
+    sanctuary: 'Channel Islands',
+    category: 'whale',
+    label: 'Fin whales (enhanced)',
+    description: 'Generated NOAA description.',
+    variant: 'enhanced',
+  }], [{
+    filename: 'SanctSound_CI05_04_finwhale_20191228T134133Z_6xSpeed.wav',
+    sanctuary: 'Channel Islands',
+    category: 'whale',
+    label: 'Fin whales',
+    description: 'Generated NOAA description.',
+  }]);
+
+  assert.equal(merged.label, 'Fin whales (enhanced)');
 });
 
 test('applies filename overrides after generated metadata', () => {

@@ -2,7 +2,7 @@ window.OCEAN_JUKEBOX_CATALOG = {
   "title": "Ocean Jukebox Catalog",
   "source": "https://sanctsound.ioos.us/sounds.html",
   "baseUrl": "https://sanctsound.ioos.us/files/",
-  "generatedAt": "2026-05-15T22:53:04.218Z",
+  "generatedAt": "2026-05-15T22:59:06.016Z",
   "archiveNote": "NOAA SanctSound is a historical passive acoustic archive. These clips are recordings from the 2018-2021/2022 project period, not realtime audio.",
   "tracks": [
     {
@@ -15,11 +15,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-03-13T07:36:28Z",
       "site": "FK02",
       "deployment": "01",
-      "groupKey": "FK02-01-atlanticmidshipmanandsnappingshrimp",
+      "groupKey": "FK02-01-atlanticmidshipmanandsnappingshrimp-20190313T073628Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_FK01_01_blackgrouper_20190105T163326Z.mp4",
@@ -31,11 +31,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-01-05T16:33:26Z",
       "site": "FK01",
       "deployment": "01",
-      "groupKey": "FK01-01-blackgrouper",
+      "groupKey": "FK01-01-blackgrouper-20190105T163326Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI01_01_bocaccio_20181101T100353Z.mp4",
@@ -47,11 +47,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2018-11-01T10:03:53Z",
       "site": "CI01",
       "deployment": "01",
-      "groupKey": "CI01-01-bocaccio",
+      "groupKey": "CI01-01-bocaccio-20181101T100353Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB01_05_bocaccio_20200508T042435Z.mp4",
@@ -63,11 +63,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-05-08T04:24:35Z",
       "site": "MB01",
       "deployment": "05",
-      "groupKey": "MB01-05-bocaccio",
+      "groupKey": "MB01-05-bocaccio-20200508T042435Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB01_01_atlanticcod_20181113T024154Z.mp4",
@@ -79,11 +79,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2018-11-13T02:41:54Z",
       "site": "SB01",
       "deployment": "01",
-      "groupKey": "SB01-01-atlanticcod",
+      "groupKey": "SB01-01-atlanticcod-20181113T024154Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_PM05_01_damselfish_20191001T040002Z.mp4",
@@ -95,11 +95,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-10-01T04:00:02Z",
       "site": "PM05",
       "deployment": "01",
-      "groupKey": "PM05-01-damselfish",
+      "groupKey": "PM05-01-damselfish-20191001T040002Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_FK02_01_fishchorus_20190416T004332Z.mp4",
@@ -111,11 +111,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-04-16T00:43:32Z",
       "site": "FK02",
       "deployment": "01",
-      "groupKey": "FK02-01-fishchorus",
+      "groupKey": "FK02-01-fishchorus-20190416T004332Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_GR01_02_fishchorus_20190902T004059Z.mp4",
@@ -127,11 +127,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-09-02T00:40:59Z",
       "site": "GR01",
       "deployment": "02",
-      "groupKey": "GR01-02-fishchorus",
+      "groupKey": "GR01-02-fishchorus-20190902T004059Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_HI06_01_fishchorus_20200615T031758Z.mp4",
@@ -143,11 +143,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-06-15T03:17:58Z",
       "site": "HI06",
       "deployment": "01",
-      "groupKey": "HI06-01-fishchorus",
+      "groupKey": "HI06-01-fishchorus-20200615T031758Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "haddock.mp4",
@@ -163,7 +163,7 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI01_02_plainfinmidshipman_20190426T085921Z.mp4",
@@ -175,11 +175,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-04-26T08:59:21Z",
       "site": "CI01",
       "deployment": "02",
-      "groupKey": "CI01-02-plainfinmidshipman",
+      "groupKey": "CI01-02-plainfinmidshipman-20190426T085921Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB02_05_plainfinmidshipman_20200606T041700Z.mp4",
@@ -191,11 +191,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-06-06T04:17:00Z",
       "site": "MB02",
       "deployment": "05",
-      "groupKey": "MB02-05-plainfinmidshipman",
+      "groupKey": "MB02-05-plainfinmidshipman-20200606T041700Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_FK03_01_redgrouper_20190201T054658Z.mp4",
@@ -207,11 +207,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-02-01T05:46:58Z",
       "site": "FK03",
       "deployment": "01",
-      "groupKey": "FK03-01-redgrouper",
+      "groupKey": "FK03-01-redgrouper-20190201T054658Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_GR01_01_toadfish_20190327T080530Z.mp4",
@@ -223,11 +223,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-03-27T08:05:30Z",
       "site": "GR01",
       "deployment": "01",
-      "groupKey": "GR01-01-toadfish",
+      "groupKey": "GR01-01-toadfish-20190327T080530Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI01_01_snappingshrimp_20181101T080448Z.mp4",
@@ -239,11 +239,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2018-11-01T08:04:48Z",
       "site": "CI01",
       "deployment": "01",
-      "groupKey": "CI01-01-snappingshrimp",
+      "groupKey": "CI01-01-snappingshrimp-20181101T080448Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_FK02_03_snappingshrimp_20191103T014035Z.mp4",
@@ -255,11 +255,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-11-03T01:40:35Z",
       "site": "FK02",
       "deployment": "03",
-      "groupKey": "FK02-03-snappingshrimp",
+      "groupKey": "FK02-03-snappingshrimp-20191103T014035Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_GR01_01_snappingshrimp_20181228T004950Z.mp4",
@@ -271,11 +271,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2018-12-28T00:49:50Z",
       "site": "GR01",
       "deployment": "01",
-      "groupKey": "GR01-01-snappingshrimp",
+      "groupKey": "GR01-01-snappingshrimp-20181228T004950Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_HI06_01_snappingshrimp_20200630T151547Z.mp4",
@@ -287,11 +287,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-06-30T15:15:47Z",
       "site": "HI06",
       "deployment": "01",
-      "groupKey": "HI06-01-snappingshrimp",
+      "groupKey": "HI06-01-snappingshrimp-20200630T151547Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB01_05_snappingshrimp_20200425T103600Z.mp4",
@@ -303,11 +303,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-04-25T10:36:00Z",
       "site": "MB01",
       "deployment": "05",
-      "groupKey": "MB01-05-snappingshrimp",
+      "groupKey": "MB01-05-snappingshrimp-20200425T103600Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_PM05_01_snappingshrimp_20191001T040002Z.mp4",
@@ -319,11 +319,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-10-01T04:00:02Z",
       "site": "PM05",
       "deployment": "01",
-      "groupKey": "PM05-01-snappingshrimp",
+      "groupKey": "PM05-01-snappingshrimp-20191001T040002Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI05_03_bluewhale_20190926T230959Z.mp4",
@@ -335,11 +335,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-09-26T23:09:59Z",
       "site": "CI05",
       "deployment": "03",
-      "groupKey": "CI05-03-bluewhale",
+      "groupKey": "CI05-03-bluewhale-20190926T230959Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI05_03_bluewhale_20190926T230959Z_41dBgain_4xSpeed.wav",
@@ -351,11 +351,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-09-26T23:09:59Z",
       "site": "CI05",
       "deployment": "03",
-      "groupKey": "CI05-03-bluewhale",
+      "groupKey": "CI05-03-bluewhale-20190926T230959Z",
       "variant": "enhanced",
       "sourceType": "audio",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB01_01_bluewhale_20181123T203257Z.mp4",
@@ -367,11 +367,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2018-11-23T20:32:57Z",
       "site": "MB01",
       "deployment": "01",
-      "groupKey": "MB01-01-bluewhale",
+      "groupKey": "MB01-01-bluewhale-20181123T203257Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB01_01_bluewhale_20181123T203257Z_6xSpeed.wav.mp3",
@@ -383,11 +383,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2018-11-23T20:32:57Z",
       "site": "MB01",
       "deployment": "01",
-      "groupKey": "MB01-01-bluewhale",
+      "groupKey": "MB01-01-bluewhale-20181123T203257Z",
       "variant": "enhanced",
       "sourceType": "audio",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_OC02_02_bluewhale_20191028T005013Z.mp4",
@@ -399,11 +399,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-10-28T00:50:13Z",
       "site": "OC02",
       "deployment": "02",
-      "groupKey": "OC02-02-bluewhale",
+      "groupKey": "OC02-02-bluewhale-20191028T005013Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_OC02_02_bluewhale_20191028T005013Z_45dBgain_6xSpeed.wav",
@@ -415,11 +415,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-10-28T00:50:13Z",
       "site": "OC02",
       "deployment": "02",
-      "groupKey": "OC02-02-bluewhale",
+      "groupKey": "OC02-02-bluewhale-20191028T005013Z",
       "variant": "enhanced",
       "sourceType": "audio",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB02_06_blueandfinwhales_20191025T050452Z.mp4",
@@ -431,11 +431,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-10-25T05:04:52Z",
       "site": "SB02",
       "deployment": "06",
-      "groupKey": "SB02-06-blueandfinwhales",
+      "groupKey": "SB02-06-blueandfinwhales-20191025T050452Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB02_06_blueandfinwhales_20191025T050452Z_10xSpeed.wav",
@@ -447,11 +447,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-10-25T05:04:52Z",
       "site": "SB02",
       "deployment": "06",
-      "groupKey": "SB02-06-blueandfinwhales",
+      "groupKey": "SB02-06-blueandfinwhales-20191025T050452Z",
       "variant": "enhanced",
       "sourceType": "audio",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI01_03_dolphins_20190904T064203Z.mp4",
@@ -463,11 +463,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-09-04T06:42:03Z",
       "site": "CI01",
       "deployment": "03",
-      "groupKey": "CI01-03-dolphins",
+      "groupKey": "CI01-03-dolphins-20190904T064203Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_FK03_01_dolphins_20190301T042106Z.mp4",
@@ -479,11 +479,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-03-01T04:21:06Z",
       "site": "FK03",
       "deployment": "01",
-      "groupKey": "FK03-01-dolphins",
+      "groupKey": "FK03-01-dolphins-20190301T042106Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_GR01_01_dolphins_20181224T003744Z.mp4",
@@ -495,11 +495,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2018-12-24T00:37:44Z",
       "site": "GR01",
       "deployment": "01",
-      "groupKey": "GR01-01-dolphins",
+      "groupKey": "GR01-01-dolphins-20181224T003744Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_HI03_02_dolphin_20191223T175613Z.mp4",
@@ -511,11 +511,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-12-23T17:56:13Z",
       "site": "HI03",
       "deployment": "02",
-      "groupKey": "HI03-02-dolphin",
+      "groupKey": "HI03-02-dolphin-20191223T175613Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB02_04_odontoceteclicks_20200516T104349Z.mp4",
@@ -527,11 +527,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-05-16T10:43:49Z",
       "site": "MB02",
       "deployment": "04",
-      "groupKey": "MB02-04-odontoceteclicks",
+      "groupKey": "MB02-04-odontoceteclicks-20200516T104349Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_OC02_02_odontocetes_20190803T172033Z.mp4",
@@ -543,11 +543,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-08-03T17:20:33Z",
       "site": "OC02",
       "deployment": "02",
-      "groupKey": "OC02-02-odontocetes",
+      "groupKey": "OC02-02-odontocetes-20190803T172033Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_PM05_01_dolphin_20200519T160612Z.mp4",
@@ -559,11 +559,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-05-19T16:06:12Z",
       "site": "PM05",
       "deployment": "01",
-      "groupKey": "PM05-01-dolphin",
+      "groupKey": "PM05-01-dolphin-20200519T160612Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB03_09_dolphins_20200426T030912Z.mp4",
@@ -575,11 +575,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-04-26T03:09:12Z",
       "site": "SB03",
       "deployment": "09",
-      "groupKey": "SB03-09-dolphins",
+      "groupKey": "SB03-09-dolphins-20200426T030912Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI05_04_finwhale_20191228T134133Z.mp4",
@@ -591,11 +591,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-12-28T13:41:33Z",
       "site": "CI05",
       "deployment": "04",
-      "groupKey": "CI05-04-finwhale",
+      "groupKey": "CI05-04-finwhale-20191228T134133Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI05_04_finwhale_20191228T134133Z_6xSpeed.wav",
@@ -607,11 +607,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-12-28T13:41:33Z",
       "site": "CI05",
       "deployment": "04",
-      "groupKey": "CI05-04-finwhale",
+      "groupKey": "CI05-04-finwhale-20191228T134133Z",
       "variant": "enhanced",
       "sourceType": "audio",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB01_05_finwhale_20200417T214135Z.mp4",
@@ -623,11 +623,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-04-17T21:41:35Z",
       "site": "MB01",
       "deployment": "05",
-      "groupKey": "MB01-05-finwhale",
+      "groupKey": "MB01-05-finwhale-20200417T214135Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB01_05_finwhale_20200417T214135Z_53dBgain_8xSpeed.wav",
@@ -639,11 +639,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-04-17T21:41:35Z",
       "site": "MB01",
       "deployment": "05",
-      "groupKey": "MB01-05-finwhale",
+      "groupKey": "MB01-05-finwhale-20200417T214135Z",
       "variant": "enhanced",
       "sourceType": "audio",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_OC02_02_finwhale_20190905T020206Z.mp4",
@@ -655,11 +655,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-09-05T02:02:06Z",
       "site": "OC02",
       "deployment": "02",
-      "groupKey": "OC02-02-finwhale",
+      "groupKey": "OC02-02-finwhale-20190905T020206Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_OC02_02_finwhale_20190905T020206Z_48dBGain_6xSpeed.wav",
@@ -671,11 +671,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-09-05T02:02:06Z",
       "site": "OC02",
       "deployment": "02",
-      "groupKey": "OC02-02-finwhale",
+      "groupKey": "OC02-02-finwhale-20190905T020206Z",
       "variant": "enhanced",
       "sourceType": "audio",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB03_05_finwhale_20190923T074930Z.mp4",
@@ -687,11 +687,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-09-23T07:49:30Z",
       "site": "SB03",
       "deployment": "05",
-      "groupKey": "SB03-05-finwhale",
+      "groupKey": "SB03-05-finwhale-20190923T074930Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB03_05_finwhale_20190923T074930Z_10xSpeed.wav",
@@ -703,43 +703,43 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-09-23T07:49:30Z",
       "site": "SB03",
       "deployment": "05",
-      "groupKey": "SB03-05-finwhale",
+      "groupKey": "SB03-05-finwhale-20190923T074930Z",
       "variant": "enhanced",
       "sourceType": "audio",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI02_02_graywhale_20190425T012924Z_33dBgain.mp4",
       "url": "https://sanctsound.ioos.us/files/SanctSound_CI02_02_graywhale_20190425T012924Z_33dBgain.mp4",
       "sanctuary": "Channel Islands",
       "category": "whale",
-      "label": "Gray whale rumble",
+      "label": "Gray whale rumble (enhanced)",
       "description": "Gray whale sounds: knocks, rumbles, growls, bubble blasts — west of San Miguel Island during spring migration.",
       "recordedAt": "2019-04-25T01:29:24Z",
       "site": "CI02",
       "deployment": "02",
-      "groupKey": "CI02-02-graywhale",
+      "groupKey": "CI02-02-graywhale-20190425T012924Z",
       "variant": "enhanced",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB01_05_graywhale_20200418T074228Z_40dBgain.mp4",
       "url": "https://sanctsound.ioos.us/files/SanctSound_MB01_05_graywhale_20200418T074228Z_40dBgain.mp4",
       "sanctuary": "Monterey Bay",
       "category": "whale",
-      "label": "Gray whale rumble",
+      "label": "Gray whale rumble (enhanced)",
       "description": "Gray whale knocks and rumbles from Monterey Canyon during spring 2020 northward migration.",
       "recordedAt": "2020-04-18T07:42:28Z",
       "site": "MB01",
       "deployment": "05",
-      "groupKey": "MB01-05-graywhale",
+      "groupKey": "MB01-05-graywhale-20200418T074228Z",
       "variant": "enhanced",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_OC02_01_graywhale_20190401T051313Z_36dBgain.mp4",
@@ -751,11 +751,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-04-01T05:13:13Z",
       "site": "OC02",
       "deployment": "01",
-      "groupKey": "OC02-01-graywhale",
+      "groupKey": "OC02-01-graywhale-20190401T051313Z",
       "variant": "enhanced",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI02_05_humpbackwhale_20201014T134715Z.mp4",
@@ -767,11 +767,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-10-14T13:47:15Z",
       "site": "CI02",
       "deployment": "05",
-      "groupKey": "CI02-05-humpbackwhale",
+      "groupKey": "CI02-05-humpbackwhale-20201014T134715Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_HI01_01_humpbackwhale_20190216T045823Z.mp4",
@@ -783,11 +783,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-02-16T04:58:23Z",
       "site": "HI01",
       "deployment": "01",
-      "groupKey": "HI01-01-humpbackwhale",
+      "groupKey": "HI01-01-humpbackwhale-20190216T045823Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB01_05_humpbackwhale_20200721T103355Z.mp4",
@@ -799,11 +799,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-07-21T10:33:55Z",
       "site": "MB01",
       "deployment": "05",
-      "groupKey": "MB01-05-humpbackwhale",
+      "groupKey": "MB01-05-humpbackwhale-20200721T103355Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_OC02_02_humpbackwhale_20191024T074335Z.mp4",
@@ -815,11 +815,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-10-24T07:43:35Z",
       "site": "OC02",
       "deployment": "02",
-      "groupKey": "OC02-02-humpbackwhale",
+      "groupKey": "OC02-02-humpbackwhale-20191024T074335Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_PM02_01_humpbackwhale_20200227T220002Z.mp4",
@@ -831,11 +831,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-02-27T22:00:02Z",
       "site": "PM02",
       "deployment": "01",
-      "groupKey": "PM02-01-humpbackwhale",
+      "groupKey": "PM02-01-humpbackwhale-20200227T220002Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB03_04_humpbackwhale_20190623T004507Z.mp4",
@@ -847,11 +847,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-06-23T00:45:07Z",
       "site": "SB03",
       "deployment": "04",
-      "groupKey": "SB03-04-humpbackwhale",
+      "groupKey": "SB03-04-humpbackwhale-20190623T004507Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB01_05_killerwhale_20200423T164427Z.mp4",
@@ -863,11 +863,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-04-23T16:44:27Z",
       "site": "MB01",
       "deployment": "05",
-      "groupKey": "MB01-05-killerwhale",
+      "groupKey": "MB01-05-killerwhale-20200423T164427Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_OC03_02_killerwhale_20191128T091339Z.mp4",
@@ -879,11 +879,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-11-28T09:13:39Z",
       "site": "OC03",
       "deployment": "02",
-      "groupKey": "OC03-02-killerwhale",
+      "groupKey": "OC03-02-killerwhale-20191128T091339Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_HI03_02_minkewhale_20191210T055810Z.mp4",
@@ -895,11 +895,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-12-10T05:58:10Z",
       "site": "HI03",
       "deployment": "02",
-      "groupKey": "HI03-02-minkewhale",
+      "groupKey": "HI03-02-minkewhale-20191210T055810Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_PM05_01_minkewhale_20200226T113612Z.mp4",
@@ -911,11 +911,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-02-26T11:36:12Z",
       "site": "PM05",
       "deployment": "01",
-      "groupKey": "PM05-01-minkewhale",
+      "groupKey": "PM05-01-minkewhale-20200226T113612Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB03_09_minkewhale_20200502T012119Z.mp4",
@@ -927,11 +927,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-05-02T01:21:19Z",
       "site": "SB03",
       "deployment": "09",
-      "groupKey": "SB03-09-minkewhale",
+      "groupKey": "SB03-09-minkewhale-20200502T012119Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_GR01_01_northatlanticrightwhale_20181227T060148Z.mp4",
@@ -943,11 +943,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2018-12-27T06:01:48Z",
       "site": "GR01",
       "deployment": "01",
-      "groupKey": "GR01-01-northatlanticrightwhale",
+      "groupKey": "GR01-01-northatlanticrightwhale-20181227T060148Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB01_01_northatlanticrightwhale_20181120T090303Z.mp4",
@@ -959,11 +959,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2018-11-20T09:03:03Z",
       "site": "SB01",
       "deployment": "01",
-      "groupKey": "SB01-01-northatlanticrightwhale",
+      "groupKey": "SB01-01-northatlanticrightwhale-20181120T090303Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI02_05_sealionbark_20200613T042112Z.mp4",
@@ -975,11 +975,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-06-13T04:21:12Z",
       "site": "CI02",
       "deployment": "05",
-      "groupKey": "CI02-05-sealionbark",
+      "groupKey": "CI02-05-sealionbark-20200613T042112Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB01_05_pinnipedbark_20200717T173702Z.mp4",
@@ -991,11 +991,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-07-17T17:37:02Z",
       "site": "MB01",
       "deployment": "05",
-      "groupKey": "MB01-05-pinnipedbark",
+      "groupKey": "MB01-05-pinnipedbark-20200717T173702Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB02_03_seiwhale_20190402T203828Z.mp4",
@@ -1007,11 +1007,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-04-02T20:38:28Z",
       "site": "SB02",
       "deployment": "03",
-      "groupKey": "SB02-03-seiwhale",
+      "groupKey": "SB02-03-seiwhale-20190402T203828Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB02_03_seiwhale_20190402T203828Z_2xSpeed.wav",
@@ -1023,11 +1023,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-04-02T20:38:28Z",
       "site": "SB02",
       "deployment": "03",
-      "groupKey": "SB02-03-seiwhale",
+      "groupKey": "SB02-03-seiwhale-20190402T203828Z",
       "variant": "enhanced",
       "sourceType": "audio",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_HI03_02_spermwhale_20191216T115715Z.mp4",
@@ -1039,11 +1039,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-12-16T11:57:15Z",
       "site": "HI03",
       "deployment": "02",
-      "groupKey": "HI03-02-spermwhale",
+      "groupKey": "HI03-02-spermwhale-20191216T115715Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_FK03_01_explosion_20190131T220530Z.mp4",
@@ -1055,11 +1055,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-01-31T22:05:30Z",
       "site": "FK03",
       "deployment": "01",
-      "groupKey": "FK03-01-explosion",
+      "groupKey": "FK03-01-explosion-20190131T220530Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI05_02_sealbomb_20190405T110516Z.mp4",
@@ -1071,27 +1071,27 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-04-05T11:05:16Z",
       "site": "CI05",
       "deployment": "02",
-      "groupKey": "CI05-02-sealbomb",
+      "groupKey": "CI05-02-sealbomb-20190405T110516Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB01_05_sealbomb_20200619T064138Z_33dBgain.mp4",
       "url": "https://sanctsound.ioos.us/files/SanctSound_MB01_05_sealbomb_20200619T064138Z_33dBgain.mp4",
       "sanctuary": "Monterey Bay",
       "category": "human",
-      "label": "Seal bombs (two blasts)",
+      "label": "Seal bombs (enhanced)",
       "description": "Two seal bomb explosions at the edge of Monterey Canyon — brief, brutal. These routinely exceed the OSHA hearing damage threshold.",
       "recordedAt": "2020-06-19T06:41:38Z",
       "site": "MB01",
       "deployment": "05",
-      "groupKey": "MB01-05-sealbomb",
+      "groupKey": "MB01-05-sealbomb-20200619T064138Z",
       "variant": "enhanced",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_OC02_02_sealbomb_20190816T123736Z_24dB.mp4",
@@ -1103,11 +1103,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-08-16T12:37:36Z",
       "site": "OC02",
       "deployment": "02",
-      "groupKey": "OC02-02-sealbomb",
+      "groupKey": "OC02-02-sealbomb-20190816T123736Z",
       "variant": "enhanced",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_FK01_06_scubadivers_20201207T184714Z.mp4",
@@ -1119,11 +1119,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-12-07T18:47:14Z",
       "site": "FK01",
       "deployment": "06",
-      "groupKey": "FK01-06-scubadivers",
+      "groupKey": "FK01-06-scubadivers-20201207T184714Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_GR01_01_scubadivers_20181213T201740Z.mp4",
@@ -1135,11 +1135,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2018-12-13T20:17:40Z",
       "site": "GR01",
       "deployment": "01",
-      "groupKey": "GR01-01-scubadivers",
+      "groupKey": "GR01-01-scubadivers-20181213T201740Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI05_03_echosounder_20191003T132915Z_36dBgain.mp4",
@@ -1151,11 +1151,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-10-03T13:29:15Z",
       "site": "CI05",
       "deployment": "03",
-      "groupKey": "CI05-03-echosounder",
+      "groupKey": "CI05-03-echosounder-20191003T132915Z",
       "variant": "enhanced",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_HI03_02_echosounder_20200413T140616Z_35dBgain.mp4",
@@ -1167,11 +1167,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-04-13T14:06:16Z",
       "site": "HI03",
       "deployment": "02",
-      "groupKey": "HI03-02-echosounder",
+      "groupKey": "HI03-02-echosounder-20200413T140616Z",
       "variant": "enhanced",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_OC02_02_echosounder_20190905T020206Z_48dBGain.mp4",
@@ -1183,11 +1183,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-09-05T02:02:06Z",
       "site": "OC02",
       "deployment": "02",
-      "groupKey": "OC02-02-echosounder",
+      "groupKey": "OC02-02-echosounder-20190905T020206Z",
       "variant": "enhanced",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB02_04_echosounder_20200227T160011Z.mp4",
@@ -1199,11 +1199,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-02-27T16:00:11Z",
       "site": "MB02",
       "deployment": "04",
-      "groupKey": "MB02-04-echosounder",
+      "groupKey": "MB02-04-echosounder-20200227T160011Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB02_03_fishingpinger_20190403T005205Z.mp4",
@@ -1215,11 +1215,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-04-03T00:52:05Z",
       "site": "SB02",
       "deployment": "03",
-      "groupKey": "SB02-03-fishingpinger",
+      "groupKey": "SB02-03-fishingpinger-20190403T005205Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI05_01_LFAsonar_20181109T202439Z.mp4",
@@ -1231,11 +1231,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2018-11-09T20:24:39Z",
       "site": "CI05",
       "deployment": "01",
-      "groupKey": "CI05-01-lfasonar",
+      "groupKey": "CI05-01-lfasonar-20181109T202439Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_HI04_02_sonar_20191212T115800Z.mp4",
@@ -1247,11 +1247,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-12-12T11:58:00Z",
       "site": "HI04",
       "deployment": "02",
-      "groupKey": "HI04-02-sonar",
+      "groupKey": "HI04-02-sonar-20191212T115800Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB03_02_MFAsonar_20191006T175235Z_38dBgain.mp4",
@@ -1263,11 +1263,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-10-06T17:52:35Z",
       "site": "MB03",
       "deployment": "02",
-      "groupKey": "MB03-02-mfasonar",
+      "groupKey": "MB03-02-mfasonar-20191006T175235Z",
       "variant": "enhanced",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_OC02_03_sonar_20191209T194850Z.mp4",
@@ -1279,11 +1279,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-12-09T19:48:50Z",
       "site": "OC02",
       "deployment": "03",
-      "groupKey": "OC02-03-sonar",
+      "groupKey": "OC02-03-sonar-20191209T194850Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_PM01_01_sonar_20200528T025304Z.mp4",
@@ -1295,11 +1295,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-05-28T02:53:04Z",
       "site": "PM01",
       "deployment": "01",
-      "groupKey": "PM01-01-sonar",
+      "groupKey": "PM01-01-sonar-20200528T025304Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI05_03_largeship_20190925T135956Z.mp4",
@@ -1311,11 +1311,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-09-25T13:59:56Z",
       "site": "CI05",
       "deployment": "03",
-      "groupKey": "CI05-03-largeship",
+      "groupKey": "CI05-03-largeship-20190925T135956Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_FK01_01_vessel_20190312T170945Z.mp4",
@@ -1327,11 +1327,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-03-12T17:09:45Z",
       "site": "FK01",
       "deployment": "01",
-      "groupKey": "FK01-01-vessel",
+      "groupKey": "FK01-01-vessel-20190312T170945Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_GR01_01_vessel_20181217T204109Z.mp4",
@@ -1343,11 +1343,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2018-12-17T20:41:09Z",
       "site": "GR01",
       "deployment": "01",
-      "groupKey": "GR01-01-vessel",
+      "groupKey": "GR01-01-vessel-20181217T204109Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_HI01_02_smallboat_20191201T000002Z.mp4",
@@ -1359,11 +1359,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-12-01T00:00:02Z",
       "site": "HI01",
       "deployment": "02",
-      "groupKey": "HI01-02-smallboat",
+      "groupKey": "HI01-02-smallboat-20191201T000002Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB01_05_ship_20200424T171317Z.mp4",
@@ -1375,11 +1375,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-04-24T17:13:17Z",
       "site": "MB01",
       "deployment": "05",
-      "groupKey": "MB01-05-ship",
+      "groupKey": "MB01-05-ship-20200424T171317Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_OC01_03_ship_20191106T223751Z.mp4",
@@ -1391,11 +1391,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-11-06T22:37:51Z",
       "site": "OC01",
       "deployment": "03",
-      "groupKey": "OC01-03-ship",
+      "groupKey": "OC01-03-ship-20191106T223751Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB03_09_vessel_20200415T161235Z.mp4",
@@ -1407,11 +1407,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-04-15T16:12:35Z",
       "site": "SB03",
       "deployment": "09",
-      "groupKey": "SB03-09-vessel",
+      "groupKey": "SB03-09-vessel-20200415T161235Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_FK02_05_hurricane_20200824T203426Z.mp4",
@@ -1423,11 +1423,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-08-24T20:34:26Z",
       "site": "FK02",
       "deployment": "05",
-      "groupKey": "FK02-05-hurricane",
+      "groupKey": "FK02-05-hurricane-20200824T203426Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_GR03_02_hurricane_20190904T221437Z.mp4",
@@ -1439,11 +1439,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-09-04T22:14:37Z",
       "site": "GR03",
       "deployment": "02",
-      "groupKey": "GR03-02-hurricane",
+      "groupKey": "GR03-02-hurricane-20190904T221437Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI02_04_rain_20200206T035909Z_26dBgain.mp4",
@@ -1455,11 +1455,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-02-06T03:59:09Z",
       "site": "CI02",
       "deployment": "04",
-      "groupKey": "CI02-04-rain",
+      "groupKey": "CI02-04-rain-20200206T035909Z",
       "variant": "enhanced",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_FK02_03_rain_20191103T005156Z.mp4",
@@ -1471,11 +1471,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-11-03T00:51:56Z",
       "site": "FK02",
       "deployment": "03",
-      "groupKey": "FK02-03-rain",
+      "groupKey": "FK02-03-rain-20191103T005156Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_GR01_02_rain_20190619T183750Z.mp4",
@@ -1487,11 +1487,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-06-19T18:37:50Z",
       "site": "GR01",
       "deployment": "02",
-      "groupKey": "GR01-02-rain",
+      "groupKey": "GR01-02-rain-20190619T183750Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_HI03_02_rain_20200210T201517Z.mp4",
@@ -1503,11 +1503,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-02-10T20:15:17Z",
       "site": "HI03",
       "deployment": "02",
-      "groupKey": "HI03-02-rain",
+      "groupKey": "HI03-02-rain-20200210T201517Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB01_05_rain_20200816T093204Z_28dBgain.mp4",
@@ -1519,11 +1519,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-08-16T09:32:04Z",
       "site": "MB01",
       "deployment": "05",
-      "groupKey": "MB01-05-rain",
+      "groupKey": "MB01-05-rain-20200816T093204Z",
       "variant": "enhanced",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_OC03_02_rain_20191106T160341Z_30dBgain.mp4",
@@ -1535,11 +1535,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-11-06T16:03:41Z",
       "site": "OC03",
       "deployment": "02",
-      "groupKey": "OC03-02-rain",
+      "groupKey": "OC03-02-rain-20191106T160341Z",
       "variant": "enhanced",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_PM05_01_rain_20191011T033002Z.mp4",
@@ -1551,11 +1551,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-10-11T03:30:02Z",
       "site": "PM05",
       "deployment": "01",
-      "groupKey": "PM05-01-rain",
+      "groupKey": "PM05-01-rain-20191011T033002Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB03_09_rain_20200409T194223Z.mp4",
@@ -1567,11 +1567,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-04-09T19:42:23Z",
       "site": "SB03",
       "deployment": "09",
-      "groupKey": "SB03-09-rain",
+      "groupKey": "SB03-09-rain-20200409T194223Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI02_03_wind_20191026T155434Z.mp4",
@@ -1583,11 +1583,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-10-26T15:54:34Z",
       "site": "CI02",
       "deployment": "03",
-      "groupKey": "CI02-03-wind",
+      "groupKey": "CI02-03-wind-20191026T155434Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI02_03_wind_20191026T155434Z_28dBgain_2xSpeed.wav",
@@ -1599,11 +1599,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-10-26T15:54:34Z",
       "site": "CI02",
       "deployment": "03",
-      "groupKey": "CI02-03-wind",
+      "groupKey": "CI02-03-wind-20191026T155434Z",
       "variant": "enhanced",
       "sourceType": "audio",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_FK02_03_windwaves_20191222T031830Z.mp4",
@@ -1615,11 +1615,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-12-22T03:18:30Z",
       "site": "FK02",
       "deployment": "03",
-      "groupKey": "FK02-03-windwaves",
+      "groupKey": "FK02-03-windwaves-20191222T031830Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_GR03_04_windwaves_20191224T155152Z.mp4",
@@ -1631,11 +1631,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-12-24T15:51:52Z",
       "site": "GR03",
       "deployment": "04",
-      "groupKey": "GR03-04-windwaves",
+      "groupKey": "GR03-04-windwaves-20191224T155152Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_HI04_03_windwaves_20201220115634Z_36dBgain.mp4",
@@ -1647,11 +1647,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-12-20T11:56:34Z",
       "site": "HI04",
       "deployment": "03",
-      "groupKey": "HI04-03-windwaves",
+      "groupKey": "HI04-03-windwaves-20201220T115634Z",
       "variant": "enhanced",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB02_04_wind_20200101T225838Z_36dBgain.mp4",
@@ -1663,11 +1663,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-01-01T22:58:38Z",
       "site": "MB02",
       "deployment": "04",
-      "groupKey": "MB02-04-wind",
+      "groupKey": "MB02-04-wind-20200101T225838Z",
       "variant": "enhanced",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_OC02_03_wind_20191205T223352Z_50dBgain.mp4",
@@ -1679,11 +1679,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-12-05T22:33:52Z",
       "site": "OC02",
       "deployment": "03",
-      "groupKey": "OC02-03-wind",
+      "groupKey": "OC02-03-wind-20191205T223352Z",
       "variant": "enhanced",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_PM05_01_windwaves_20191113T090002Z_18dBgain.mp4",
@@ -1695,11 +1695,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-11-13T09:00:02Z",
       "site": "PM05",
       "deployment": "01",
-      "groupKey": "PM05-01-windwaves",
+      "groupKey": "PM05-01-windwaves-20191113T090002Z",
       "variant": "enhanced",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB03_13_windwaves_20210105T213524Z.mp4",
@@ -1711,11 +1711,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2021-01-05T21:35:24Z",
       "site": "SB03",
       "deployment": "13",
-      "groupKey": "SB03-13-windwaves",
+      "groupKey": "SB03-13-windwaves-20210105T213524Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI02_04_soundscape_20200512T110153Z.mp4",
@@ -1727,11 +1727,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-05-12T11:01:53Z",
       "site": "CI02",
       "deployment": "04",
-      "groupKey": "CI02-04-soundscape",
+      "groupKey": "CI02-04-soundscape-20200512T110153Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI04_04_soundscape_20200405T081636Z.mp4",
@@ -1743,11 +1743,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-04-05T08:16:36Z",
       "site": "CI04",
       "deployment": "04",
-      "groupKey": "CI04-04-soundscape",
+      "groupKey": "CI04-04-soundscape-20200405T081636Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_CI05_04_soundscape_20200207T153747Z.mp4",
@@ -1759,11 +1759,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-02-07T15:37:47Z",
       "site": "CI05",
       "deployment": "04",
-      "groupKey": "CI05-04-soundscape",
+      "groupKey": "CI05-04-soundscape-20200207T153747Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_FK03_01_soundscape_20190324T000934Z.mp4",
@@ -1775,11 +1775,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-03-24T00:09:34Z",
       "site": "FK03",
       "deployment": "01",
-      "groupKey": "FK03-01-soundscape",
+      "groupKey": "FK03-01-soundscape-20190324T000934Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_FK01_04_soundscape_20200411T022449Z.mp4",
@@ -1791,11 +1791,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-04-11T02:24:49Z",
       "site": "FK01",
       "deployment": "04",
-      "groupKey": "FK01-04-soundscape",
+      "groupKey": "FK01-04-soundscape-20200411T022449Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_FK02_05_soundscape_20200821T031123Z.mp4",
@@ -1807,11 +1807,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-08-21T03:11:23Z",
       "site": "FK02",
       "deployment": "05",
-      "groupKey": "FK02-05-soundscape",
+      "groupKey": "FK02-05-soundscape-20200821T031123Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_GR01_01_soundscape_20190327T004230Z.mp4",
@@ -1823,11 +1823,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-03-27T00:42:30Z",
       "site": "GR01",
       "deployment": "01",
-      "groupKey": "GR01-01-soundscape",
+      "groupKey": "GR01-01-soundscape-20190327T004230Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_GR02_02_soundscape_20190904T053824Z.mp4",
@@ -1839,11 +1839,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-09-04T05:38:24Z",
       "site": "GR02",
       "deployment": "02",
-      "groupKey": "GR02-02-soundscape",
+      "groupKey": "GR02-02-soundscape-20190904T053824Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_GR02_02_soundscape_20190918T232257Z.mp4",
@@ -1855,11 +1855,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-09-18T23:22:57Z",
       "site": "GR02",
       "deployment": "02",
-      "groupKey": "GR02-02-soundscape",
+      "groupKey": "GR02-02-soundscape-20190918T232257Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_HI03_01_soundscape_20190105T084747Z.mp4",
@@ -1871,11 +1871,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-01-05T08:47:47Z",
       "site": "HI03",
       "deployment": "01",
-      "groupKey": "HI03-01-soundscape",
+      "groupKey": "HI03-01-soundscape-20190105T084747Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_HI01_01_soundscape_20190216T045823Z.mp4",
@@ -1887,11 +1887,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-02-16T04:58:23Z",
       "site": "HI01",
       "deployment": "01",
-      "groupKey": "HI01-01-soundscape",
+      "groupKey": "HI01-01-soundscape-20190216T045823Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_HI04_01_dolphinsandfish_20190111T155302Z.mp4",
@@ -1903,11 +1903,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-01-11T15:53:02Z",
       "site": "HI04",
       "deployment": "01",
-      "groupKey": "HI04-01-dolphinsandfish",
+      "groupKey": "HI04-01-dolphinsandfish-20190111T155302Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB01_05_soundscape_20200421T081945Z.mp4",
@@ -1919,11 +1919,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-04-21T08:19:45Z",
       "site": "MB01",
       "deployment": "05",
-      "groupKey": "MB01-05-soundscape",
+      "groupKey": "MB01-05-soundscape-20200421T081945Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB02_02_soundscape_20190501T041832Z.mp4",
@@ -1935,11 +1935,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-05-01T04:18:32Z",
       "site": "MB02",
       "deployment": "02",
-      "groupKey": "MB02-02-soundscape",
+      "groupKey": "MB02-02-soundscape-20190501T041832Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_MB02_04_soundscape_20200501T134708Z.mp4",
@@ -1951,11 +1951,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-05-01T13:47:08Z",
       "site": "MB02",
       "deployment": "04",
-      "groupKey": "MB02-04-soundscape",
+      "groupKey": "MB02-04-soundscape-20200501T134708Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_OC01_03_soundscape_20191106T223930Z.mp4",
@@ -1967,11 +1967,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-11-06T22:39:30Z",
       "site": "OC01",
       "deployment": "03",
-      "groupKey": "OC01-03-soundscape",
+      "groupKey": "OC01-03-soundscape-20191106T223930Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_OC02_02_unknownanthro_20190815T233301Z.mp4",
@@ -1983,11 +1983,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-08-15T23:33:01Z",
       "site": "OC02",
       "deployment": "02",
-      "groupKey": "OC02-02-unknownanthro",
+      "groupKey": "OC02-02-unknownanthro-20190815T233301Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_OC02_02_odontoceteandship_20190807T165513Z.mp4",
@@ -1999,11 +1999,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-08-07T16:55:13Z",
       "site": "OC02",
       "deployment": "02",
-      "groupKey": "OC02-02-odontoceteandship",
+      "groupKey": "OC02-02-odontoceteandship-20190807T165513Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_PM05_01_soundscape_20191005T193002Z.mp4",
@@ -2015,11 +2015,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-10-05T19:30:02Z",
       "site": "PM05",
       "deployment": "01",
-      "groupKey": "PM05-01-soundscape",
+      "groupKey": "PM05-01-soundscape-20191005T193002Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_PM02_02_soundscape_20201226093002Z.mp4",
@@ -2031,11 +2031,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-12-26T09:30:02Z",
       "site": "PM02",
       "deployment": "02",
-      "groupKey": "PM02-02-soundscape",
+      "groupKey": "PM02-02-soundscape-20201226T093002Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_PM01_01_soundscape_20200331103927Z.mp4",
@@ -2047,11 +2047,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2020-03-31T10:39:27Z",
       "site": "PM01",
       "deployment": "01",
-      "groupKey": "PM01-01-soundscape",
+      "groupKey": "PM01-01-soundscape-20200331T103927Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB01_01_soundscape_20181202T050337Z.mp4",
@@ -2063,11 +2063,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2018-12-02T05:03:37Z",
       "site": "SB01",
       "deployment": "01",
-      "groupKey": "SB01-01-soundscape",
+      "groupKey": "SB01-01-soundscape-20181202T050337Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB03_05_soundscape_20190929T074436Z.mp4",
@@ -2079,11 +2079,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-09-29T07:44:36Z",
       "site": "SB03",
       "deployment": "05",
-      "groupKey": "SB03-05-soundscape",
+      "groupKey": "SB03-05-soundscape-20190929T074436Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     },
     {
       "filename": "SanctSound_SB03_05_soundscape_20190929T093451Z.mp4",
@@ -2095,11 +2095,11 @@ window.OCEAN_JUKEBOX_CATALOG = {
       "recordedAt": "2019-09-29T09:34:51Z",
       "site": "SB03",
       "deployment": "05",
-      "groupKey": "SB03-05-soundscape",
+      "groupKey": "SB03-05-soundscape-20190929T093451Z",
       "variant": "original",
       "sourceType": "video",
       "sourcePage": "https://sanctsound.ioos.us/sounds.html",
-      "catalogedAt": "2026-05-15T22:53:04.218Z"
+      "catalogedAt": "2026-05-15T22:59:06.016Z"
     }
   ]
 };
