@@ -63,6 +63,32 @@ function normalizeLabel(value, isEnhanced = false) {
   return isEnhanced ? `${label} (enhanced)` : label;
 }
 
+export function variantForFilename(filename) {
+  return /(?:Speed|gain|dB|dBGain|dBgain)/.test(filename) ? 'enhanced' : 'original';
+}
+
+export function buildGroupKey(metadata) {
+  const rawSlug = String(metadata.soundSlug || metadata.filename || 'unknown')
+    .replace(/\.[^.]+$/, '')
+    .replace(/_(?:\d+xSpeed|[\ddB]+gain|[\ddB]+Gain|[\ddB]+dB).*$/i, '');
+  const cleanedSlug = rawSlug
+    .replace(/[^a-z0-9]+/gi, '-')
+    .replace(/^-|-$/g, '')
+    .toLowerCase();
+
+  if (metadata.site && metadata.deployment) {
+    return `${metadata.site}-${metadata.deployment}-${cleanedSlug || 'unknown'}`;
+  }
+  return cleanedSlug || 'unknown';
+}
+
+export function applyOverrides(tracks, overrides = {}) {
+  return tracks.map(track => ({
+    ...track,
+    ...(overrides[track.filename] || {}),
+  }));
+}
+
 export function parseTrackMetadata(filename) {
   const match = filename.match(/^SanctSound_([A-Z]{2}\d{2})_(\d{2})_(.+?)_(\d{8}T?\d{6}Z)/);
   if (!match) {
@@ -143,8 +169,10 @@ export function parseSanctSoundHtml(html, catalogedAt = new Date().toISOString()
     seen.add(filename);
 
     const sourceType = /\.(wav|mp3|m4a|ogg)$/i.test(filename) ? 'audio' : 'video';
-    const isEnhanced = /Enhanced/i.test(previousBlock) || /Speed|gain|dB/i.test(filename);
+    const variant = variantForFilename(filename);
+    const isEnhanced = /Enhanced/i.test(previousBlock) || variant === 'enhanced';
     const metadata = parseTrackMetadata(filename);
+    const groupKey = buildGroupKey({ ...metadata, filename });
     const label = normalizeLabel(currentTitle, isEnhanced);
     const sanctuary = extractSanctuary(currentTitle, filename);
 
@@ -158,6 +186,8 @@ export function parseSanctSoundHtml(html, catalogedAt = new Date().toISOString()
       recordedAt: metadata.recordedAt,
       site: metadata.site,
       deployment: metadata.deployment,
+      groupKey,
+      variant,
       sourceType,
       sourcePage: SOURCE_URL,
       catalogedAt,
@@ -221,7 +251,16 @@ async function main() {
     const indexHtml = await readFile(new URL('../index.html', import.meta.url), 'utf8');
     curated = parseInlineCatalogFromHtml(indexHtml);
   }
-  const tracks = mergeCatalogs(parseSanctSoundHtml(sourceHtml, catalogedAt), curated);
+  let overrides = {};
+  try {
+    overrides = JSON.parse(await readFile(new URL('../catalog-overrides.json', import.meta.url), 'utf8'));
+  } catch {
+    overrides = {};
+  }
+  const tracks = applyOverrides(
+    mergeCatalogs(parseSanctSoundHtml(sourceHtml, catalogedAt), curated),
+    overrides,
+  );
   const catalog = {
     title: 'Ocean Jukebox Catalog',
     source: SOURCE_URL,

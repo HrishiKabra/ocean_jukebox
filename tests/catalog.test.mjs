@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
+  applyOverrides,
+  buildGroupKey,
   mergeCatalogs,
   parseCuratedCatalogJson,
   parseSanctSoundHtml,
@@ -113,6 +115,50 @@ test('parses compact NOAA timestamps without a T separator', () => {
       recordedAt: '2020-12-26T09:30:02Z',
     },
   );
+});
+
+test('builds matching group keys for original and enhanced variants', () => {
+  assert.equal(
+    buildGroupKey({
+      site: 'CI05',
+      deployment: '04',
+      soundSlug: 'finwhale',
+      filename: 'SanctSound_CI05_04_finwhale_20191228T134133Z.mp4',
+    }),
+    'CI05-04-finwhale',
+  );
+  assert.equal(
+    buildGroupKey({
+      site: 'CI05',
+      deployment: '04',
+      soundSlug: 'finwhale',
+      filename: 'SanctSound_CI05_04_finwhale_20191228T134133Z_6xSpeed.wav',
+    }),
+    'CI05-04-finwhale',
+  );
+});
+
+test('applies filename overrides after generated metadata', () => {
+  const [track] = applyOverrides([{
+    filename: 'haddock.mp4',
+    label: 'Haddock',
+    site: null,
+    deployment: null,
+    groupKey: 'haddock',
+    variant: 'original',
+  }], {
+    'haddock.mp4': {
+      site: 'SB01',
+      deployment: '01',
+      groupKey: 'SB01-01-haddock',
+      variant: 'original',
+    },
+  });
+
+  assert.equal(track.site, 'SB01');
+  assert.equal(track.deployment, '01');
+  assert.equal(track.groupKey, 'SB01-01-haddock');
+  assert.equal(track.variant, 'original');
 });
 
 test('reads curated metadata from an existing generated catalog', () => {

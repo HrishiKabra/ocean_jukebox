@@ -187,6 +187,23 @@ export function buildTrackDetail(track) {
   };
 }
 
+export function buildVariantGroups(tracks) {
+  const groups = new Map();
+  tracks.forEach(track => {
+    const key = track.groupKey || trackId(track);
+    if (!groups.has(key)) groups.set(key, { original: null, enhanced: [] });
+    const group = groups.get(key);
+    if (track.variant === 'enhanced') {
+      group.enhanced.push(track);
+    } else if (!group.original) {
+      group.original = track;
+    } else {
+      group.enhanced.push(track);
+    }
+  });
+  return groups;
+}
+
 export function formatCount(count) {
   return `${count} ${count === 1 ? 'recording' : 'recordings'}`;
 }

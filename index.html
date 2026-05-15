@@ -315,6 +315,40 @@
       overflow-wrap: anywhere;
     }
 
+    .variant-list {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      min-height: 0;
+    }
+
+    .variant-list:empty {
+      display: none;
+    }
+
+    .variant-list-label {
+      color: var(--faint);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .variant-button {
+      min-height: 30px;
+      border: 0.5px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: var(--bg);
+      color: var(--kelp);
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    .variant-button:hover {
+      background: var(--kelp-2);
+      border-color: var(--kelp);
+    }
+
     .detail-source {
       display: flex;
       gap: 8px;
@@ -611,6 +645,7 @@
             <div class="detail-field"><span>Filename</span><code id="detail-filename">Unknown file</code></div>
           </div>
           <p class="detail-desc" id="detail-description">No description available from the source catalog.</p>
+          <div class="variant-list" id="detail-variants" aria-label="Alternate versions"></div>
           <div class="detail-source">
             <a class="source-link" id="detail-source-link" href="#" target="_blank" rel="noopener">Source file</a>
             <button class="ctrl" id="btn-copy-source" type="button">

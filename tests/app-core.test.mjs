@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 
 import {
+  buildVariantGroups,
   buildTrackDetail,
   createCatalogState,
   formatDate,
@@ -92,6 +93,18 @@ test('builds track detail with source URL and fallback metadata', () => {
       sourceUrl: 'https://sanctsound.ioos.us/files/haddock.mp4',
     },
   );
+});
+
+test('groups original and enhanced variants by groupKey', () => {
+  const groups = buildVariantGroups([
+    { filename: 'a.mp4', groupKey: 'CI05-04-finwhale', variant: 'original' },
+    { filename: 'a_6xSpeed.wav', groupKey: 'CI05-04-finwhale', variant: 'enhanced' },
+    { filename: 'b.mp4', groupKey: 'GR01-01-snapshots', variant: 'original' },
+  ]);
+
+  assert.equal(groups.get('CI05-04-finwhale').original.filename, 'a.mp4');
+  assert.equal(groups.get('CI05-04-finwhale').enhanced.length, 1);
+  assert.equal(groups.get('GR01-01-snapshots').enhanced.length, 0);
 });
 
 test('parses shareable route state from query params', () => {

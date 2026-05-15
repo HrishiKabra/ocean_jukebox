@@ -49,6 +49,7 @@
     order: [],
     currentIndex: 0,
     visibleIndexes: [],
+    variantGroups: new Map(),
     playing: false,
   };
 
@@ -271,6 +272,51 @@
     };
   }
 
+  function buildVariantGroupsForBrowser(tracks) {
+    const groups = new Map();
+    tracks.forEach(track => {
+      const key = track.groupKey || trackId(track);
+      if (!groups.has(key)) groups.set(key, { original: null, enhanced: [] });
+      const group = groups.get(key);
+      if (track.variant === 'enhanced') {
+        group.enhanced.push(track);
+      } else if (!group.original) {
+        group.original = track;
+      } else {
+        group.enhanced.push(track);
+      }
+    });
+    return groups;
+  }
+
+  function renderVariantAlternates(track) {
+    const group = state.variantGroups.get(track.groupKey || trackId(track));
+    els.detailVariants.innerHTML = '';
+    if (!group) return;
+
+    const alternates = [group.original, ...group.enhanced]
+      .filter(variant => variant && variant !== track);
+    if (!alternates.length) return;
+
+    const label = document.createElement('span');
+    label.className = 'variant-list-label';
+    label.textContent = 'Alternates';
+    els.detailVariants.appendChild(label);
+
+    alternates.forEach(variant => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'variant-button';
+      button.textContent = variant.variant === 'enhanced' ? 'Enhanced' : 'Original';
+      button.setAttribute('aria-label', `Switch to ${variant.label}`);
+      button.addEventListener('click', () => {
+        const index = state.tracks.indexOf(variant);
+        if (index >= 0) setTrack(index, { autoplay: state.playing });
+      });
+      els.detailVariants.appendChild(button);
+    });
+  }
+
   function renderTrackDetail() {
     const track = state.tracks[state.currentIndex];
     if (!track) return;
@@ -287,6 +333,7 @@
     els.detailDescription.textContent = detail.description;
     els.detailSourceLink.href = sourceUrl;
     els.detailSourceLink.textContent = sourceUrl;
+    renderVariantAlternates(track);
   }
 
   function openTrackDetail() {
@@ -540,6 +587,7 @@
       detailFilename: byId('detail-filename'),
       detailDescription: byId('detail-description'),
       detailSourceLink: byId('detail-source-link'),
+      detailVariants: byId('detail-variants'),
       copySourceButton: byId('btn-copy-source'),
       sanctuary: byId('s-sanctuary'),
       category: byId('s-cat'),
@@ -567,6 +615,7 @@
   function init() {
     cacheElements();
     state.tracks = state.catalog.tracks || [];
+    state.variantGroups = buildVariantGroupsForBrowser(state.tracks);
     state.order = state.tracks.map((_, index) => index);
     state.visibleIndexes = [...state.order];
     applyRoute(parseRoute(window.location.search));
