@@ -114,6 +114,38 @@
       margin-bottom: 14px;
     }
 
+    .tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+      border-bottom: 0.5px solid var(--line);
+    }
+
+    .tab {
+      min-height: 36px;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      padding: 8px 12px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+    }
+
+    .tab:hover {
+      color: var(--ink);
+      background: var(--bg-2);
+    }
+
+    .tab.on {
+      color: var(--kelp);
+      border-bottom-color: var(--kelp);
+      font-weight: 650;
+    }
+
     .player {
       display: grid;
       grid-template-columns: minmax(0, 1fr) 280px;
@@ -427,6 +459,137 @@
       font-weight: 600;
     }
 
+    .map-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 14px;
+      align-items: stretch;
+      margin: 14px 0;
+    }
+
+    .map-panel[hidden] {
+      display: none;
+    }
+
+    .map-canvas {
+      position: relative;
+      min-height: 430px;
+      overflow: hidden;
+      border: 0.5px solid var(--line);
+      border-radius: 10px;
+      background:
+        radial-gradient(circle at 8% 18%, rgba(224, 161, 93, 0.2), transparent 12%),
+        radial-gradient(circle at 35% 26%, rgba(49, 95, 75, 0.18), transparent 15%),
+        linear-gradient(145deg, color-mix(in srgb, var(--tide) 22%, var(--bg)), var(--bg-2) 65%);
+    }
+
+    .map-canvas::before {
+      content: "";
+      position: absolute;
+      inset: 9% 8%;
+      border: 0.5px solid rgba(28, 111, 134, 0.26);
+      border-radius: 48% 42% 50% 38%;
+      transform: rotate(-7deg);
+      pointer-events: none;
+    }
+
+    .map-canvas::after {
+      content: "Pacific to Atlantic sanctuary listening map";
+      position: absolute;
+      left: 14px;
+      bottom: 12px;
+      color: var(--faint);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .map-pin {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      display: grid;
+      justify-items: center;
+      gap: 5px;
+      z-index: 1;
+    }
+
+    .pin-dot {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--bg);
+      background: var(--tide);
+      border: 2px solid var(--bg);
+      box-shadow: 0 8px 24px rgba(21, 24, 18, 0.22);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .pin-label {
+      min-width: 112px;
+      max-width: 154px;
+      border: 0.5px solid var(--line);
+      border-radius: var(--radius);
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+      padding: 6px 8px;
+      text-align: left;
+      box-shadow: 0 8px 22px rgba(21, 24, 18, 0.12);
+      opacity: 0;
+      transform: translateY(2px);
+      transition: opacity 0.14s, transform 0.14s;
+      pointer-events: none;
+    }
+
+    .pin-label strong,
+    .pin-label span {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+
+    .pin-label strong {
+      font-size: 12px;
+      line-height: 1.15;
+    }
+
+    .pin-label span {
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.35;
+      margin-top: 2px;
+    }
+
+    .map-pin:hover .pin-label,
+    .map-pin:focus-visible .pin-label,
+    .map-pin.active .pin-label {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .map-pin.active .pin-dot {
+      background: var(--sun);
+      color: var(--ink);
+      border-color: var(--ink);
+    }
+
+    .map-pin.empty {
+      opacity: 0.55;
+    }
+
+    .map-summary {
+      border: 0.5px solid var(--line);
+      border-radius: 10px;
+      background: var(--bg-2);
+      color: var(--muted);
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
     .list-head {
       display: flex;
       justify-content: space-between;
@@ -530,6 +693,7 @@
       body { padding-top: 18px; }
       .site-header,
       .player,
+      .map-panel,
       .tools,
       .transport {
         grid-template-columns: 1fr;
@@ -554,6 +718,12 @@
       .detail-source {
         align-items: stretch;
       }
+      .map-canvas {
+        min-height: 360px;
+      }
+      .pin-label {
+        max-width: 128px;
+      }
     }
   </style>
 </head>
@@ -574,6 +744,25 @@
     </header>
 
     <p class="archive-note" id="archive-note"></p>
+
+    <nav class="tabs" aria-label="Explorer views">
+      <button class="tab on" type="button" data-tab="archive" role="tab" aria-selected="true">
+        <i class="ti ti-archive" aria-hidden="true"></i>
+        Archive
+      </button>
+      <button class="tab" type="button" data-tab="map" role="tab" aria-selected="false">
+        <i class="ti ti-map-2" aria-hidden="true"></i>
+        Map
+      </button>
+      <button class="tab" type="button" data-tab="live" role="tab" aria-selected="false">
+        <i class="ti ti-broadcast" aria-hidden="true"></i>
+        Live
+      </button>
+      <button class="tab" type="button" data-tab="spectrogram" role="tab" aria-selected="false">
+        <i class="ti ti-wave-sine" aria-hidden="true"></i>
+        Spectrogram
+      </button>
+    </nav>
 
     <main>
       <section class="player" aria-label="Audio player">
@@ -665,6 +854,11 @@
         <div class="cats" id="cat-bar" role="group" aria-label="Filter by sound type"></div>
       </section>
 
+      <section class="map-panel" id="map-panel" aria-label="Sanctuary map" hidden>
+        <div class="map-canvas" id="map-canvas"></div>
+        <aside class="map-summary" id="map-summary" aria-live="polite"></aside>
+      </section>
+
       <section aria-label="Sound recordings">
         <div class="list-head">
           <span>Recordings</span>
@@ -684,6 +878,7 @@
 
   <audio id="audio" preload="metadata"></audio>
   <script src="./sounds.js"></script>
+  <script src="./sanctuaries.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>

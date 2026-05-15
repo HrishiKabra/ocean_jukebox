@@ -63,10 +63,10 @@ export function serializeRoute(route) {
   const params = new URLSearchParams();
   if (route.track) params.set('track', route.track);
   if (route.category && route.category !== DEFAULT_ROUTE.category) params.set('category', route.category);
+  if (route.tab && route.tab !== DEFAULT_ROUTE.tab) params.set('tab', route.tab);
   if (route.sanctuary && route.sanctuary !== DEFAULT_ROUTE.sanctuary) params.set('sanctuary', route.sanctuary);
   if (route.query) params.set('q', route.query);
   if (route.sort && route.sort !== DEFAULT_ROUTE.sort) params.set('sort', route.sort);
-  if (route.tab && route.tab !== DEFAULT_ROUTE.tab) params.set('tab', route.tab);
   const query = params.toString();
   return query ? `?${query}` : '';
 }
@@ -202,6 +202,45 @@ export function buildVariantGroups(tracks) {
     }
   });
   return groups;
+}
+
+export function buildMapPins(sanctuaries, tracks, activeSanctuary = 'all') {
+  const counts = new Map();
+  tracks.forEach(track => {
+    if (!track.sanctuary) return;
+    counts.set(track.sanctuary, (counts.get(track.sanctuary) || 0) + 1);
+  });
+
+  const bounds = sanctuaries.reduce((acc, sanctuary) => {
+    const [lat, lng] = sanctuary.coordinates || [0, 0];
+    return {
+      minLat: Math.min(acc.minLat, lat),
+      maxLat: Math.max(acc.maxLat, lat),
+      minLng: Math.min(acc.minLng, lng),
+      maxLng: Math.max(acc.maxLng, lng),
+    };
+  }, {
+    minLat: 20,
+    maxLat: 48,
+    minLng: -172,
+    maxLng: -70,
+  });
+
+  const latRange = bounds.maxLat - bounds.minLat || 1;
+  const lngRange = bounds.maxLng - bounds.minLng || 1;
+
+  return sanctuaries.map(sanctuary => {
+    const [lat, lng] = sanctuary.coordinates || [0, 0];
+    return {
+      ...sanctuary,
+      lat,
+      lng,
+      count: counts.get(sanctuary.name) || 0,
+      active: activeSanctuary !== 'all' && sanctuary.name === activeSanctuary,
+      x: ((lng - bounds.minLng) / lngRange) * 100,
+      y: ((bounds.maxLat - lat) / latRange) * 100,
+    };
+  });
 }
 
 export function formatCount(count) {

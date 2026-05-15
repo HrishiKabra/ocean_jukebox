@@ -39,6 +39,7 @@
   const els = {};
   const state = {
     catalog: window.OCEAN_JUKEBOX_CATALOG || FALLBACK_CATALOG,
+    sanctuaries: window.OCEAN_JUKEBOX_SANCTUARIES || [],
     tracks: [],
     category: 'all',
     sanctuary: 'all',
@@ -124,10 +125,10 @@
     const params = new URLSearchParams();
     if (route.track) params.set('track', route.track);
     if (route.category && route.category !== DEFAULT_ROUTE.category) params.set('category', route.category);
+    if (route.tab && route.tab !== DEFAULT_ROUTE.tab) params.set('tab', route.tab);
     if (route.sanctuary && route.sanctuary !== DEFAULT_ROUTE.sanctuary) params.set('sanctuary', route.sanctuary);
     if (route.query) params.set('q', route.query);
     if (route.sort && route.sort !== DEFAULT_ROUTE.sort) params.set('sort', route.sort);
-    if (route.tab && route.tab !== DEFAULT_ROUTE.tab) params.set('tab', route.tab);
     const query = params.toString();
     return query ? `?${query}` : '';
   }
@@ -176,7 +177,7 @@
   }
 
   function setTab(tabName, options = {}) {
-    state.activeTab = tabName || DEFAULT_ROUTE.tab;
+    state.activeTab = tabList().includes(tabName) ? tabName : DEFAULT_ROUTE.tab;
     if (els.tabs) {
       els.tabs.forEach(tab => {
         const active = tab.dataset.tab === state.activeTab;
@@ -184,6 +185,10 @@
         tab.setAttribute('aria-selected', active ? 'true' : 'false');
       });
     }
+    if (els.mapPanel) {
+      els.mapPanel.hidden = state.activeTab !== 'map';
+    }
+    if (state.activeTab === 'map') renderMap();
     if (options.sync !== false) syncUrl();
   }
 
@@ -228,10 +233,15 @@
 
   function tabList() {
     const tabs = els.tabs ? [...els.tabs].map(tab => tab.dataset.tab).filter(Boolean) : [];
-    return ['archive', ...tabs.filter(tab => tab !== 'archive')];
+    const normalized = ['archive', 'map', 'live', 'spectrogram'];
+    tabs.forEach(tab => {
+      if (!normalized.includes(tab)) normalized.push(tab);
+    });
+    return normalized;
   }
 
   window.OCEAN_JUKEBOX_ROUTE_HELPERS = Object.freeze({
+    buildMapPins,
     buildTrackDetail,
     normalizeRoute,
     parseRoute,
@@ -287,6 +297,94 @@
       }
     });
     return groups;
+  }
+
+  function buildMapPins(sanctuaries, tracks, activeSanctuary = 'all') {
+    const counts = new Map();
+    tracks.forEach(track => {
+      if (!track.sanctuary) return;
+      counts.set(track.sanctuary, (counts.get(track.sanctuary) || 0) + 1);
+    });
+
+    const bounds = sanctuaries.reduce((acc, sanctuary) => {
+      const [lat, lng] = sanctuary.coordinates || [0, 0];
+      return {
+        minLat: Math.min(acc.minLat, lat),
+        maxLat: Math.max(acc.maxLat, lat),
+        minLng: Math.min(acc.minLng, lng),
+        maxLng: Math.max(acc.maxLng, lng),
+      };
+    }, {
+      minLat: 20,
+      maxLat: 48,
+      minLng: -172,
+      maxLng: -70,
+    });
+
+    const latRange = bounds.maxLat - bounds.minLat || 1;
+    const lngRange = bounds.maxLng - bounds.minLng || 1;
+
+    return sanctuaries.map(sanctuary => {
+      const [lat, lng] = sanctuary.coordinates || [0, 0];
+      return {
+        ...sanctuary,
+        lat,
+        lng,
+        count: counts.get(sanctuary.name) || 0,
+        active: activeSanctuary !== 'all' && sanctuary.name === activeSanctuary,
+        x: ((lng - bounds.minLng) / lngRange) * 100,
+        y: ((bounds.maxLat - lat) / latRange) * 100,
+      };
+    });
+  }
+
+  function renderMap() {
+    if (!els.mapCanvas || !els.mapSummary) return;
+    const currentTrack = state.tracks[state.currentIndex];
+    const activeSanctuary = state.sanctuary !== 'all'
+      ? state.sanctuary
+      : currentTrack && currentTrack.sanctuary
+        ? currentTrack.sanctuary
+        : 'all';
+    const pins = buildMapPins(state.sanctuaries, state.tracks, activeSanctuary);
+
+    els.mapCanvas.innerHTML = '';
+    if (!pins.length) {
+      els.mapSummary.textContent = 'No sanctuary map metadata available.';
+      return;
+    }
+
+    pins.forEach(pin => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = `map-pin${pin.active ? ' active' : ''}${pin.count ? '' : ' empty'}`;
+      button.style.left = `${pin.x}%`;
+      button.style.top = `${pin.y}%`;
+      button.dataset.sanctuary = pin.name;
+      button.setAttribute('aria-pressed', pin.active ? 'true' : 'false');
+      button.setAttribute('aria-label', `${pin.name}, ${formatCount(pin.count)}`);
+      button.innerHTML = `
+        <span class="pin-dot">${pin.count}</span>
+        <span class="pin-label">
+          <strong>${pin.name}</strong>
+          <span>${pin.region} · ${formatCount(pin.count)}</span>
+        </span>
+      `;
+      button.addEventListener('click', () => {
+        state.sanctuary = pin.name;
+        syncControlsFromState();
+        recomputeVisible();
+        renderTrackList();
+        renderMap();
+        syncUrl();
+      });
+      els.mapCanvas.appendChild(button);
+    });
+
+    const activePin = pins.find(pin => pin.active);
+    els.mapSummary.textContent = activePin
+      ? `${activePin.name}: ${activePin.note} ${formatCount(activePin.count)} in the archive.`
+      : `${pins.length} sanctuary listening regions mapped from the current archive.`;
   }
 
   function renderVariantAlternates(track) {
@@ -384,6 +482,7 @@
     highlightCurrent();
     if (!els.detailPanel.hidden) renderTrackDetail();
     if (options.sync !== false) syncUrl();
+    if (state.activeTab === 'map') renderMap();
     if (options.autoplay) {
       els.audio.play().then(() => setPlayingState(true)).catch(() => setPlayingState(false));
     }
@@ -438,6 +537,7 @@
         syncControlsFromState();
         recomputeVisible();
         renderTrackList();
+        if (state.activeTab === 'map') renderMap();
         updateMeta();
         syncUrl();
       });
@@ -527,18 +627,21 @@
       state.query = els.query.value;
       recomputeVisible();
       renderTrackList();
+      if (state.activeTab === 'map') renderMap();
       syncUrl();
     });
     els.sanctuarySelect.addEventListener('change', () => {
       state.sanctuary = els.sanctuarySelect.value;
       recomputeVisible();
       renderTrackList();
+      if (state.activeTab === 'map') renderMap();
       syncUrl();
     });
     els.sortSelect.addEventListener('change', () => {
       state.sort = els.sortSelect.value;
       recomputeVisible();
       renderTrackList();
+      if (state.activeTab === 'map') renderMap();
       syncUrl();
     });
     els.progress.addEventListener('input', () => {
@@ -608,6 +711,9 @@
       progress: byId('progress'),
       time: byId('time'),
       status: byId('status'),
+      mapPanel: byId('map-panel'),
+      mapCanvas: byId('map-canvas'),
+      mapSummary: byId('map-summary'),
       tabs: document.querySelectorAll('.tab'),
     });
   }

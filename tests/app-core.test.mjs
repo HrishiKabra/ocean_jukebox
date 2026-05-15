@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 
 import {
+  buildMapPins,
   buildVariantGroups,
   buildTrackDetail,
   createCatalogState,
@@ -105,6 +106,33 @@ test('groups original and enhanced variants by groupKey', () => {
   assert.equal(groups.get('CI05-04-finwhale').original.filename, 'a.mp4');
   assert.equal(groups.get('CI05-04-finwhale').enhanced.length, 1);
   assert.equal(groups.get('GR01-01-snapshots').enhanced.length, 0);
+});
+
+test('builds map pins with recording counts and active sanctuary state', () => {
+  const pins = buildMapPins(
+    [
+      { name: 'Monterey Bay', coordinates: [36.8, -121.9], region: 'West Coast', note: 'Canyon edge habitat.' },
+      { name: 'Florida Keys', coordinates: [24.6, -81.7], region: 'Southeast', note: 'Reef soundscape.' },
+    ],
+    [
+      { sanctuary: 'Monterey Bay' },
+      { sanctuary: 'Monterey Bay' },
+      { sanctuary: 'Florida Keys' },
+    ],
+    'Florida Keys',
+  );
+
+  assert.deepEqual(
+    pins.map(pin => ({
+      name: pin.name,
+      count: pin.count,
+      active: pin.active,
+    })),
+    [
+      { name: 'Monterey Bay', count: 2, active: false },
+      { name: 'Florida Keys', count: 1, active: true },
+    ],
+  );
 });
 
 test('parses shareable route state from query params', () => {
