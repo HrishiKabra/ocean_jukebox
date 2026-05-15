@@ -1,16 +1,18 @@
 # Ocean Jukebox
 
-A jukebox for the ocean. 58 real underwater recordings from NOAA's National Marine Sanctuaries — whale song, snapping shrimp, naval sonar, scuba bubbles, hurricanes, and more — streamed directly from NOAA's public hydrophone archive.
+A jukebox for the ocean. 131 real underwater recordings from NOAA's National Marine Sanctuaries — whale song, snapping shrimp, naval sonar, scuba bubbles, hurricanes, and more — streamed directly from NOAA's public hydrophone archive.
 
-**Live source:** [sanctsound.ioos.us](https://sanctsound.ioos.us)
+**Archive source:** [sanctsound.ioos.us](https://sanctsound.ioos.us)
 
 ---
 
 ## What it is
 
-Ocean Jukebox is a single-file static web app that pulls audio directly from NOAA's publicly accessible SanctSound archive. No backend, no API key, no server. You open `index.html` and it works.
+Ocean Jukebox is a static web app that pulls audio directly from NOAA's publicly accessible SanctSound archive. No backend, no API key, no server. You open `index.html` and it works.
 
 The SanctSound project was a collaboration between NOAA's Office of National Marine Sanctuaries and the U.S. Navy, deploying hydrophones (underwater microphones) across seven national marine sanctuaries and one marine monument from 2018 to 2022. The resulting recordings are public domain.
+
+The recordings are archival, not realtime. The bundled catalog can be refreshed from NOAA's current example-sounds page, but the sounds themselves are historical SanctSound clips.
 
 ---
 
@@ -45,7 +47,7 @@ The SanctSound project was a collaboration between NOAA's Office of National Mar
 
 ## How it works
 
-The app is a single HTML file (`index.html`). All audio files are served directly from NOAA's servers at `https://sanctsound.ioos.us/files/`. Nothing is hosted locally — the sounds stream on demand.
+The app is a static HTML/CSS/JS site. The local catalog lives in `sounds.json` and `sounds.js`; the audio files are served directly from NOAA's servers at `https://sanctsound.ioos.us/files/`. Nothing is hosted locally except the catalog metadata — the sounds stream on demand.
 
 ```
 https://sanctsound.ioos.us/files/SanctSound_HI01_01_humpbackwhale_20190216T045823Z.mp4
@@ -86,12 +88,14 @@ If you want to self-host on GitHub Pages, Netlify, Vercel, or any static host, d
 
 ## Features
 
-- **Play/pause** with animated waveform visualizer
+- **131-track generated catalog** from NOAA's example-sounds page
+- **Play/pause** with animated waveform visualizer, progress, and time display
 - **Previous / next** track navigation
 - **Shuffle** — randomises playback order across the full catalog
-- **Category filter** — filter to just whales, or just weather, or just the eerie human sounds
+- **Category, sanctuary, search, and sort controls** — filter to just whales, weather, a sanctuary, a site code, or a filename
 - **Auto-advance** — plays the next track automatically when one ends
 - **Grouped track list** — organized by sanctuary, with sound category labels
+- **Recording metadata** — date, site code, and original filename
 - **Dark mode** — respects `prefers-color-scheme`
 - **Keyboard accessible** — all tracks navigable with Enter/Space
 - **No cookies, no tracking, no ads**
@@ -100,19 +104,20 @@ If you want to self-host on GitHub Pages, Netlify, Vercel, or any static host, d
 
 ## Extending it
 
-### Add more recordings
+### Refresh the recording catalog
 
-The SanctSound archive has hundreds more files. Browse the full catalog at [sanctsound.ioos.us/sounds.html](https://sanctsound.ioos.us/sounds.html), right-click any audio element, copy the URL, and add an entry to the `SOUNDS` array in `index.html`:
+The SanctSound archive page changes independently of this repo. Refresh the generated local catalog with:
 
-```javascript
-{
-  f: 'SanctSound_CI01_01_bocaccio_20181101T100353Z.mp4',
-  s: 'Channel Islands',
-  c: 'fish',
-  l: 'Bocaccio calls',
-  d: 'Low frequency bocaccio calls from the north side of Santa Rosa Island.'
-},
+```bash
+node scripts/catalog.mjs
 ```
+
+That command fetches [sanctsound.ioos.us/sounds.html](https://sanctsound.ioos.us/sounds.html), parses the media entries, preserves curated labels/descriptions already present in `sounds.json`, and writes both:
+
+- `sounds.json` — readable catalog data
+- `sounds.js` — browser-friendly catalog wrapper so `index.html` still works when opened directly from disk
+
+If you want to add a hand-curated description, edit the matching record in `sounds.json`, then run the refresh script. The script keeps curated fields by filename.
 
 ### Add a real spectrogram
 
@@ -158,6 +163,10 @@ map.flyTo(LOCS[currentSanction], 7, { duration: 1.2 });
 
 NOAA's buoy API (`https://www.ndbc.noaa.gov/data/realtime2/`) has near-real-time wave height and sea surface temperature for stations near each sanctuary. You could show current conditions alongside the historical recordings.
 
+### Add live or near-live audio
+
+SanctSound itself is an archive, not a realtime audio feed. A live section should use a separate source and label it separately from the historical catalog. MBARI's Monterey Bay hydrophone stream is one possible near-live source when available, but it should be treated as a distinct integration rather than mixed into the SanctSound catalog.
+
 ---
 
 ## Deploying as a real site
@@ -185,10 +194,10 @@ Buy `oceanjukebox.com` (~$12/yr), point the DNS to your host, done.
 ## Tech stack
 
 - Vanilla HTML/CSS/JS — no framework, no bundler
+- Node.js script for catalog refresh and tests
 - [Tabler Icons](https://tabler.io/icons) (webfont, loaded from jsDelivr CDN)
 - Audio from NOAA's SanctSound archive (public domain, streamed on demand)
 - CSS `prefers-color-scheme` for automatic dark mode
-- Total size: ~18 KB (excluding audio)
 
 ---
 
@@ -202,9 +211,3 @@ Portal: [sanctsound.ioos.us](https://sanctsound.ioos.us)
 Data archive: [NOAA NCEI Passive Acoustic Data Archive](https://www.ncei.noaa.gov/products/passive-acoustic-data)
 
 Audio is public domain. Please cite NOAA PMEL Acoustics Program as the source if you reproduce recordings.
-
----
-
-## Inspired by
-
-[Riley Walz](https://walzr.com) — internet artist whose projects surface hidden or forgotten data in unexpected ways. Ocean Jukebox is in that tradition: NOAA recorded all this, it's all public, most people have no idea it exists.
