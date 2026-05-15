@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ocean Jukebox — NOAA Underwater Recordings</title>
+  <meta name="description" content="Real underwater recordings from NOAA's National Marine Sanctuaries. Whale song, snapping shrimp, naval sonar, hurricanes, and more — streamed directly from NOAA's public hydrophone archive." />
+
+  <!-- Tabler Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #ffffff;
+      --bg-2:      #f7f7f5;
+      --bg-3:      #f0efea;
+      --text:      #1a1a18;
+      --text-2:    #555550;
+      --text-3:    #999990;
+      --border:    rgba(0,0,0,0.10);
+      --border-2:  rgba(0,0,0,0.18);
+      --teal-50:   #E1F5EE;
+      --teal-100:  #9FE1CB;
+      --teal-400:  #1D9E75;
+      --teal-600:  #0F6E56;
+      --teal-800:  #085041;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:       #1c1c1a;
+        --bg-2:     #242422;
+        --bg-3:     #2c2c2a;
+        --text:     #f0efe8;
+        --text-2:   #a8a89e;
+        --text-3:   #666660;
+        --border:   rgba(255,255,255,0.10);
+        --border-2: rgba(255,255,255,0.18);
+        --teal-50:  #04342C;
+        --teal-100: #085041;
+        --teal-400: #1D9E75;
+        --teal-600: #5DCAA5;
+        --teal-800: #9FE1CB;
+      }
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    .site-header { margin-bottom: 1.5rem; }
+    .site-header h1 {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .site-header p {
+      font-size: 13px;
+      color: var(--text-2);
+    }
+    .site-header a { color: var(--teal-400); text-decoration: none; }
+    .site-header a:hover { text-decoration: underline; }
+
+    /* ── Player card ── */
+    .player {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .s-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--teal-800);
+      background: var(--teal-50);
+      padding: 3px 10px;
+      border-radius: var(--radius-md);
+      margin-bottom: 10px;
+    }
+
+    .s-cat {
+      font-size: 11px;
+      color: var(--text-3);
+      margin-bottom: 3px;
+      letter-spacing: .03em;
+    }
+
+    .s-label {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .s-desc {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--text-2);
+      margin-bottom: 1.25rem;
+      min-height: 52px;
+    }
+
+    /* ── Waveform ── */
+    .waveform {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      height: 36px;
+      margin-bottom: 1rem;
+    }
+
+    .bar {
+      flex: 1;
+      background: var(--border-2);
+      border-radius: 2px;
+      height: 4px;
+      transition: background 0.3s;
+    }
+
+    @keyframes pulse {
+      0%   { height: 4px; }
+      100% { height: 28px; background: var(--teal-400); }
+    }
+
+    .waveform.active .bar { animation: pulse 0.7s ease-in-out infinite alternate; }
+    .waveform.active .bar:nth-child(2n)  { animation-delay: 0.10s; }
+    .waveform.active .bar:nth-child(3n)  { animation-delay: 0.20s; }
+    .waveform.active .bar:nth-child(4n)  { animation-delay: 0.30s; }
+    .waveform.active .bar:nth-child(5n)  { animation-delay: 0.05s; }
+    .waveform.active .bar:nth-child(7n)  { animation-delay: 0.15s; }
+    .waveform.active .bar:nth-child(11n) { animation-delay: 0.25s; }
+
+    /* ── Controls ── */
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .ctrl {
+      background: transparent;
+      border: 0.5px solid var(--border-2);
+      border-radius: var(--radius-md);
+      padding: 6px 14px;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.15s;
+      font-family: var(--font);
+    }
+    .ctrl:hover { background: var(--bg-2); }
+    .ctrl:active { transform: scale(0.97); }
+
+    .play-btn { padding: 8px 24px; font-size: 15px; }
+
+    .ctrl.active-btn {
+      background: var(--teal-50);
+      border-color: var(--teal-400);
+      color: var(--teal-800);
+    }
+
+    /* ── Category chips ── */
+    .cats {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .chip {
+      background: transparent;
+      border: 0.5px solid var(--border-2);
+      border-radius: var(--radius-md);
+      padding: 4px 12px;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--text-2);
+      font-family: var(--font);
+      transition: background 0.12s;
+    }
+    .chip:hover { background: var(--bg-2); }
+    .chip.on {
+      background: var(--teal-50);
+      border-color: var(--teal-400);
+      color: var(--teal-800);
+      font-weight: 500;
+    }
+
+    /* ── Track list ── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-3);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      padding: 14px 10px 4px;
+    }
+
+    .trow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+    .trow:hover { background: var(--bg-2); }
+    .trow.now   { background: var(--teal-50); }
+
+    .t-num {
+      font-size: 11px;
+      color: var(--text-3);
+      min-width: 20px;
+      text-align: right;
+    }
+
+    .t-info { flex: 1; min-width: 0; }
+
+    .t-name {
+      font-size: 13px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .trow.now .t-name { color: var(--teal-800); font-weight: 500; }
+
+    .t-meta { font-size: 11px; color: var(--text-3); }
+
+    .t-play-icon {
+      font-size: 13px;
+      color: var(--text-3);
+      opacity: 0;
+      transition: opacity 0.12s;
+    }
+    .trow:hover .t-play-icon,
+    .trow.now   .t-play-icon { opacity: 1; color: var(--teal-400); }
+
+    .hidden { display: none !important; }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: 2.5rem;
+      padding-top: 1.25rem;
+      border-top: 0.5px solid var(--border);
+      font-size: 12px;
+      color: var(--text-3);
+      line-height: 1.7;
+    }
+    .footer a { color: var(--text-3); }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="site-header">
+    <h1>Ocean Jukebox</h1>
+    <p>
+      Real recordings from NOAA's underwater hydrophones — whale song, snapping shrimp,
+      naval sonar, hurricanes, scuba bubbles, and more.
+      Source: <a href="https://sanctsound.ioos.us" target="_blank" rel="noopener">sanctsound.ioos.us</a>
+    </p>
+  </header>
+
+  <!-- Player -->
+  <div class="player">
+    <div class="s-tag">
+      <i class="ti ti-map-pin" style="font-size:12px" aria-hidden="true"></i>
+      <span id="s-sanctuary">Hawaiian Islands</span>
+    </div>
+    <p class="s-cat" id="s-cat">marine mammal · whale</p>
+    <h2 class="s-label" id="s-label">Humpback whale chorus</h2>
+    <p class="s-desc" id="s-desc">Several humpback whales singing off west Maui. From December through April the ocean around Hawaiʻi is alive with male song — complex arrangements thought to play a role in reproduction.</p>
+
+    <div class="waveform" id="waveform" aria-hidden="true">
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    </div>
+
+    <div class="controls">
+      <button class="ctrl" id="btn-prev" aria-label="Previous track">
+        <i class="ti ti-player-skip-back" style="font-size:15px" aria-hidden="true"></i>
+      </button>
+      <button class="ctrl play-btn" id="btn-play" aria-label="Play">
+        <i class="ti ti-player-play" id="play-icon" style="font-size:16px" aria-hidden="true"></i>
+      </button>
+      <button class="ctrl" id="btn-next" aria-label="Next track">
+        <i class="ti ti-player-skip-forward" style="font-size:15px" aria-hidden="true"></i>
+      </button>
+      <button class="ctrl" id="btn-shuffle" aria-label="Toggle shuffle" title="Shuffle">
+        <i class="ti ti-arrows-shuffle" style="font-size:15px" aria-hidden="true"></i>
+        Shuffle
+      </button>
+    </div>
+  </div>
+
+  <!-- Category filters -->
+  <div class="cats" id="cat-bar" role="group" aria-label="Filter by sound type"></div>
+
+  <!-- Track list -->
+  <div id="tlist" role="list" aria-label="Sound recordings"></div>
+
+  <footer class="footer">
+    Audio sourced from NOAA's
+    <a href="https://sanctsound.ioos.us" target="_blank" rel="noopener">SanctSound project</a>
+    — a collaboration between NOAA's Office of National Marine Sanctuaries and the U.S. Navy.
+    All recordings are public domain.
+    &nbsp;·&nbsp;
+    <a href="https://sanctsound.ioos.us/sounds.html" target="_blank" rel="noopener">Browse original archive</a>
+  </footer>
+</div>
+
+<audio id="audio" preload="none"></audio>
+
+<script>
+const BASE = 'https://sanctsound.ioos.us/files/';
+
+const SOUNDS = [
+  // Hawaiian Islands
+  { f:'SanctSound_HI01_01_humpbackwhale_20190216T045823Z.mp4',        s:'Hawaiian Islands',   c:'whale',         l:'Humpback whale chorus',            d:"Several humpback whales singing off west Maui. From December through April the ocean around Hawaiʻi is alive with male song — complex arrangements thought to play a role in reproduction." },
+  { f:'SanctSound_HI03_02_minkewhale_20191210T055810Z.mp4',           s:'Hawaiian Islands',   c:'whale',         l:'Minke whale boing',                 d:'The North Pacific minke whale\'s unique "boing" call — one of the ocean\'s strangest sounds, recorded off southeast Oahu.' },
+  { f:'SanctSound_HI03_02_spermwhale_20191216T115715Z.mp4',           s:'Hawaiian Islands',   c:'whale',         l:'Sperm whale clicks',                d:'Sperm whale echolocation clicks. They use these to hunt giant squid in the dark abyss — each click travels miles.' },
+  { f:'SanctSound_HI06_01_fishchorus_20200615T031758Z.mp4',           s:'Hawaiian Islands',   c:'fish',          l:'Fish chorus',                       d:'Various fish species chorusing off the northwest coast of Hawaiʻi. Reproductive season fills the water with overlapping calls.' },
+  { f:'SanctSound_HI06_01_snappingshrimp_20200630T151547Z.mp4',       s:'Hawaiian Islands',   c:'invertebrate',  l:'Snapping shrimp',                   d:'Snapping shrimp dominate Hawaiian waters — loud snaps from the rapid closure of their enlarged claw, like frying food heard from below.' },
+  { f:'SanctSound_HI03_02_dolphin_20191223T175613Z.mp4',              s:'Hawaiian Islands',   c:'dolphin',       l:'Dolphin burst pulses',              d:'Dolphin whistles and burst pulses — rapid broadband click trains — off the southeast coast of Oahu.' },
+  { f:'SanctSound_HI03_02_rain_20200210T201517Z.mp4',                  s:'Hawaiian Islands',   c:'weather',       l:'Tropical rainstorm',                d:'A rainstorm recorded from below the surface off Oahu. Rain pattering creates a surprisingly loud broadband hiss underwater.' },
+  { f:'SanctSound_HI04_02_sonar_20191212T115800Z.mp4',                 s:'Hawaiian Islands',   c:'human',         l:'Naval sonar',                       d:'Naval sonar recorded off the north shore of Kauai — a slow, mournful ping that carries for hundreds of miles underwater.' },
+
+  // Channel Islands
+  { f:'SanctSound_CI01_02_plainfinmidshipman_20190426T085921Z.mp4',   s:'Channel Islands',    c:'fish',          l:'Midshipman hum',                    d:'Male plainfin midshipman humming for hours to attract females — a deep, vibrating drone from north of Santa Rosa Island.' },
+  { f:'SanctSound_CI05_03_bluewhale_20190926T230959Z.mp4',            s:'Channel Islands',    c:'whale',         l:'Blue whale calls',                  d:'Near the very lower limit of human hearing — a blue whale calling east of Anacapa Island. The largest animal ever to exist.' },
+  { f:'SanctSound_CI02_05_humpbackwhale_20201014T134715Z.mp4',        s:'Channel Islands',    c:'whale',         l:'Humpback whale',                    d:'Humpback moans, cries, and groans between 100 and 900 Hz from west of San Miguel Island in 2020.' },
+  { f:'SanctSound_CI05_04_finwhale_20191228T134133Z.mp4',             s:'Channel Islands',    c:'whale',         l:'Fin whale pulses',                  d:'Fin whale "20-Hertz pulses" — the second-largest animal on Earth producing repeated loud downsweeps, east of Anacapa Island.' },
+  { f:'SanctSound_CI02_02_graywhale_20190425T012924Z_33dBgain.mp4',   s:'Channel Islands',    c:'whale',         l:'Gray whale rumble',                 d:'Gray whale sounds: knocks, rumbles, growls, bubble blasts — west of San Miguel Island during spring migration.' },
+  { f:'SanctSound_CI02_05_sealionbark_20200613T042112Z.mp4',          s:'Channel Islands',    c:'marine mammal', l:'Sea lion barks',                    d:'California sea lion barks and buzzing near one of the largest rookeries on earth, west of San Miguel Island.' },
+  { f:'SanctSound_CI01_01_snappingshrimp_20181101T080448Z.mp4',       s:'Channel Islands',    c:'invertebrate',  l:'Snapping shrimp',                   d:'The ambient noise divers know from Channel Islands — shrimp claw closures crackle like popcorn north of Santa Rosa Island.' },
+  { f:'SanctSound_CI01_03_dolphins_20190904T064203Z.mp4',             s:'Channel Islands',    c:'dolphin',       l:'Dolphin whistles',                  d:'Dolphin whistles from 3 to 24 kHz recorded at Santa Barbara Island — individuals have distinct signature whistles.' },
+  { f:'SanctSound_CI05_01_LFAsonar_20181109T202439Z.mp4',             s:'Channel Islands',    c:'human',         l:'Low-frequency naval sonar',         d:'Low frequency active sonar at ~1,000 Hz from a naval vessel east of Anacapa Island. These sweeps can disorient whales.' },
+  { f:'SanctSound_CI05_02_sealbomb_20190405T110516Z.mp4',             s:'Channel Islands',    c:'human',         l:'Seal bomb blast',                   d:'A seal bomb explosion — 100 milliseconds, up to 200 dB. Fishermen use these to deter seals from catch. The shockwave travels far.' },
+  { f:'SanctSound_CI05_03_largeship_20190925T135956Z.mp4',            s:'Channel Islands',    c:'vessel',        l:'Commercial ship noise',             d:"A large cargo ship's propulsion — spinning propeller blades and water flow over the hull — east of Anacapa Island." },
+  { f:'SanctSound_CI04_04_soundscape_20200405T081636Z.mp4',           s:'Channel Islands',    c:'soundscape',    l:'Reef chaos',                        d:'A cacophony of fish, whales, and dolphins south of Santa Rosa Island — a busy spring afternoon on the sanctuary floor.' },
+
+  // Monterey Bay
+  { f:'SanctSound_MB01_01_bluewhale_20181123T203257Z.mp4',            s:'Monterey Bay',       c:'whale',         l:'Blue whale (Monterey Canyon)',       d:"A blue whale calling inside Monterey Canyon in 2018. The call is pitched so low most speakers can't reproduce it fully." },
+  { f:'SanctSound_MB01_05_humpbackwhale_20200721T103355Z.mp4',        s:'Monterey Bay',       c:'whale',         l:'Humpback whale',                    d:'Humpback moans and clicks spanning 100 to 1,800 Hz from Monterey Canyon. The canyon funnels sound like an amphitheatre.' },
+  { f:'SanctSound_MB01_05_killerwhale_20200423T164427Z.mp4',          s:'Monterey Bay',       c:'whale',         l:'Killer whale social calls',         d:'Orca social calls recorded in Monterey Canyon — each pod has a distinct dialect passed down through generations.' },
+  { f:'SanctSound_MB01_05_graywhale_20200418T074228Z_40dBgain.mp4',   s:'Monterey Bay',       c:'whale',         l:'Gray whale rumble',                 d:'Gray whale knocks and rumbles from Monterey Canyon during spring 2020 northward migration.' },
+  { f:'SanctSound_MB02_05_plainfinmidshipman_20200606T041700Z.mp4',   s:'Monterey Bay',       c:'fish',          l:'Midshipman hum (hours long)',        d:'Male midshipman humming to guard his nest at Point Pinos. These hums last hours and travel through wood — boat owners sometimes hear them at night.' },
+  { f:'SanctSound_MB01_05_snappingshrimp_20200425T103600Z.mp4',       s:'Monterey Bay',       c:'invertebrate',  l:'Snapping shrimp',                   d:'Shrimp snapping at the edge of Monterey Canyon — the highest-energy biological sound source in shallow temperate waters.' },
+  { f:'SanctSound_MB01_05_pinnipedbark_20200717T173702Z.mp4',         s:'Monterey Bay',       c:'marine mammal', l:'Sea lion barks',                    d:'Sea lions barking and buzzing in the Monterey Canyon water column.' },
+  { f:'SanctSound_MB02_04_odontoceteclicks_20200516T104349Z.mp4',     s:'Monterey Bay',       c:'dolphin',       l:'Dolphin echolocation',              d:'Broadband dolphin echolocation clicks at Point Pinos — each click resolves objects smaller than a coin at 100 meters.' },
+  { f:'SanctSound_MB01_05_sealbomb_20200619T064138Z_33dBgain.mp4',    s:'Monterey Bay',       c:'human',         l:'Seal bombs (two blasts)',            d:'Two seal bomb explosions at the edge of Monterey Canyon — brief, brutal. These routinely exceed the OSHA hearing damage threshold.' },
+  { f:'SanctSound_MB01_05_ship_20200424T171317Z.mp4',                  s:'Monterey Bay',       c:'vessel',        l:'Commercial ship',                   d:'Low frequency ship noise from Monterey Canyon — propellers and hull. This chronic background noise has doubled every decade.' },
+  { f:'SanctSound_MB02_02_soundscape_20190501T041832Z.mp4',            s:'Monterey Bay',       c:'soundscape',    l:'Moonless night soundscape',         d:'Waning crescent moon, 10% illumination — bocaccio calls and dolphin whistles amid shrimp chatter. Bocaccio call more in darkness.' },
+
+  // Olympic Coast
+  { f:'SanctSound_OC02_02_bluewhale_20191028T005013Z.mp4',            s:'Olympic Coast',      c:'whale',         l:'Blue whale at shipping lanes',       d:'A blue whale at the international shipping lanes — the same corridor where container ships pass within miles.' },
+  { f:'SanctSound_OC03_02_killerwhale_20191128T091339Z.mp4',          s:'Olympic Coast',      c:'whale',         l:'Killer whale social calls',         d:'Southern Resident killer whale calls near the U.S. Navy Testing Area — a population of fewer than 75 animals.' },
+  { f:'SanctSound_OC02_02_humpbackwhale_20191024T074335Z.mp4',        s:'Olympic Coast',      c:'whale',         l:'Humpback inside critical habitat',   d:'Humpback social calls inside designated critical habitat at the shipping lanes listening station, October 2019.' },
+  { f:'SanctSound_OC02_02_odontocetes_20190803T172033Z.mp4',          s:'Olympic Coast',      c:'dolphin',       l:'Dolphin clicks & moans',            d:'Dolphin clicks, whistles, and moans from 2 to 24 kHz at the international shipping lanes on the northern sanctuary border.' },
+  { f:'SanctSound_OC01_03_ship_20191106T223751Z.mp4',                  s:'Olympic Coast',      c:'vessel',        l:'Cargo ship (Strait of Juan de Fuca)',d:'A commercial ship near the mouth of the Strait of Juan de Fuca — protected habitat for humpbacks and Southern Resident orcas.' },
+  { f:'SanctSound_OC01_03_soundscape_20191106T223930Z.mp4',            s:'Olympic Coast',      c:'soundscape',    l:'Whales & shipping',                 d:'Humpback whales calling in the distance amid constant vessel noise near the Strait of Juan de Fuca — their home, and ours.' },
+
+  // Gray's Reef
+  { f:'SanctSound_GR01_01_northatlanticrightwhale_20181227T060148Z.mp4', s:"Gray's Reef",     c:'whale',         l:'North Atlantic right whale',        d:"A critically endangered right whale calling during winter migration. Fewer than 370 survive. Their calls have shifted pitch as ocean noise increases." },
+  { f:'SanctSound_GR01_02_fishchorus_20190902T004059Z.mp4',            s:"Gray's Reef",       c:'fish',          l:'Fish chorus',                       d:'Various fish species chorusing during reproductive season off the Georgia coast — a deep, pulsing acoustic landscape.' },
+  { f:'SanctSound_GR01_01_snappingshrimp_20181228T004950Z.mp4',        s:"Gray's Reef",       c:'invertebrate',  l:'Snapping shrimp',                   d:"Classic snapping shrimp off Georgia — popcorn in the deep." },
+  { f:'SanctSound_GR01_01_scubadivers_20181213T201740Z.mp4',           s:"Gray's Reef",       c:'human',         l:'Scuba bubbles',                     d:"The sound of divers breathing at Gray's Reef — bubble expansion and gas flow from tanks. Meditative from outside the wetsuit." },
+  { f:'SanctSound_GR03_02_hurricane_20190904T221437Z.mp4',             s:"Gray's Reef",       c:'weather',       l:'Hurricane Dorian underwater',       d:"The underwater signature of Hurricane Dorian passing Gray's Reef — wind, waves, and seafloor sediment all generating sound at once." },
+
+  // Stellwagen Bank
+  { f:'SanctSound_SB01_01_northatlanticrightwhale_20181120T090303Z.mp4', s:'Stellwagen Bank', c:'whale',         l:'Right whale upcall',                d:'North Atlantic right whale upcalls east of Boston — frequency-sweeping contact calls used to find one another across miles of ocean.' },
+  { f:'SanctSound_SB03_04_humpbackwhale_20190623T004507Z.mp4',         s:'Stellwagen Bank',   c:'whale',         l:'Humpback whale',                    d:"Humpback moans and clicks east of Boston, June 2019 — Stellwagen is one of the world's great whale feeding grounds." },
+  { f:'SanctSound_SB02_03_seiwhale_20190402T203828Z.mp4',              s:'Stellwagen Bank',   c:'whale',         l:'Sei whale calls',                   d:'The low frequency calls of a sei whale at Stellwagen Bank — a species so elusive it is rarely recorded.' },
+  { f:'SanctSound_SB01_01_atlanticcod_20181113T024154Z.mp4',           s:'Stellwagen Bank',   c:'fish',          l:'Atlantic cod grunts',               d:'Cod grunting during winter reproductive season east of Boston. This species once fed empires; now fewer than 2% of historic numbers remain.' },
+  { f:'haddock.mp4',                                                     s:'Stellwagen Bank',   c:'fish',          l:'Haddock knocks',                    d:'Haddock knocking during reproductive season at Stellwagen Bank. The drumming sound comes from a muscle vibrating the swim bladder.' },
+  { f:'SanctSound_SB02_03_fishingpinger_20190403T005205Z.mp4',         s:'Stellwagen Bank',   c:'human',         l:'Fishing pingers',                   d:'Deterrence pings at 12 kHz from fishing gear — alerting whales and dolphins to the presence of nets. Whether it works is still debated.' },
+  { f:'SanctSound_SB03_09_vessel_20200415T161235Z.mp4',                 s:'Stellwagen Bank',   c:'vessel',        l:'Vessel at shipping lane',            d:'A ship passing through the shipping lanes in central Stellwagen Bank sanctuary — the same zone whales feed in.' },
+  { f:'SanctSound_SB03_13_windwaves_20210105T213524Z.mp4',             s:'Stellwagen Bank',   c:'weather',       l:'Winter storm',                      d:"Wind and waves from a January 2021 storm at Stellwagen Bank — the ocean's own white noise, heard from below." },
+  { f:'SanctSound_SB03_05_soundscape_20190929T093451Z.mp4',            s:'Stellwagen Bank',   c:'soundscape',    l:'Humpbacks & dolphins',              d:'Humpback whale calls and dolphin whistles over the sandy bank that gives Stellwagen its name.' },
+
+  // Papahānaumokuākea
+  { f:'SanctSound_PM02_01_humpbackwhale_20200227T220002Z.mp4',         s:'Papahānaumokuākea', c:'whale',         l:'Humpback chorusing',                d:'Male humpback chorusing at French Frigate Shoals — the most remote sanctuary, 1,500 miles from the US mainland.' },
+  { f:'SanctSound_PM05_01_minkewhale_20200226T113612Z.mp4',            s:'Papahānaumokuākea', c:'whale',         l:'Minke whale boing',                 d:'Another "boing" from a North Pacific minke whale — Gardner Pinnacles, the westernmost point of the Hawaiian Archipelago.' },
+  { f:'SanctSound_PM05_01_snappingshrimp_20191001T040002Z.mp4',        s:'Papahānaumokuākea', c:'invertebrate',  l:'Snapping shrimp (remote)',          d:'Hawaiian waters dominated by snapping shrimp at Gardner Pinnacles — the crackle of millions of tiny claws in the dark.' },
+  { f:'SanctSound_PM05_01_dolphin_20200519T160612Z.mp4',               s:'Papahānaumokuākea', c:'dolphin',       l:'Dolphin whistles (remote)',         d:'High frequency dolphin whistles at Gardner Pinnacles — 1,500 miles from the nearest city, yet still full of life.' },
+  { f:'SanctSound_PM05_01_soundscape_20191005T193002Z.mp4',            s:'Papahānaumokuākea', c:'soundscape',    l:'Remote reef',                       d:"Shrimp snaps, fish chirps, and dolphin whistles from the most remote waters under US protection. What the ocean sounds like without us." },
+
+  // Florida Keys
+  { f:'SanctSound_FK02_01_fishchorus_20190416T004332Z.mp4',            s:'Florida Keys',      c:'fish',          l:'Fish chorus (reef)',                 d:'A loud underwater chorus of fish popping and calling during reproductive season south of Key West.' },
+  { f:'SanctSound_FK02_01_atlanticmidshipmanandsnappingshrimp_20190313T073628Z.mp4', s:'Florida Keys', c:'fish', l:'Midshipman courtship hum',          d:'Continuous humming from male Atlantic midshipman through the spring night — a bass drone from inside rock burrows to attract females.' },
+  { f:'SanctSound_FK03_01_redgrouper_20190201T054658Z.mp4',            s:'Florida Keys',      c:'fish',          l:'Red grouper',                        d:'Red grouper producing low frequency spawning calls south of Key West in February.' },
+  { f:'SanctSound_FK02_03_snappingshrimp_20191103T014035Z.mp4',        s:'Florida Keys',      c:'invertebrate',  l:'Snapping shrimp (coral reef)',       d:"Very familiar to anyone who's dived the Florida Keys — the constant static of snapping shrimp is the background hum of a healthy reef." },
+  { f:'SanctSound_FK01_06_scubadivers_20201207T184714Z.mp4',           s:'Florida Keys',      c:'human',         l:'Scuba bubbles',                     d:'SCUBA divers exhaling south of Key West — bubble expansion and tank gas, heard from outside. Rhythmic and oddly peaceful.' },
+  { f:'SanctSound_FK02_05_hurricane_20200824T203426Z.mp4',             s:'Florida Keys',      c:'weather',       l:'Hurricane underwater',              d:"A hurricane's underwater signature — wind, waves, and sediment movement creating a roar of broadband noise from above." },
+  { f:'SanctSound_FK03_01_soundscape_20190324T000934Z.mp4',            s:'Florida Keys',      c:'soundscape',    l:'Coral reef at night',               d:'Snapping shrimp, red grouper, black grouper, fish grunts — a full living reef in March 2019 south of Key West.' },
+];
+
+const CATS = ['all','whale','dolphin','fish','invertebrate','marine mammal','weather','vessel','human','soundscape'];
+const CAT_LABELS = {
+  all:'All', whale:'Whales', dolphin:'Dolphins', fish:'Fish',
+  invertebrate:'Invertebrates', 'marine mammal':'Marine mammals',
+  weather:'Weather', vessel:'Vessels', human:'Human', soundscape:'Soundscapes'
+};
+
+let idx = 0;
+let playing = false;
+let shuffled = false;
+let cat = 'all';
+let order = SOUNDS.map((_, i) => i);
+
+const audio    = document.getElementById('audio');
+const waveform = document.getElementById('waveform');
+const playIcon = document.getElementById('play-icon');
+
+function filteredOrder() {
+  return order.filter(i => cat === 'all' || SOUNDS[i].c === cat);
+}
+
+function setTrack(i) {
+  idx = i;
+  const s = SOUNDS[i];
+  document.getElementById('s-sanctuary').textContent = s.s;
+  document.getElementById('s-cat').textContent       = s.c;
+  document.getElementById('s-label').textContent     = s.l;
+  document.getElementById('s-desc').textContent      = s.d;
+  audio.src = BASE + s.f;
+  document.querySelectorAll('.trow').forEach(r => {
+    r.classList.toggle('now', parseInt(r.dataset.idx) === i);
+  });
+  if (playing) audio.play().catch(() => {});
+}
+
+function setPlayingState(val) {
+  playing = val;
+  waveform.classList.toggle('active', val);
+  playIcon.className = val ? 'ti ti-player-pause' : 'ti ti-player-play';
+  document.getElementById('btn-play').setAttribute('aria-label', val ? 'Pause' : 'Play');
+}
+
+function playPause() {
+  if (!playing) {
+    audio.play().then(() => setPlayingState(true)).catch(() => setPlayingState(false));
+  } else {
+    audio.pause();
+    setPlayingState(false);
+  }
+}
+
+function navBy(delta) {
+  const fo  = filteredOrder();
+  if (!fo.length) return;
+  const cur  = fo.indexOf(idx);
+  const next = (cur + delta + fo.length) % fo.length;
+  setTrack(fo[next]);
+}
+
+audio.addEventListener('ended', () => navBy(1));
+
+document.getElementById('btn-play').onclick    = playPause;
+document.getElementById('btn-prev').onclick    = () => navBy(-1);
+document.getElementById('btn-next').onclick    = () => navBy(1);
+document.getElementById('btn-shuffle').onclick = function () {
+  shuffled = !shuffled;
+  this.classList.toggle('active-btn', shuffled);
+  if (shuffled) {
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+  } else {
+    order = SOUNDS.map((_, i) => i);
+  }
+};
+
+// Build category chips
+const catBar = document.getElementById('cat-bar');
+CATS.forEach(c => {
+  const btn = document.createElement('button');
+  btn.className = 'chip' + (c === 'all' ? ' on' : '');
+  btn.textContent = CAT_LABELS[c];
+  btn.setAttribute('aria-pressed', c === 'all' ? 'true' : 'false');
+  btn.onclick = function () {
+    cat = c;
+    document.querySelectorAll('.chip').forEach(b => {
+      b.classList.remove('on');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    this.classList.add('on');
+    this.setAttribute('aria-pressed', 'true');
+
+    document.querySelectorAll('.trow').forEach(r => {
+      const rc = SOUNDS[parseInt(r.dataset.idx)].c;
+      r.classList.toggle('hidden', c !== 'all' && rc !== c);
+    });
+    document.querySelectorAll('.section-label').forEach(sl => {
+      const rows = document.querySelectorAll(`.trow[data-sanc="${sl.dataset.sanc}"]`);
+      const anyVisible = Array.from(rows).some(r => !r.classList.contains('hidden'));
+      sl.classList.toggle('hidden', !anyVisible);
+    });
+  };
+  catBar.appendChild(btn);
+});
+
+// Build track list grouped by sanctuary
+const tlist = document.getElementById('tlist');
+const sanctuaries = [...new Set(SOUNDS.map(s => s.s))];
+let trackNum = 0;
+
+sanctuaries.forEach(sanc => {
+  const lbl = document.createElement('div');
+  lbl.className = 'section-label';
+  lbl.textContent = sanc;
+  lbl.dataset.sanc = sanc;
+  tlist.appendChild(lbl);
+
+  SOUNDS.forEach((s, i) => {
+    if (s.s !== sanc) return;
+    trackNum++;
+    const row = document.createElement('div');
+    row.className = 'trow' + (i === 0 ? ' now' : '');
+    row.dataset.idx  = i;
+    row.dataset.sanc = sanc;
+    row.setAttribute('role', 'listitem');
+    row.setAttribute('tabindex', '0');
+    row.setAttribute('aria-label', `${s.l} — ${s.s}`);
+    row.innerHTML = `
+      <span class="t-num">${trackNum}</span>
+      <div class="t-info">
+        <div class="t-name">${s.l}</div>
+        <div class="t-meta">${s.c}</div>
+      </div>
+      <i class="ti ti-player-play t-play-icon" aria-hidden="true"></i>
+    `;
+    const activate = () => {
+      const wasPlaying = playing;
+      if (!playing) setPlayingState(true);
+      setTrack(i);
+      if (!wasPlaying) {
+        audio.play().then(() => setPlayingState(true)).catch(() => setPlayingState(false));
+      }
+    };
+    row.onclick   = activate;
+    row.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } };
+    tlist.appendChild(row);
+  });
+});
+
+// Init
+setTrack(0);
+</script>
+</body>
+</html>
