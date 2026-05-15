@@ -184,13 +184,20 @@
         const active = tab.dataset.tab === state.activeTab;
         tab.classList.toggle('on', active);
         tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        tab.setAttribute('tabindex', active ? '0' : '-1');
       });
+    }
+    if (els.archivePanel) {
+      els.archivePanel.hidden = state.activeTab !== 'archive';
     }
     if (els.mapPanel) {
       els.mapPanel.hidden = state.activeTab !== 'map';
     }
     if (els.livePanel) {
       els.livePanel.hidden = state.activeTab !== 'live';
+    }
+    if (els.spectrogramPanel) {
+      els.spectrogramPanel.hidden = state.activeTab !== 'spectrogram';
     }
     if (state.activeTab === 'map') renderMap();
     if (state.activeTab === 'live') renderLiveSources();
@@ -829,11 +836,13 @@
       progress: byId('progress'),
       time: byId('time'),
       status: byId('status'),
+      archivePanel: byId('archive-panel'),
       mapPanel: byId('map-panel'),
       mapCanvas: byId('map-canvas'),
       mapSummary: byId('map-summary'),
       livePanel: byId('live-panel'),
       liveGrid: byId('live-grid'),
+      spectrogramPanel: byId('spectrogram-panel'),
       tabs: document.querySelectorAll('.tab'),
     });
   }

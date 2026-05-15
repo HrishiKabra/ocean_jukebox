@@ -467,6 +467,7 @@
       margin: 14px 0;
     }
 
+    .archive-panel[hidden],
     .map-panel[hidden] {
       display: none;
     }
@@ -703,6 +704,16 @@
       text-decoration: none;
     }
 
+    .spectrogram-panel {
+      display: grid;
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .spectrogram-panel[hidden] {
+      display: none;
+    }
+
     .list-head {
       display: flex;
       justify-content: space-between;
@@ -861,121 +872,132 @@
 
     <p class="archive-note" id="archive-note"></p>
 
-    <nav class="tabs" aria-label="Explorer views">
-      <button class="tab on" type="button" data-tab="archive" role="tab" aria-selected="true">
+    <nav class="tabs" role="tablist" aria-label="Explorer views">
+      <button class="tab on" id="tab-archive" type="button" data-tab="archive" role="tab" aria-selected="true" aria-controls="archive-panel" tabindex="0">
         <i class="ti ti-archive" aria-hidden="true"></i>
         Archive
       </button>
-      <button class="tab" type="button" data-tab="map" role="tab" aria-selected="false">
+      <button class="tab" id="tab-map" type="button" data-tab="map" role="tab" aria-selected="false" aria-controls="map-panel" tabindex="-1">
         <i class="ti ti-map-2" aria-hidden="true"></i>
         Map
       </button>
-      <button class="tab" type="button" data-tab="live" role="tab" aria-selected="false">
+      <button class="tab" id="tab-live" type="button" data-tab="live" role="tab" aria-selected="false" aria-controls="live-panel" tabindex="-1">
         <i class="ti ti-broadcast" aria-hidden="true"></i>
         Live
       </button>
-      <button class="tab" type="button" data-tab="spectrogram" role="tab" aria-selected="false">
+      <button class="tab" id="tab-spectrogram" type="button" data-tab="spectrogram" role="tab" aria-selected="false" aria-controls="spectrogram-panel" tabindex="-1">
         <i class="ti ti-wave-sine" aria-hidden="true"></i>
         Spectrogram
       </button>
     </nav>
 
     <main>
-      <section class="player" aria-label="Audio player">
-        <div>
-          <div class="s-tag">
-            <i class="ti ti-map-pin" aria-hidden="true"></i>
-            <span id="s-sanctuary">Loading</span>
+      <section class="archive-panel" id="archive-panel" role="tabpanel" aria-labelledby="tab-archive">
+        <section class="player" aria-label="Audio player">
+          <div>
+            <div class="s-tag">
+              <i class="ti ti-map-pin" aria-hidden="true"></i>
+              <span id="s-sanctuary">Loading</span>
+            </div>
+            <p class="s-cat" id="s-cat">Category</p>
+            <h2 class="s-label" id="s-label">Loading catalog</h2>
+            <p class="s-desc" id="s-desc">Fetching the current generated track list.</p>
           </div>
-          <p class="s-cat" id="s-cat">Category</p>
-          <h2 class="s-label" id="s-label">Loading catalog</h2>
-          <p class="s-desc" id="s-desc">Fetching the current generated track list.</p>
-        </div>
 
-        <aside class="track-facts" aria-label="Recording metadata">
-          <div class="fact"><span>Recorded</span><strong id="s-date">Unknown date</strong></div>
-          <div class="fact"><span>Site</span><strong id="s-site">Unknown site</strong></div>
-          <div class="fact"><span>File</span><code id="s-file">Unknown file</code></div>
-        </aside>
+          <aside class="track-facts" aria-label="Recording metadata">
+            <div class="fact"><span>Recorded</span><strong id="s-date">Unknown date</strong></div>
+            <div class="fact"><span>Site</span><strong id="s-site">Unknown site</strong></div>
+            <div class="fact"><span>File</span><code id="s-file">Unknown file</code></div>
+          </aside>
 
-        <div class="waveform" id="waveform" aria-hidden="true">
-          <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-          <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-          <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-          <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-          <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-          <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-        </div>
+          <div class="waveform" id="waveform" aria-hidden="true">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          </div>
 
-        <div class="transport">
-          <div class="controls">
-            <button class="ctrl" id="btn-prev" type="button" aria-label="Previous track">
-              <i class="ti ti-player-skip-back" aria-hidden="true"></i>
-            </button>
-            <button class="ctrl play-btn" id="btn-play" type="button" aria-label="Play">
-              <i class="ti ti-player-play" id="play-icon" aria-hidden="true"></i>
-            </button>
-            <button class="ctrl" id="btn-next" type="button" aria-label="Next track">
-              <i class="ti ti-player-skip-forward" aria-hidden="true"></i>
-            </button>
-            <button class="ctrl" id="btn-shuffle" type="button" aria-label="Toggle shuffle">
-              <i class="ti ti-arrows-shuffle" aria-hidden="true"></i>
-              Shuffle
-            </button>
-            <button class="ctrl" id="btn-details" type="button" aria-expanded="false" aria-controls="track-detail">
-              <i class="ti ti-info-circle" aria-hidden="true"></i>
-              Details
-            </button>
+          <div class="transport">
+            <div class="controls">
+              <button class="ctrl" id="btn-prev" type="button" aria-label="Previous track">
+                <i class="ti ti-player-skip-back" aria-hidden="true"></i>
+              </button>
+              <button class="ctrl play-btn" id="btn-play" type="button" aria-label="Play">
+                <i class="ti ti-player-play" id="play-icon" aria-hidden="true"></i>
+              </button>
+              <button class="ctrl" id="btn-next" type="button" aria-label="Next track">
+                <i class="ti ti-player-skip-forward" aria-hidden="true"></i>
+              </button>
+              <button class="ctrl" id="btn-shuffle" type="button" aria-label="Toggle shuffle">
+                <i class="ti ti-arrows-shuffle" aria-hidden="true"></i>
+                Shuffle
+              </button>
+              <button class="ctrl" id="btn-details" type="button" aria-expanded="false" aria-controls="track-detail">
+                <i class="ti ti-info-circle" aria-hidden="true"></i>
+                Details
+              </button>
+            </div>
+            <div class="progress-wrap">
+              <input id="progress" type="range" min="0" max="0" value="0" step="0.1" aria-label="Playback position" />
+              <div class="status" id="status" aria-live="polite"></div>
+            </div>
+            <div class="time" id="time">0:00 / 0:00</div>
           </div>
-          <div class="progress-wrap">
-            <input id="progress" type="range" min="0" max="0" value="0" step="0.1" aria-label="Playback position" />
-            <div class="status" id="status" aria-live="polite"></div>
-          </div>
-          <div class="time" id="time">0:00 / 0:00</div>
-        </div>
 
-        <aside class="detail-panel" id="track-detail" aria-label="Track details" hidden>
-          <div class="detail-head">
-            <h3 class="detail-title" id="detail-title">Track details</h3>
-            <button class="ctrl" id="btn-detail-close" type="button" aria-label="Close details">
-              <i class="ti ti-x" aria-hidden="true"></i>
-            </button>
+          <aside class="detail-panel" id="track-detail" aria-label="Track details" hidden>
+            <div class="detail-head">
+              <h3 class="detail-title" id="detail-title">Track details</h3>
+              <button class="ctrl" id="btn-detail-close" type="button" aria-label="Close details">
+                <i class="ti ti-x" aria-hidden="true"></i>
+              </button>
+            </div>
+            <div class="detail-grid">
+              <div class="detail-field"><span>Sanctuary</span><strong id="detail-sanctuary">Unknown sanctuary</strong></div>
+              <div class="detail-field"><span>Category</span><strong id="detail-category">Unknown category</strong></div>
+              <div class="detail-field"><span>Recorded</span><strong id="detail-recorded">Unknown date</strong></div>
+              <div class="detail-field"><span>Site</span><strong id="detail-site">Unknown site</strong></div>
+              <div class="detail-field"><span>Deployment</span><strong id="detail-deployment">Unknown deployment</strong></div>
+              <div class="detail-field"><span>Filename</span><code id="detail-filename">Unknown file</code></div>
+            </div>
+            <p class="detail-desc" id="detail-description">No description available from the source catalog.</p>
+            <div class="variant-list" id="detail-variants" aria-label="Alternate versions"></div>
+            <div class="detail-source">
+              <a class="source-link" id="detail-source-link" href="#" target="_blank" rel="noopener">Source file</a>
+              <button class="ctrl" id="btn-copy-source" type="button">
+                <i class="ti ti-copy" aria-hidden="true"></i>
+                Copy source URL
+              </button>
+            </div>
+          </aside>
+        </section>
+
+        <section aria-label="Catalog controls">
+          <div class="tools">
+            <input class="search" id="search-input" type="search" placeholder="Search by animal, place, site, or filename" aria-label="Search recordings" />
+            <select id="sanctuary-filter" aria-label="Filter by sanctuary"></select>
+            <select id="sort-select" aria-label="Sort recordings"></select>
           </div>
-          <div class="detail-grid">
-            <div class="detail-field"><span>Sanctuary</span><strong id="detail-sanctuary">Unknown sanctuary</strong></div>
-            <div class="detail-field"><span>Category</span><strong id="detail-category">Unknown category</strong></div>
-            <div class="detail-field"><span>Recorded</span><strong id="detail-recorded">Unknown date</strong></div>
-            <div class="detail-field"><span>Site</span><strong id="detail-site">Unknown site</strong></div>
-            <div class="detail-field"><span>Deployment</span><strong id="detail-deployment">Unknown deployment</strong></div>
-            <div class="detail-field"><span>Filename</span><code id="detail-filename">Unknown file</code></div>
+          <div class="cats" id="cat-bar" role="group" aria-label="Filter by sound type"></div>
+        </section>
+
+        <section aria-label="Sound recordings">
+          <div class="list-head">
+            <span>Recordings</span>
+            <span id="result-count">0 recordings</span>
           </div>
-          <p class="detail-desc" id="detail-description">No description available from the source catalog.</p>
-          <div class="variant-list" id="detail-variants" aria-label="Alternate versions"></div>
-          <div class="detail-source">
-            <a class="source-link" id="detail-source-link" href="#" target="_blank" rel="noopener">Source file</a>
-            <button class="ctrl" id="btn-copy-source" type="button">
-              <i class="ti ti-copy" aria-hidden="true"></i>
-              Copy source URL
-            </button>
-          </div>
-        </aside>
+          <div id="tlist" role="list"></div>
+          <div class="empty" id="empty-state" hidden>No matching recordings. Try a broader search or category.</div>
+        </section>
       </section>
 
-      <section aria-label="Catalog controls">
-        <div class="tools">
-          <input class="search" id="search-input" type="search" placeholder="Search by animal, place, site, or filename" aria-label="Search recordings" />
-          <select id="sanctuary-filter" aria-label="Filter by sanctuary"></select>
-          <select id="sort-select" aria-label="Sort recordings"></select>
-        </div>
-        <div class="cats" id="cat-bar" role="group" aria-label="Filter by sound type"></div>
-      </section>
-
-      <section class="map-panel" id="map-panel" aria-label="Sanctuary map" hidden>
+      <section class="map-panel" id="map-panel" role="tabpanel" aria-labelledby="tab-map" hidden>
         <div class="map-canvas" id="map-canvas"></div>
         <aside class="map-summary" id="map-summary" aria-live="polite"></aside>
       </section>
 
-      <section class="live-panel" id="live-panel" aria-label="Live and near-live sources" hidden>
+      <section class="live-panel" id="live-panel" role="tabpanel" aria-labelledby="tab-live" hidden>
         <p class="live-note">
           Live and near-live sources are separate from the NOAA SanctSound archive. Streams may be delayed,
           temporarily unavailable, or offline at the source.
@@ -983,13 +1005,8 @@
         <div class="live-grid" id="live-grid"></div>
       </section>
 
-      <section aria-label="Sound recordings">
-        <div class="list-head">
-          <span>Recordings</span>
-          <span id="result-count">0 recordings</span>
-        </div>
-        <div id="tlist" role="list"></div>
-        <div class="empty" id="empty-state" hidden>No matching recordings. Try a broader search or category.</div>
+      <section class="spectrogram-panel" id="spectrogram-panel" role="tabpanel" aria-labelledby="tab-spectrogram" hidden>
+        <p class="live-note">Spectrogram support is not generated yet.</p>
       </section>
     </main>
 
