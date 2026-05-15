@@ -18,6 +18,43 @@ export const SORT_LABELS = {
   sanctuary: 'Sanctuary',
 };
 
+export const DEFAULT_ROUTE = {
+  track: '',
+  category: 'all',
+  sanctuary: 'all',
+  query: '',
+  sort: 'curated',
+  tab: 'archive',
+};
+
+export function trackId(track) {
+  return (track.filename || '').replace(/\.[^.]*$/, '');
+}
+
+export function parseRoute(search = '') {
+  const params = new URLSearchParams(search);
+  return {
+    track: params.get('track') || DEFAULT_ROUTE.track,
+    category: params.get('category') || DEFAULT_ROUTE.category,
+    sanctuary: params.get('sanctuary') || DEFAULT_ROUTE.sanctuary,
+    query: params.get('q') || DEFAULT_ROUTE.query,
+    sort: params.get('sort') || DEFAULT_ROUTE.sort,
+    tab: params.get('tab') || DEFAULT_ROUTE.tab,
+  };
+}
+
+export function serializeRoute(route) {
+  const params = new URLSearchParams();
+  if (route.track) params.set('track', route.track);
+  if (route.category && route.category !== DEFAULT_ROUTE.category) params.set('category', route.category);
+  if (route.sanctuary && route.sanctuary !== DEFAULT_ROUTE.sanctuary) params.set('sanctuary', route.sanctuary);
+  if (route.query) params.set('q', route.query);
+  if (route.sort && route.sort !== DEFAULT_ROUTE.sort) params.set('sort', route.sort);
+  if (route.tab && route.tab !== DEFAULT_ROUTE.tab) params.set('tab', route.tab);
+  const query = params.toString();
+  return query ? `?${query}` : '';
+}
+
 function searchable(track) {
   return [
     track.label,

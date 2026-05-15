@@ -93,6 +93,7 @@ If you want to self-host on GitHub Pages, Netlify, Vercel, or any static host, d
 - **Previous / next** track navigation
 - **Shuffle** — randomises playback order across the full catalog
 - **Category, sanctuary, search, and sort controls** — filter to just whales, weather, a sanctuary, a site code, or a filename
+- **Shareable URLs** — track, category, sanctuary, search, sort, and tab state can be encoded in query parameters
 - **Auto-advance** — plays the next track automatically when one ends
 - **Grouped track list** — organized by sanctuary, with sound category labels
 - **Recording metadata** — date, site code, and original filename

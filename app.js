@@ -19,6 +19,15 @@
     sanctuary: 'Sanctuary',
   };
 
+  const DEFAULT_ROUTE = {
+    track: '',
+    category: 'all',
+    sanctuary: 'all',
+    query: '',
+    sort: 'curated',
+    tab: 'archive',
+  };
+
   const FALLBACK_CATALOG = {
     source: 'https://sanctsound.ioos.us/sounds.html',
     baseUrl: 'https://sanctsound.ioos.us/files/',
@@ -35,6 +44,7 @@
     sanctuary: 'all',
     query: '',
     sort: 'curated',
+    activeTab: 'archive',
     shuffled: false,
     order: [],
     currentIndex: 0,
@@ -75,6 +85,84 @@
 
   function recordedTime(track) {
     return track.recordedAt ? Date.parse(track.recordedAt) : 0;
+  }
+
+  function trackId(track) {
+    return (track.filename || '').replace(/\.[^.]*$/, '');
+  }
+
+  function parseRoute(search = '') {
+    const params = new URLSearchParams(search);
+    return {
+      track: params.get('track') || DEFAULT_ROUTE.track,
+      category: params.get('category') || DEFAULT_ROUTE.category,
+      sanctuary: params.get('sanctuary') || DEFAULT_ROUTE.sanctuary,
+      query: params.get('q') || DEFAULT_ROUTE.query,
+      sort: params.get('sort') || DEFAULT_ROUTE.sort,
+      tab: params.get('tab') || DEFAULT_ROUTE.tab,
+    };
+  }
+
+  function serializeRoute(route) {
+    const params = new URLSearchParams();
+    if (route.track) params.set('track', route.track);
+    if (route.category && route.category !== DEFAULT_ROUTE.category) params.set('category', route.category);
+    if (route.sanctuary && route.sanctuary !== DEFAULT_ROUTE.sanctuary) params.set('sanctuary', route.sanctuary);
+    if (route.query) params.set('q', route.query);
+    if (route.sort && route.sort !== DEFAULT_ROUTE.sort) params.set('sort', route.sort);
+    if (route.tab && route.tab !== DEFAULT_ROUTE.tab) params.set('tab', route.tab);
+    const query = params.toString();
+    return query ? `?${query}` : '';
+  }
+
+  function syncUrl() {
+    if (!window.history || !window.history.replaceState) return;
+    const currentTrack = state.tracks[state.currentIndex];
+    const query = serializeRoute({
+      track: currentTrack ? trackId(currentTrack) : '',
+      category: state.category,
+      sanctuary: state.sanctuary,
+      query: state.query,
+      sort: state.sort,
+      tab: state.activeTab,
+    });
+    const nextUrl = `${window.location.pathname}${query}${window.location.hash}`;
+    try {
+      window.history.replaceState(null, '', nextUrl);
+    } catch (_error) {
+      // Some file:// contexts can reject history updates; playback should still work.
+    }
+  }
+
+  function applyRoute(route) {
+    state.category = route.category;
+    state.sanctuary = route.sanctuary;
+    state.query = route.query;
+    state.sort = SORT_LABELS[route.sort] ? route.sort : DEFAULT_ROUTE.sort;
+    state.activeTab = route.tab;
+
+    const routeTrackIndex = state.tracks.findIndex(track => trackId(track) === route.track);
+    if (routeTrackIndex !== -1) {
+      state.currentIndex = routeTrackIndex;
+    }
+  }
+
+  function syncControlsFromState() {
+    els.query.value = state.query;
+    els.sanctuarySelect.value = state.sanctuary;
+    els.sortSelect.value = state.sort;
+  }
+
+  function setTab(tabName, options = {}) {
+    state.activeTab = tabName || DEFAULT_ROUTE.tab;
+    if (els.tabs) {
+      els.tabs.forEach(tab => {
+        const active = tab.dataset.tab === state.activeTab;
+        tab.classList.toggle('on', active);
+        tab.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+    }
+    if (options.sync !== false) syncUrl();
   }
 
   function sortedIndexes(indexes) {
@@ -148,6 +236,7 @@
     els.audio.src = mediaUrl(track);
     els.audio.load();
     highlightCurrent();
+    if (options.sync !== false) syncUrl();
     if (options.autoplay) {
       els.audio.play().then(() => setPlayingState(true)).catch(() => setPlayingState(false));
     }
@@ -199,9 +288,11 @@
       button.addEventListener('click', () => {
         state.category = category;
         buildFilters();
+        syncControlsFromState();
         recomputeVisible();
         renderTrackList();
         updateMeta();
+        syncUrl();
       });
       els.categoryBar.appendChild(button);
     });
@@ -280,21 +371,25 @@
       state.shuffled = !state.shuffled;
       els.shuffleButton.classList.toggle('active-btn', state.shuffled);
       shuffleOrder();
+      syncUrl();
     });
     els.query.addEventListener('input', () => {
       state.query = els.query.value;
       recomputeVisible();
       renderTrackList();
+      syncUrl();
     });
     els.sanctuarySelect.addEventListener('change', () => {
       state.sanctuary = els.sanctuarySelect.value;
       recomputeVisible();
       renderTrackList();
+      syncUrl();
     });
     els.sortSelect.addEventListener('change', () => {
       state.sort = els.sortSelect.value;
       recomputeVisible();
       renderTrackList();
+      syncUrl();
     });
     els.progress.addEventListener('input', () => {
       els.audio.currentTime = Number(els.progress.value);
@@ -304,6 +399,11 @@
     els.audio.addEventListener('ended', () => navigate(1));
     els.audio.addEventListener('timeupdate', updateProgress);
     els.audio.addEventListener('loadedmetadata', updateProgress);
+    if (els.tabs) {
+      els.tabs.forEach(tab => {
+        tab.addEventListener('click', () => setTab(tab.dataset.tab));
+      });
+    }
     els.audio.addEventListener('waiting', () => {
       els.status.textContent = 'Loading audio...';
     });
@@ -344,6 +444,7 @@
       progress: byId('progress'),
       time: byId('time'),
       status: byId('status'),
+      tabs: document.querySelectorAll('.tab'),
     });
   }
 
@@ -352,6 +453,7 @@
     state.tracks = state.catalog.tracks || [];
     state.order = state.tracks.map((_, index) => index);
     state.visibleIndexes = [...state.order];
+    applyRoute(parseRoute(window.location.search));
 
     Object.entries(SORT_LABELS).forEach(([value, label]) => {
       const option = document.createElement('option');
@@ -362,11 +464,14 @@
 
     bindEvents();
     buildFilters();
+    syncControlsFromState();
+    setTab(state.activeTab, { sync: false });
     recomputeVisible();
     renderTrackList();
 
     if (state.tracks.length) {
-      setTrack(state.visibleIndexes[0] || 0);
+      setTrack(state.currentIndex, { sync: false });
+      syncUrl();
     } else {
       els.status.textContent = 'No recordings found. Refresh the catalog with node scripts/catalog.mjs.';
     }

@@ -4,6 +4,9 @@ import assert from 'node:assert/strict';
 import {
   createCatalogState,
   formatDate,
+  parseRoute,
+  serializeRoute,
+  trackId,
 } from '../app-core.mjs';
 
 const tracks = [
@@ -50,4 +53,39 @@ test('sorts newest and oldest without losing selected visible track', () => {
 test('formats missing and valid dates for compact metadata', () => {
   assert.equal(formatDate(null), 'Unknown date');
   assert.equal(formatDate('2020-01-02T03:04:05Z'), 'Jan 2, 2020');
+});
+
+test('creates stable URL track ids from filenames', () => {
+  assert.equal(
+    trackId({ filename: 'SanctSound_GR03_02_hurricane_20190904T221437Z.mp4' }),
+    'SanctSound_GR03_02_hurricane_20190904T221437Z',
+  );
+});
+
+test('parses shareable route state from query params', () => {
+  assert.deepEqual(
+    parseRoute('?track=SanctSound_GR03_02_hurricane_20190904T221437Z&category=weather&sanctuary=Gray%27s%20Reef&q=dorian&sort=newest'),
+    {
+      track: 'SanctSound_GR03_02_hurricane_20190904T221437Z',
+      category: 'weather',
+      sanctuary: "Gray's Reef",
+      query: 'dorian',
+      sort: 'newest',
+      tab: 'archive',
+    },
+  );
+});
+
+test('serializes shareable route state while omitting defaults', () => {
+  assert.equal(
+    serializeRoute({
+      track: 'SanctSound_GR03_02_hurricane_20190904T221437Z',
+      category: 'weather',
+      sanctuary: 'all',
+      query: '',
+      sort: 'curated',
+      tab: 'archive',
+    }),
+    '?track=SanctSound_GR03_02_hurricane_20190904T221437Z&category=weather',
+  );
 });
