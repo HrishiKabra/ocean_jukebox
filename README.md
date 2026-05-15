@@ -103,6 +103,56 @@ If you want to self-host on GitHub Pages, Netlify, Vercel, or any static host, d
 
 ---
 
+## Shareable URLs
+
+Ocean Jukebox keeps the current explorer state in the URL. You can share a link to a specific track, category, sanctuary, search term, sort order, or tab without a backend.
+
+Example:
+
+```text
+/?track=SanctSound_GR03_02_hurricane_20190904T221437Z&category=weather
+```
+
+The app also accepts combined route state such as:
+
+```text
+/?track=SanctSound_GR03_02_hurricane_20190904T221437Z&category=weather&q=dorian
+/?tab=map&sanctuary=Monterey+Bay
+/?tab=spectrogram&track=SanctSound_GR03_02_hurricane_20190904T221437Z
+```
+
+---
+
+## Map view
+
+The Map tab shows sanctuary-level listening regions for the generated SanctSound catalog. Coordinates are approximate sanctuary reference points, not exact hydrophone deployment locations.
+
+Clicking a map pin filters the catalog to that sanctuary, marks the pin active, and updates the URL with `tab=map&sanctuary=...` so the filtered map view can be shared.
+
+---
+
+## Live sources
+
+The Live tab lists live or near-live listening sources that are separate from NOAA SanctSound. These sources are not part of the historical SanctSound archive and should not be treated as the same dataset.
+
+Live streams may be delayed, temporarily unavailable, or offline at the source. Cards link to the source page or stream when available; the app does not embed a live player.
+
+---
+
+## Spectrograms
+
+The Spectrogram tab looks for static generated PNG assets under `spectrograms/`. If a matching image exists, it is displayed for the active track; otherwise the app shows an empty-state message without a broken image.
+
+Generate a spectrogram for a SanctSound file with:
+
+```bash
+node scripts/generate-spectrograms.mjs SanctSound_GR03_02_hurricane_20190904T221437Z.mp4
+```
+
+The generator writes `spectrograms/SanctSound_GR03_02_hurricane_20190904T221437Z.png`. It expects local command-line media tooling such as FFmpeg to be available.
+
+---
+
 ## Extending it
 
 ### Refresh the recording catalog
@@ -120,53 +170,9 @@ That command fetches [sanctsound.ioos.us/sounds.html](https://sanctsound.ioos.us
 
 If you want to add a hand-curated description, edit the matching record in `sounds.json`, then run the refresh script. The script keeps curated fields by filename.
 
-### Add a real spectrogram
-
-The waveform visualizer is CSS-only (decorative). To get a real frequency visualization tied to the audio, you'd need:
-
-1. A CORS proxy (NOAA's files don't send `Access-Control-Allow-Origin` headers, so Web Audio API canvas access is blocked cross-origin)
-2. Web Audio API `AnalyserNode` hooked to the `<audio>` element
-3. `requestAnimationFrame` loop drawing frequency bins to a `<canvas>`
-
-A simple approach with a proxy:
-
-```javascript
-const ctx = new AudioContext();
-const analyser = ctx.createAnalyser();
-const source = ctx.createMediaElementSource(audio);
-source.connect(analyser);
-analyser.connect(ctx.destination);
-
-function draw() {
-  requestAnimationFrame(draw);
-  const data = new Uint8Array(analyser.frequencyBinCount);
-  analyser.getByteFrequencyData(data);
-  // draw data to canvas
-}
-draw();
-```
-
-### Add a map
-
-Each recording has a known lat/lon. Add Leaflet.js and plot markers, then pan to the active sanctuary when a track plays:
-
-```javascript
-const LOCS = {
-  'Hawaiian Islands': [20.7, -156.5],
-  'Monterey Bay':     [36.8, -121.9],
-  // ...
-};
-
-map.flyTo(LOCS[currentSanction], 7, { duration: 1.2 });
-```
-
 ### Add NOAA buoy weather
 
 NOAA's buoy API (`https://www.ndbc.noaa.gov/data/realtime2/`) has near-real-time wave height and sea surface temperature for stations near each sanctuary. You could show current conditions alongside the historical recordings.
-
-### Add live or near-live audio
-
-SanctSound itself is an archive, not a realtime audio feed. A live section should use a separate source and label it separately from the historical catalog. MBARI's Monterey Bay hydrophone stream is one possible near-live source when available, but it should be treated as a distinct integration rather than mixed into the SanctSound catalog.
 
 ---
 
