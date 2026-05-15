@@ -43,6 +43,22 @@ export function parseRoute(search = '') {
   };
 }
 
+function allowedValue(value, allowed, fallback) {
+  return allowed.includes(value) ? value : fallback;
+}
+
+export function normalizeRoute(route, { categories = ['all'], sanctuaries = ['all'], tabs = ['archive'] } = {}) {
+  const sorts = Object.keys(SORT_LABELS);
+  return {
+    track: route.track || DEFAULT_ROUTE.track,
+    category: allowedValue(route.category, categories, DEFAULT_ROUTE.category),
+    sanctuary: allowedValue(route.sanctuary, sanctuaries, DEFAULT_ROUTE.sanctuary),
+    query: route.query || DEFAULT_ROUTE.query,
+    sort: allowedValue(route.sort, sorts, DEFAULT_ROUTE.sort),
+    tab: allowedValue(route.tab, tabs, DEFAULT_ROUTE.tab),
+  };
+}
+
 export function serializeRoute(route) {
   const params = new URLSearchParams();
   if (route.track) params.set('track', route.track);

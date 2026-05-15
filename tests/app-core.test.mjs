@@ -1,9 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
 
 import {
   createCatalogState,
   formatDate,
+  normalizeRoute,
   parseRoute,
   serializeRoute,
   trackId,
@@ -101,5 +104,106 @@ test('serializes non-empty route query with q parameter', () => {
       tab: 'archive',
     }),
     '?q=dorian',
+  );
+});
+
+test('normalizes invalid route values to defaults', () => {
+  assert.deepEqual(
+    normalizeRoute(
+      parseRoute('?category=bogus&sanctuary=bogus&sort=bogus&tab=bogus&q=dorian'),
+      {
+        categories: ['all', 'weather'],
+        sanctuaries: ['all', "Gray's Reef"],
+        tabs: ['archive', 'map'],
+      },
+    ),
+    {
+      track: '',
+      category: 'all',
+      sanctuary: 'all',
+      query: 'dorian',
+      sort: 'curated',
+      tab: 'archive',
+    },
+  );
+});
+
+test('normalizes route while preserving valid catalog values', () => {
+  assert.deepEqual(
+    normalizeRoute(
+      parseRoute('?track=SanctSound_GR03_02_hurricane_20190904T221437Z&category=weather&sanctuary=Gray%27s%20Reef&q=dorian&sort=newest&tab=map'),
+      {
+        categories: ['all', 'weather'],
+        sanctuaries: ['all', "Gray's Reef"],
+        tabs: ['archive', 'map'],
+      },
+    ),
+    {
+      track: 'SanctSound_GR03_02_hurricane_20190904T221437Z',
+      category: 'weather',
+      sanctuary: "Gray's Reef",
+      query: 'dorian',
+      sort: 'newest',
+      tab: 'map',
+    },
+  );
+});
+
+test('browser route helper normalizes invalid values before app state uses them', () => {
+  const source = fs.readFileSync(new URL('../app.js', import.meta.url), 'utf8');
+  const sandbox = {
+    URLSearchParams,
+    window: { OCEAN_JUKEBOX_CATALOG: { tracks: [] } },
+    document: {
+      addEventListener() {},
+      querySelectorAll() {
+        return [];
+      },
+    },
+  };
+  sandbox.window.window = sandbox.window;
+  sandbox.window.document = sandbox.document;
+  vm.runInNewContext(source, sandbox);
+
+  const normalized = sandbox.window.OCEAN_JUKEBOX_ROUTE_HELPERS.normalizeRoute(
+    sandbox.window.OCEAN_JUKEBOX_ROUTE_HELPERS.parseRoute('?category=bogus&sanctuary=bogus&tab=bogus'),
+    {
+      categories: ['all', 'weather'],
+      sanctuaries: ['all', "Gray's Reef"],
+      tabs: ['archive', 'map'],
+    },
+  );
+
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(normalized)),
+    {
+      track: '',
+      category: 'all',
+      sanctuary: 'all',
+      query: '',
+      sort: 'curated',
+      tab: 'archive',
+    },
+  );
+
+  const validRoute = sandbox.window.OCEAN_JUKEBOX_ROUTE_HELPERS.normalizeRoute(
+    sandbox.window.OCEAN_JUKEBOX_ROUTE_HELPERS.parseRoute('?category=weather&sanctuary=Gray%27s%20Reef&q=dorian&sort=newest&tab=map'),
+    {
+      categories: ['all', 'weather'],
+      sanctuaries: ['all', "Gray's Reef"],
+      tabs: ['archive', 'map'],
+    },
+  );
+
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(validRoute)),
+    {
+      track: '',
+      category: 'weather',
+      sanctuary: "Gray's Reef",
+      query: 'dorian',
+      sort: 'newest',
+      tab: 'map',
+    },
   );
 });

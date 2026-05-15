@@ -103,6 +103,22 @@
     };
   }
 
+  function allowedValue(value, allowed, fallback) {
+    return allowed.includes(value) ? value : fallback;
+  }
+
+  function normalizeRoute(route, { categories = ['all'], sanctuaries = ['all'], tabs = ['archive'] } = {}) {
+    const sorts = Object.keys(SORT_LABELS);
+    return {
+      track: route.track || DEFAULT_ROUTE.track,
+      category: allowedValue(route.category, categories, DEFAULT_ROUTE.category),
+      sanctuary: allowedValue(route.sanctuary, sanctuaries, DEFAULT_ROUTE.sanctuary),
+      query: route.query || DEFAULT_ROUTE.query,
+      sort: allowedValue(route.sort, sorts, DEFAULT_ROUTE.sort),
+      tab: allowedValue(route.tab, tabs, DEFAULT_ROUTE.tab),
+    };
+  }
+
   function serializeRoute(route) {
     const params = new URLSearchParams();
     if (route.track) params.set('track', route.track);
@@ -135,13 +151,18 @@
   }
 
   function applyRoute(route) {
-    state.category = route.category;
-    state.sanctuary = route.sanctuary;
-    state.query = route.query;
-    state.sort = SORT_LABELS[route.sort] ? route.sort : DEFAULT_ROUTE.sort;
-    state.activeTab = route.tab;
+    const normalized = normalizeRoute(route, {
+      categories: categoryList(),
+      sanctuaries: sanctuaryList(),
+      tabs: tabList(),
+    });
+    state.category = normalized.category;
+    state.sanctuary = normalized.sanctuary;
+    state.query = normalized.query;
+    state.sort = normalized.sort;
+    state.activeTab = normalized.tab;
 
-    const routeTrackIndex = state.tracks.findIndex(track => trackId(track) === route.track);
+    const routeTrackIndex = state.tracks.findIndex(track => trackId(track) === normalized.track);
     if (routeTrackIndex !== -1) {
       state.currentIndex = routeTrackIndex;
     }
@@ -203,6 +224,18 @@
   function sanctuaryList() {
     return ['all', ...new Set(state.tracks.map(track => track.sanctuary).sort())];
   }
+
+  function tabList() {
+    const tabs = els.tabs ? [...els.tabs].map(tab => tab.dataset.tab).filter(Boolean) : [];
+    return ['archive', ...tabs.filter(tab => tab !== 'archive')];
+  }
+
+  window.OCEAN_JUKEBOX_ROUTE_HELPERS = Object.freeze({
+    normalizeRoute,
+    parseRoute,
+    serializeRoute,
+    trackId,
+  });
 
   function updateMeta() {
     const generated = state.catalog.generatedAt ? formatDate(state.catalog.generatedAt) : 'Unknown';
