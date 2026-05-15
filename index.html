@@ -507,6 +507,7 @@
     .map-pin {
       position: absolute;
       transform: translate(-50%, -50%);
+      width: clamp(96px, 15vw, 154px);
       border: 0;
       background: transparent;
       color: var(--ink);
@@ -514,6 +515,7 @@
       justify-items: center;
       gap: 5px;
       z-index: 1;
+      padding: 0;
     }
 
     .pin-dot {
@@ -531,8 +533,8 @@
     }
 
     .pin-label {
-      min-width: 112px;
-      max-width: 154px;
+      width: 100%;
+      min-width: 0;
       border: 0.5px solid var(--line);
       border-radius: var(--radius);
       background: color-mix(in srgb, var(--bg) 92%, transparent);
@@ -722,7 +724,7 @@
         min-height: 360px;
       }
       .pin-label {
-        max-width: 128px;
+        width: 96px;
       }
     }
   </style>

@@ -11,6 +11,7 @@ import {
   formatDate,
   normalizeRoute,
   parseRoute,
+  projectMapPosition,
   serializeRoute,
   trackId,
 } from '../app-core.mjs';
@@ -132,6 +133,24 @@ test('builds map pins with recording counts and active sanctuary state', () => {
       { name: 'Monterey Bay', count: 2, active: false },
       { name: 'Florida Keys', count: 1, active: true },
     ],
+  );
+});
+
+test('projects map coordinates into a padded visible range', () => {
+  assert.deepEqual(
+    projectMapPosition(
+      { lat: 48, lng: -172 },
+      { minLat: 20, maxLat: 48, minLng: -172, maxLng: -70 },
+    ),
+    { x: 18, y: 18 },
+  );
+
+  assert.deepEqual(
+    projectMapPosition(
+      { lat: 20, lng: -70 },
+      { minLat: 20, maxLat: 48, minLng: -172, maxLng: -70 },
+    ),
+    { x: 82, y: 82 },
   );
 });
 

@@ -245,6 +245,7 @@
     buildTrackDetail,
     normalizeRoute,
     parseRoute,
+    projectMapPosition,
     serializeRoute,
     trackId,
   });
@@ -299,6 +300,21 @@
     return groups;
   }
 
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function projectMapPosition(point, bounds, inset = 18) {
+    const latRange = bounds.maxLat - bounds.minLat || 1;
+    const lngRange = bounds.maxLng - bounds.minLng || 1;
+    const rawX = ((point.lng - bounds.minLng) / lngRange) * 100;
+    const rawY = ((bounds.maxLat - point.lat) / latRange) * 100;
+    return {
+      x: clamp(rawX, inset, 100 - inset),
+      y: clamp(rawY, inset, 100 - inset),
+    };
+  }
+
   function buildMapPins(sanctuaries, tracks, activeSanctuary = 'all') {
     const counts = new Map();
     tracks.forEach(track => {
@@ -321,19 +337,17 @@
       maxLng: -70,
     });
 
-    const latRange = bounds.maxLat - bounds.minLat || 1;
-    const lngRange = bounds.maxLng - bounds.minLng || 1;
-
     return sanctuaries.map(sanctuary => {
       const [lat, lng] = sanctuary.coordinates || [0, 0];
+      const position = projectMapPosition({ lat, lng }, bounds);
       return {
         ...sanctuary,
         lat,
         lng,
         count: counts.get(sanctuary.name) || 0,
         active: activeSanctuary !== 'all' && sanctuary.name === activeSanctuary,
-        x: ((lng - bounds.minLng) / lngRange) * 100,
-        y: ((bounds.maxLat - lat) / latRange) * 100,
+        x: position.x,
+        y: position.y,
       };
     });
   }
