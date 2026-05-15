@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 
 import {
+  buildTrackDetail,
   createCatalogState,
   formatDate,
   normalizeRoute,
@@ -62,6 +63,34 @@ test('creates stable URL track ids from filenames', () => {
   assert.equal(
     trackId({ filename: 'SanctSound_GR03_02_hurricane_20190904T221437Z.mp4' }),
     'SanctSound_GR03_02_hurricane_20190904T221437Z',
+  );
+});
+
+test('builds track detail with source URL and fallback metadata', () => {
+  assert.deepEqual(
+    buildTrackDetail({
+      filename: 'haddock.mp4',
+      url: 'https://sanctsound.ioos.us/files/haddock.mp4',
+      label: 'Haddock knocks',
+      sanctuary: 'Stellwagen Bank',
+      category: 'fish',
+      description: '',
+      recordedAt: null,
+      site: null,
+      deployment: null,
+    }),
+    {
+      id: 'haddock',
+      title: 'Haddock knocks',
+      sanctuary: 'Stellwagen Bank',
+      category: 'fish',
+      description: 'No description available from the source catalog.',
+      recorded: 'Unknown date',
+      site: 'Unknown site',
+      deployment: 'Unknown deployment',
+      filename: 'haddock.mp4',
+      sourceUrl: 'https://sanctsound.ioos.us/files/haddock.mp4',
+    },
   );
 });
 

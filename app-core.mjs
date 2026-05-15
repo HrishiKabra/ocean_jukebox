@@ -172,6 +172,21 @@ export function formatDate(value) {
   }).format(date);
 }
 
+export function buildTrackDetail(track) {
+  return {
+    id: trackId(track),
+    title: track.label,
+    sanctuary: track.sanctuary,
+    category: track.category,
+    description: track.description || 'No description available from the source catalog.',
+    recorded: formatDate(track.recordedAt),
+    site: track.site || 'Unknown site',
+    deployment: track.deployment || 'Unknown deployment',
+    filename: track.filename,
+    sourceUrl: track.url,
+  };
+}
+
 export function formatCount(count) {
   return `${count} ${count === 1 ? 'recording' : 'recordings'}`;
 }

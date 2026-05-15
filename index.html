@@ -259,6 +259,76 @@
       background: var(--kelp);
     }
 
+    .detail-panel {
+      grid-column: 1 / -1;
+      border-top: 0.5px solid var(--line);
+      padding-top: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .detail-panel[hidden] {
+      display: none;
+    }
+
+    .detail-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .detail-title {
+      font-size: clamp(20px, 2.5vw, 28px);
+      line-height: 1.12;
+      font-weight: 620;
+      overflow-wrap: anywhere;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 16px;
+    }
+
+    .detail-field {
+      min-width: 0;
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .detail-field span {
+      display: block;
+      color: var(--faint);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 2px;
+    }
+
+    .detail-desc {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+    }
+
+    .detail-source {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      min-width: 0;
+    }
+
+    .source-link {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      font-size: 13px;
+    }
+
     .progress-wrap {
       display: grid;
       gap: 5px;
@@ -443,6 +513,13 @@
         justify-content: center;
         flex-wrap: wrap;
       }
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+      .detail-head,
+      .detail-source {
+        align-items: stretch;
+      }
     }
   </style>
 </head>
@@ -506,6 +583,10 @@
               <i class="ti ti-arrows-shuffle" aria-hidden="true"></i>
               Shuffle
             </button>
+            <button class="ctrl" id="btn-details" type="button" aria-expanded="false" aria-controls="track-detail">
+              <i class="ti ti-info-circle" aria-hidden="true"></i>
+              Details
+            </button>
           </div>
           <div class="progress-wrap">
             <input id="progress" type="range" min="0" max="0" value="0" step="0.1" aria-label="Playback position" />
@@ -513,6 +594,31 @@
           </div>
           <div class="time" id="time">0:00 / 0:00</div>
         </div>
+
+        <aside class="detail-panel" id="track-detail" aria-label="Track details" hidden>
+          <div class="detail-head">
+            <h3 class="detail-title" id="detail-title">Track details</h3>
+            <button class="ctrl" id="btn-detail-close" type="button" aria-label="Close details">
+              <i class="ti ti-x" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="detail-grid">
+            <div class="detail-field"><span>Sanctuary</span><strong id="detail-sanctuary">Unknown sanctuary</strong></div>
+            <div class="detail-field"><span>Category</span><strong id="detail-category">Unknown category</strong></div>
+            <div class="detail-field"><span>Recorded</span><strong id="detail-recorded">Unknown date</strong></div>
+            <div class="detail-field"><span>Site</span><strong id="detail-site">Unknown site</strong></div>
+            <div class="detail-field"><span>Deployment</span><strong id="detail-deployment">Unknown deployment</strong></div>
+            <div class="detail-field"><span>Filename</span><code id="detail-filename">Unknown file</code></div>
+          </div>
+          <p class="detail-desc" id="detail-description">No description available from the source catalog.</p>
+          <div class="detail-source">
+            <a class="source-link" id="detail-source-link" href="#" target="_blank" rel="noopener">Source file</a>
+            <button class="ctrl" id="btn-copy-source" type="button">
+              <i class="ti ti-copy" aria-hidden="true"></i>
+              Copy source URL
+            </button>
+          </div>
+        </aside>
       </section>
 
       <section aria-label="Catalog controls">

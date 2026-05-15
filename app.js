@@ -231,6 +231,7 @@
   }
 
   window.OCEAN_JUKEBOX_ROUTE_HELPERS = Object.freeze({
+    buildTrackDetail,
     normalizeRoute,
     parseRoute,
     serializeRoute,
@@ -255,6 +256,71 @@
     return track.url || `${state.catalog.baseUrl}${track.filename}`;
   }
 
+  function buildTrackDetail(track) {
+    return {
+      id: trackId(track),
+      title: track.label,
+      sanctuary: track.sanctuary,
+      category: track.category,
+      description: track.description || 'No description available from the source catalog.',
+      recorded: formatDate(track.recordedAt),
+      site: track.site || 'Unknown site',
+      deployment: track.deployment || 'Unknown deployment',
+      filename: track.filename,
+      sourceUrl: track.url,
+    };
+  }
+
+  function renderTrackDetail() {
+    const track = state.tracks[state.currentIndex];
+    if (!track) return;
+    const detail = buildTrackDetail(track);
+    const sourceUrl = detail.sourceUrl || mediaUrl(track);
+
+    els.detailTitle.textContent = detail.title;
+    els.detailSanctuary.textContent = detail.sanctuary;
+    els.detailCategory.textContent = detail.category;
+    els.detailRecorded.textContent = detail.recorded;
+    els.detailSite.textContent = detail.site;
+    els.detailDeployment.textContent = detail.deployment;
+    els.detailFilename.textContent = detail.filename;
+    els.detailDescription.textContent = detail.description;
+    els.detailSourceLink.href = sourceUrl;
+    els.detailSourceLink.textContent = sourceUrl;
+  }
+
+  function openTrackDetail() {
+    if (!state.tracks[state.currentIndex]) return;
+    renderTrackDetail();
+    els.detailPanel.hidden = false;
+    els.detailsButton.setAttribute('aria-expanded', 'true');
+    els.detailCloseButton.focus();
+  }
+
+  function closeTrackDetail() {
+    els.detailPanel.hidden = true;
+    els.detailsButton.setAttribute('aria-expanded', 'false');
+    els.detailsButton.focus();
+  }
+
+  function copySourceUrl() {
+    const track = state.tracks[state.currentIndex];
+    if (!track) return;
+    const sourceUrl = mediaUrl(track);
+    const clipboard = window.navigator && window.navigator.clipboard;
+    if (!clipboard || !clipboard.writeText) {
+      els.status.textContent = 'Copy unavailable in this browser.';
+      return;
+    }
+    clipboard.writeText(sourceUrl)
+      .then(() => {
+        els.status.textContent = 'Source URL copied.';
+      })
+      .catch(() => {
+        els.status.textContent = 'Copy unavailable in this browser.';
+      });
+  }
+
   function setTrack(index, options = {}) {
     if (!state.tracks[index]) return;
     state.currentIndex = index;
@@ -269,6 +335,7 @@
     els.audio.src = mediaUrl(track);
     els.audio.load();
     highlightCurrent();
+    if (!els.detailPanel.hidden) renderTrackDetail();
     if (options.sync !== false) syncUrl();
     if (options.autoplay) {
       els.audio.play().then(() => setPlayingState(true)).catch(() => setPlayingState(false));
@@ -406,6 +473,9 @@
       shuffleOrder();
       syncUrl();
     });
+    els.detailsButton.addEventListener('click', openTrackDetail);
+    els.detailCloseButton.addEventListener('click', closeTrackDetail);
+    els.copySourceButton.addEventListener('click', copySourceUrl);
     els.query.addEventListener('input', () => {
       state.query = els.query.value;
       recomputeVisible();
@@ -458,6 +528,19 @@
       prevButton: byId('btn-prev'),
       nextButton: byId('btn-next'),
       shuffleButton: byId('btn-shuffle'),
+      detailsButton: byId('btn-details'),
+      detailPanel: byId('track-detail'),
+      detailCloseButton: byId('btn-detail-close'),
+      detailTitle: byId('detail-title'),
+      detailSanctuary: byId('detail-sanctuary'),
+      detailCategory: byId('detail-category'),
+      detailRecorded: byId('detail-recorded'),
+      detailSite: byId('detail-site'),
+      detailDeployment: byId('detail-deployment'),
+      detailFilename: byId('detail-filename'),
+      detailDescription: byId('detail-description'),
+      detailSourceLink: byId('detail-source-link'),
+      copySourceButton: byId('btn-copy-source'),
       sanctuary: byId('s-sanctuary'),
       category: byId('s-cat'),
       label: byId('s-label'),
