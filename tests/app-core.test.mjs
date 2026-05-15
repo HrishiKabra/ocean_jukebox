@@ -89,3 +89,17 @@ test('serializes shareable route state while omitting defaults', () => {
     '?track=SanctSound_GR03_02_hurricane_20190904T221437Z&category=weather',
   );
 });
+
+test('serializes non-empty route query with q parameter', () => {
+  assert.equal(
+    serializeRoute({
+      track: '',
+      category: 'all',
+      sanctuary: 'all',
+      query: 'dorian',
+      sort: 'curated',
+      tab: 'archive',
+    }),
+    '?q=dorian',
+  );
+});
