@@ -219,6 +219,30 @@ export function projectMapPosition(point, bounds, inset = 18) {
   };
 }
 
+function conflictsWithPlacedPins(pin, placedPins, minGap) {
+  return placedPins.some(placed => (
+    Math.abs(pin.x - placed.x) < minGap
+    && Math.abs(pin.y - placed.y) < minGap
+  ));
+}
+
+function separateMapPins(pins, minGap = 12) {
+  const placedPins = [];
+  return pins.map(pin => {
+    const positioned = { ...pin };
+    const offsets = [0, minGap, -minGap, minGap * 2, -minGap * 2, minGap * 3, -minGap * 3];
+
+    for (const offset of offsets) {
+      const candidateX = clamp(pin.x + offset, 18, 82);
+      positioned.x = candidateX;
+      if (!conflictsWithPlacedPins(positioned, placedPins, minGap)) break;
+    }
+
+    placedPins.push(positioned);
+    return positioned;
+  });
+}
+
 export function buildMapPins(sanctuaries, tracks, activeSanctuary = 'all') {
   const counts = new Map();
   tracks.forEach(track => {
@@ -241,7 +265,7 @@ export function buildMapPins(sanctuaries, tracks, activeSanctuary = 'all') {
     maxLng: -70,
   });
 
-  return sanctuaries.map(sanctuary => {
+  const pins = sanctuaries.map(sanctuary => {
     const [lat, lng] = sanctuary.coordinates || [0, 0];
     const position = projectMapPosition({ lat, lng }, bounds);
     return {
@@ -254,6 +278,8 @@ export function buildMapPins(sanctuaries, tracks, activeSanctuary = 'all') {
       y: position.y,
     };
   });
+
+  return separateMapPins(pins);
 }
 
 export function formatCount(count) {

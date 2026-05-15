@@ -154,6 +154,24 @@ test('projects map coordinates into a padded visible range', () => {
   );
 });
 
+test('separates crowded map pins after projection clamping', () => {
+  const pins = buildMapPins(
+    [
+      { name: 'Hawaiian Islands', coordinates: [20.7, -156.5], region: 'Pacific Islands', note: '' },
+      { name: 'Papahānaumokuākea', coordinates: [25.7, -171.7], region: 'Pacific Islands', note: '' },
+    ],
+    [],
+  );
+
+  assert.equal(
+    pins.some((pin, index) => {
+      const other = pins[index + 1];
+      return other && Math.abs(pin.x - other.x) < 12 && Math.abs(pin.y - other.y) < 12;
+    }),
+    false,
+  );
+});
+
 test('parses shareable route state from query params', () => {
   assert.deepEqual(
     parseRoute('?track=SanctSound_GR03_02_hurricane_20190904T221437Z&category=weather&sanctuary=Gray%27s%20Reef&q=dorian&sort=newest'),

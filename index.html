@@ -507,20 +507,20 @@
     .map-pin {
       position: absolute;
       transform: translate(-50%, -50%);
-      width: clamp(96px, 15vw, 154px);
+      width: 34px;
+      height: 34px;
       border: 0;
       background: transparent;
       color: var(--ink);
       display: grid;
-      justify-items: center;
-      gap: 5px;
+      place-items: center;
       z-index: 1;
       padding: 0;
     }
 
     .pin-dot {
-      width: 30px;
-      height: 30px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       display: grid;
       place-items: center;
@@ -533,7 +533,10 @@
     }
 
     .pin-label {
-      width: 100%;
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 6px);
+      width: clamp(96px, 15vw, 154px);
       min-width: 0;
       border: 0.5px solid var(--line);
       border-radius: var(--radius);
@@ -542,7 +545,7 @@
       text-align: left;
       box-shadow: 0 8px 22px rgba(21, 24, 18, 0.12);
       opacity: 0;
-      transform: translateY(2px);
+      transform: translate(-50%, 2px);
       transition: opacity 0.14s, transform 0.14s;
       pointer-events: none;
     }
@@ -569,7 +572,19 @@
     .map-pin:focus-visible .pin-label,
     .map-pin.active .pin-label {
       opacity: 1;
-      transform: translateY(0);
+      transform: translate(-50%, 0);
+    }
+
+    .map-pin.label-north .pin-label {
+      top: auto;
+      bottom: calc(100% + 6px);
+      transform: translate(-50%, -2px);
+    }
+
+    .map-pin.label-north:hover .pin-label,
+    .map-pin.label-north:focus-visible .pin-label,
+    .map-pin.label-north.active .pin-label {
+      transform: translate(-50%, 0);
     }
 
     .map-pin.active .pin-dot {
