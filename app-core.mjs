@@ -187,6 +187,20 @@ export function buildTrackDetail(track) {
   };
 }
 
+export function buildLiveSourceCards(sources = []) {
+  return sources.map(source => {
+    const playable = source.status === 'online' && Boolean(source.streamUrl);
+    return {
+      id: source.id,
+      name: source.name,
+      status: source.status,
+      playable,
+      actionLabel: playable ? 'Open stream' : 'Check source',
+      url: playable ? source.streamUrl : source.pageUrl,
+    };
+  });
+}
+
 export function buildVariantGroups(tracks) {
   const groups = new Map();
   tracks.forEach(track => {

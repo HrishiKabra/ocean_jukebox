@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 
 import {
+  buildLiveSourceCards,
   buildMapPins,
   buildVariantGroups,
   buildTrackDetail,
@@ -132,6 +133,45 @@ test('builds map pins with recording counts and active sanctuary state', () => {
     [
       { name: 'Monterey Bay', count: 2, active: false },
       { name: 'Florida Keys', count: 1, active: true },
+    ],
+  );
+});
+
+test('builds live source cards with playable stream or source check action', () => {
+  assert.deepEqual(
+    buildLiveSourceCards([
+      {
+        id: 'a',
+        name: 'A',
+        status: 'online',
+        pageUrl: 'https://example.com/a',
+        streamUrl: 'https://example.com/a.m3u8',
+      },
+      {
+        id: 'b',
+        name: 'B',
+        status: 'check-source',
+        pageUrl: 'https://example.com/b',
+        streamUrl: '',
+      },
+    ]),
+    [
+      {
+        id: 'a',
+        name: 'A',
+        status: 'online',
+        playable: true,
+        actionLabel: 'Open stream',
+        url: 'https://example.com/a.m3u8',
+      },
+      {
+        id: 'b',
+        name: 'B',
+        status: 'check-source',
+        playable: false,
+        actionLabel: 'Check source',
+        url: 'https://example.com/b',
+      },
     ],
   );
 });

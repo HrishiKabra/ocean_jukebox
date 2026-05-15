@@ -40,6 +40,7 @@
   const state = {
     catalog: window.OCEAN_JUKEBOX_CATALOG || FALLBACK_CATALOG,
     sanctuaries: window.OCEAN_JUKEBOX_SANCTUARIES || [],
+    liveSources: window.OCEAN_JUKEBOX_LIVE_SOURCES || [],
     tracks: [],
     category: 'all',
     sanctuary: 'all',
@@ -188,7 +189,11 @@
     if (els.mapPanel) {
       els.mapPanel.hidden = state.activeTab !== 'map';
     }
+    if (els.livePanel) {
+      els.livePanel.hidden = state.activeTab !== 'live';
+    }
     if (state.activeTab === 'map') renderMap();
+    if (state.activeTab === 'live') renderLiveSources();
     if (options.sync !== false) syncUrl();
   }
 
@@ -241,6 +246,7 @@
   }
 
   window.OCEAN_JUKEBOX_ROUTE_HELPERS = Object.freeze({
+    buildLiveSourceCards,
     buildMapPins,
     buildTrackDetail,
     normalizeRoute,
@@ -281,6 +287,18 @@
       filename: track.filename,
       sourceUrl: track.url,
     };
+  }
+
+  function buildLiveSourceCards(sources = []) {
+    return sources.map(source => {
+      const playable = source.status === 'online' && Boolean(source.streamUrl);
+      return {
+        ...source,
+        playable,
+        actionLabel: playable ? 'Open stream' : 'Check source',
+        url: playable ? source.streamUrl : source.pageUrl,
+      };
+    });
   }
 
   function buildVariantGroupsForBrowser(tracks) {
@@ -376,6 +394,65 @@
     });
 
     return separateMapPins(pins);
+  }
+
+  function appendLiveMeta(parent, label, value) {
+    if (!value) return;
+    const item = document.createElement('span');
+    item.textContent = `${label}: ${value}`;
+    parent.appendChild(item);
+  }
+
+  function renderLiveSources() {
+    if (!els.liveGrid) return;
+    els.liveGrid.innerHTML = '';
+    const cards = buildLiveSourceCards(state.liveSources);
+    if (!cards.length) {
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = 'No live or near-live sources are configured.';
+      els.liveGrid.appendChild(empty);
+      return;
+    }
+
+    cards.forEach(source => {
+      const card = document.createElement('article');
+      card.className = `live-card ${source.playable ? 'playable' : 'check-only'}`;
+
+      const header = document.createElement('div');
+      header.className = 'live-card-head';
+
+      const title = document.createElement('h3');
+      title.textContent = source.name;
+      header.appendChild(title);
+
+      const status = document.createElement('span');
+      status.className = `live-status ${source.status}`;
+      status.textContent = source.status;
+      header.appendChild(status);
+      card.appendChild(header);
+
+      const description = document.createElement('p');
+      description.className = 'live-desc';
+      description.textContent = source.description || 'No description available.';
+      card.appendChild(description);
+
+      const meta = document.createElement('div');
+      meta.className = 'live-meta';
+      appendLiveMeta(meta, 'Latency', source.latency);
+      appendLiveMeta(meta, 'Location', source.location);
+      card.appendChild(meta);
+
+      const link = document.createElement('a');
+      link.className = 'ctrl live-link';
+      link.href = source.url || source.pageUrl || '#';
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.textContent = source.actionLabel;
+      card.appendChild(link);
+
+      els.liveGrid.appendChild(card);
+    });
   }
 
   function renderMap() {
@@ -755,6 +832,8 @@
       mapPanel: byId('map-panel'),
       mapCanvas: byId('map-canvas'),
       mapSummary: byId('map-summary'),
+      livePanel: byId('live-panel'),
+      liveGrid: byId('live-grid'),
       tabs: document.querySelectorAll('.tab'),
     });
   }

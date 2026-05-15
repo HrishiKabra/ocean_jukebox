@@ -607,6 +607,102 @@
       line-height: 1.65;
     }
 
+    .live-panel {
+      display: grid;
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .live-panel[hidden] {
+      display: none;
+    }
+
+    .live-note {
+      border: 0.5px solid var(--line);
+      border-radius: 10px;
+      background: var(--bg-2);
+      color: var(--muted);
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .live-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+    }
+
+    .live-card {
+      min-width: 0;
+      border: 0.5px solid var(--line);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--bg) 88%, white);
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .live-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 10px;
+    }
+
+    .live-card h3 {
+      font-size: 17px;
+      line-height: 1.2;
+      font-weight: 620;
+      overflow-wrap: anywhere;
+    }
+
+    .live-status {
+      flex: none;
+      border: 0.5px solid var(--line-strong);
+      border-radius: var(--radius);
+      color: var(--kelp);
+      background: var(--kelp-2);
+      padding: 3px 8px;
+      font-size: 11px;
+      line-height: 1.4;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .live-status.check-source {
+      color: var(--sun);
+      background: color-mix(in srgb, var(--sun) 16%, var(--bg));
+    }
+
+    .live-desc {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .live-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      color: var(--faint);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .live-meta span {
+      border: 0.5px solid var(--line);
+      border-radius: var(--radius);
+      padding: 4px 8px;
+      background: var(--bg-2);
+    }
+
+    .live-link {
+      width: fit-content;
+      text-decoration: none;
+    }
+
     .list-head {
       display: flex;
       justify-content: space-between;
@@ -737,6 +833,9 @@
       }
       .map-canvas {
         min-height: 360px;
+      }
+      .live-card-head {
+        display: grid;
       }
       .pin-label {
         width: 96px;
@@ -876,6 +975,14 @@
         <aside class="map-summary" id="map-summary" aria-live="polite"></aside>
       </section>
 
+      <section class="live-panel" id="live-panel" aria-label="Live and near-live sources" hidden>
+        <p class="live-note">
+          Live and near-live sources are separate from the NOAA SanctSound archive. Streams may be delayed,
+          temporarily unavailable, or offline at the source.
+        </p>
+        <div class="live-grid" id="live-grid"></div>
+      </section>
+
       <section aria-label="Sound recordings">
         <div class="list-head">
           <span>Recordings</span>
@@ -896,6 +1003,7 @@
   <audio id="audio" preload="metadata"></audio>
   <script src="./sounds.js"></script>
   <script src="./sanctuaries.js"></script>
+  <script src="./live-sources.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>
