@@ -714,6 +714,42 @@
       display: none;
     }
 
+    .spectrogram-frame {
+      min-height: 280px;
+      border: 0.5px solid var(--line);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--bg-2) 78%, var(--bg));
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      padding: 12px;
+    }
+
+    .spectrogram-img {
+      width: 100%;
+      max-height: 520px;
+      object-fit: contain;
+      border-radius: var(--radius);
+      background: var(--ink);
+    }
+
+    .spectrogram-img[hidden] {
+      display: none;
+    }
+
+    .spectrogram-empty {
+      max-width: 520px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+      padding: 24px;
+    }
+
+    .spectrogram-empty[hidden] {
+      display: none;
+    }
+
     .list-head {
       display: flex;
       justify-content: space-between;
@@ -844,6 +880,9 @@
       }
       .map-canvas {
         min-height: 360px;
+      }
+      .spectrogram-frame {
+        min-height: 220px;
       }
       .live-card-head {
         display: grid;
@@ -1006,7 +1045,12 @@
       </section>
 
       <section class="spectrogram-panel" id="spectrogram-panel" role="tabpanel" aria-labelledby="tab-spectrogram" hidden>
-        <p class="live-note">Spectrogram support is not generated yet.</p>
+        <div class="spectrogram-frame">
+          <p class="spectrogram-empty" id="spectrogram-empty" aria-live="polite" hidden>
+            No static spectrogram has been generated for this recording yet.
+          </p>
+          <img class="spectrogram-img" id="spectrogram-img" alt="" hidden />
+        </div>
       </section>
     </main>
 

@@ -94,6 +94,10 @@
     return (track.filename || '').replace(/\.[^.]*$/, '');
   }
 
+  function buildSpectrogramPath(track) {
+    return `spectrograms/${trackId(track)}.png`;
+  }
+
   function parseRoute(search = '') {
     const params = new URLSearchParams(search);
     return {
@@ -201,6 +205,7 @@
     }
     if (state.activeTab === 'map') renderMap();
     if (state.activeTab === 'live') renderLiveSources();
+    if (state.activeTab === 'spectrogram') renderSpectrogram();
     if (options.sync !== false) syncUrl();
   }
 
@@ -255,6 +260,7 @@
   window.OCEAN_JUKEBOX_ROUTE_HELPERS = Object.freeze({
     buildLiveSourceCards,
     buildMapPins,
+    buildSpectrogramPath,
     buildTrackDetail,
     normalizeRoute,
     parseRoute,
@@ -559,6 +565,33 @@
     renderVariantAlternates(track);
   }
 
+  function renderSpectrogram() {
+    if (!els.spectrogramPanel || !els.spectrogramEmpty || !els.spectrogramImg) return;
+    const track = state.tracks[state.currentIndex];
+    els.spectrogramImg.hidden = true;
+    els.spectrogramEmpty.hidden = true;
+    els.spectrogramImg.removeAttribute('src');
+
+    if (!track) {
+      els.spectrogramEmpty.hidden = false;
+      return;
+    }
+
+    const path = buildSpectrogramPath(track);
+    els.spectrogramImg.alt = `Spectrogram for ${track.label}`;
+    els.spectrogramImg.onload = () => {
+      if (els.spectrogramImg.getAttribute('src') !== path) return;
+      els.spectrogramImg.hidden = false;
+      els.spectrogramEmpty.hidden = true;
+    };
+    els.spectrogramImg.onerror = () => {
+      if (els.spectrogramImg.getAttribute('src') !== path) return;
+      els.spectrogramImg.hidden = true;
+      els.spectrogramEmpty.hidden = false;
+    };
+    els.spectrogramImg.src = path;
+  }
+
   function openTrackDetail() {
     if (!state.tracks[state.currentIndex]) return;
     renderTrackDetail();
@@ -608,6 +641,7 @@
     if (!els.detailPanel.hidden) renderTrackDetail();
     if (options.sync !== false) syncUrl();
     if (state.activeTab === 'map') renderMap();
+    if (state.activeTab === 'spectrogram') renderSpectrogram();
     if (options.autoplay) {
       els.audio.play().then(() => setPlayingState(true)).catch(() => setPlayingState(false));
     }
@@ -843,6 +877,8 @@
       livePanel: byId('live-panel'),
       liveGrid: byId('live-grid'),
       spectrogramPanel: byId('spectrogram-panel'),
+      spectrogramEmpty: byId('spectrogram-empty'),
+      spectrogramImg: byId('spectrogram-img'),
       tabs: document.querySelectorAll('.tab'),
     });
   }

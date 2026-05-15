@@ -31,6 +31,10 @@ export function trackId(track) {
   return (track.filename || '').replace(/\.[^.]*$/, '');
 }
 
+export function buildSpectrogramPath(track) {
+  return `spectrograms/${trackId(track)}.png`;
+}
+
 export function parseRoute(search = '') {
   const params = new URLSearchParams(search);
   return {

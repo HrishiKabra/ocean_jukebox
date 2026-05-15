@@ -6,6 +6,7 @@ import vm from 'node:vm';
 import {
   buildLiveSourceCards,
   buildMapPins,
+  buildSpectrogramPath,
   buildVariantGroups,
   buildTrackDetail,
   createCatalogState,
@@ -67,6 +68,13 @@ test('creates stable URL track ids from filenames', () => {
   assert.equal(
     trackId({ filename: 'SanctSound_GR03_02_hurricane_20190904T221437Z.mp4' }),
     'SanctSound_GR03_02_hurricane_20190904T221437Z',
+  );
+});
+
+test('builds static spectrogram path from track id', () => {
+  assert.equal(
+    buildSpectrogramPath({ filename: 'SanctSound_GR03_02_hurricane_20190904T221437Z.mp4' }),
+    'spectrograms/SanctSound_GR03_02_hurricane_20190904T221437Z.png',
   );
 });
 
