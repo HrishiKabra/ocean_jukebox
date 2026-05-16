@@ -47,7 +47,7 @@ The recordings are archival, not realtime. The bundled catalog can be refreshed 
 
 ## How it works
 
-The app is a static HTML/CSS/JS site. The local catalog lives in `sounds.json` and `sounds.js`; the audio files are served directly from NOAA's servers at `https://sanctsound.ioos.us/files/`. Nothing is hosted locally except the catalog metadata — the sounds stream on demand.
+The app is a static HTML/CSS/JS site. The local catalog lives in `sounds.json` and `sounds.js`; the audio files are served directly from NOAA's servers at `https://sanctsound.ioos.us/files/`. Nothing is hosted locally except the catalog metadata — the sounds stream on demand. The Map tab loads Leaflet from a CDN and displays OpenStreetMap tiles, so that view needs network access.
 
 ```
 https://sanctsound.ioos.us/files/SanctSound_HI01_01_humpbackwhale_20190216T045823Z.mp4
@@ -82,7 +82,7 @@ open index.html
 python3 -m http.server 8000  # then visit localhost:8000
 ```
 
-If you want to self-host on GitHub Pages, Netlify, Vercel, or any static host, deploy the full static asset set in this repo root. `index.html` depends on `app.js`, `sounds.js`, `sanctuaries.js`, `live-sources.js`, and optional generated files in `spectrograms/`. The audio streams from NOAA either way.
+If you want to self-host on GitHub Pages, Netlify, Vercel, or any static host, deploy the full static asset set in this repo root. `index.html` depends on `app.js`, `sounds.js`, `sanctuaries.js`, `live-sources.js`, `audio-artifacts.js`, `site.webmanifest`, `sw.js`, and optional generated files in `spectrograms/` and `waveforms/`. The audio streams from NOAA either way.
 
 ---
 
@@ -93,7 +93,9 @@ If you want to self-host on GitHub Pages, Netlify, Vercel, or any static host, d
 - **Previous / next** track navigation
 - **Shuffle** — randomises playback order across the full catalog
 - **Category, sanctuary, search, and sort controls** — filter to just whales, weather, a sanctuary, a site code, or a filename
-- **Shareable URLs** — track, category, sanctuary, search, sort, and tab state can be encoded in query parameters
+- **Leaflet sanctuary map** — marker counts update by category and recording year
+- **Shareable URLs** — track, category, sanctuary, search, sort, tab, and map year state can be encoded in query parameters
+- **Offline app shell** — a small service worker caches the static explorer shell for repeat visits over HTTP(S)
 - **Auto-advance** — plays the next track automatically when one ends
 - **Grouped track list** — organized by sanctuary, with sound category labels
 - **Recording metadata** — date, site code, and original filename
@@ -118,6 +120,7 @@ The app also accepts combined route state such as:
 ```text
 /?track=SanctSound_GR03_02_hurricane_20190904T221437Z&category=weather&q=dorian
 /?tab=map&sanctuary=Monterey+Bay
+/?tab=map&category=whale&year=2020
 /?tab=spectrogram&track=SanctSound_GR03_02_hurricane_20190904T221437Z
 ```
 
@@ -125,9 +128,9 @@ The app also accepts combined route state such as:
 
 ## Map view
 
-The Map tab shows sanctuary-level listening regions for the generated SanctSound catalog. Coordinates are approximate sanctuary reference points, not exact hydrophone deployment locations.
+The Map tab shows a Leaflet/OpenStreetMap view of sanctuary-level listening regions for the generated SanctSound catalog. Coordinates are approximate sanctuary reference points, not exact hydrophone deployment locations.
 
-Clicking a map pin filters the catalog to that sanctuary, marks the pin active, and updates the URL with `tab=map&sanctuary=...` so the filtered map view can be shared.
+Map marker counts respect the active category filter and the map year dropdown, which is derived from `recordedAt` years in the generated catalog. Clicking a map marker filters the catalog to that sanctuary, marks the marker active, and updates the URL with `tab=map&sanctuary=...` plus any active `category` or `year` filters so the filtered map view can be shared.
 
 ---
 
@@ -136,6 +139,14 @@ Clicking a map pin filters the catalog to that sanctuary, marks the pin active, 
 The Live tab lists live or near-live listening sources that are separate from NOAA SanctSound. These sources are not part of the historical SanctSound archive and should not be treated as the same dataset.
 
 Live streams may be delayed, temporarily unavailable, or offline at the source. Cards link to the source page or stream when available; the app does not embed a live player.
+
+Refresh the generated live-source status fields with:
+
+```bash
+node scripts/check-live-sources.mjs
+```
+
+The checker updates `live-sources.js` with `checkedAt`, `status`, `statusCode`, `statusLabel`, and `statusDetail`. A reachable source page without a direct stream URL is marked as `source-page`, not playable realtime audio.
 
 ---
 
@@ -151,6 +162,18 @@ node scripts/generate-spectrograms.mjs SanctSound_GR03_02_hurricane_20190904T221
 
 The generator writes `spectrograms/SanctSound_GR03_02_hurricane_20190904T221437Z.png`. It expects local command-line media tooling such as FFmpeg to be available.
 
+Generate waveform preview data and acoustic profile metadata with:
+
+```bash
+node scripts/analyze-audio.mjs
+```
+
+By default this writes deterministic preview artifacts for every checked-in track to `audio-artifacts.json` and `audio-artifacts.js`, which keeps the player waveform and detail panel useful even without local media tooling. To attempt FFmpeg/FFprobe media analysis against the NOAA-hosted files, run:
+
+```bash
+node scripts/analyze-audio.mjs --analyze-media
+```
+
 ---
 
 ## Extending it
@@ -163,16 +186,30 @@ The SanctSound archive page changes independently of this repo. Refresh the gene
 node scripts/catalog.mjs
 ```
 
-That command fetches [sanctsound.ioos.us/sounds.html](https://sanctsound.ioos.us/sounds.html), parses the media entries, preserves curated labels/descriptions already present in `sounds.json`, and writes both:
+That command fetches [sanctsound.ioos.us/sounds.html](https://sanctsound.ioos.us/sounds.html), parses the media entries, preserves curated labels/descriptions already present in `sounds.json`, backfills enhanced-variant descriptions from their original clips, validates the result, and writes:
 
 - `sounds.json` — readable catalog data
 - `sounds.js` — browser-friendly catalog wrapper so `index.html` still works when opened directly from disk
+- `catalog-report.json` — machine-readable validation report
+- `catalog-report.md` — concise human-readable validation report
+
+Validate the checked-in catalog without fetching NOAA again with:
+
+```bash
+node scripts/validate-catalog.mjs
+```
+
+The validator checks required metadata, duplicate filenames and explicit ids, malformed or mismatched URLs, malformed SanctSound timestamps, and unmapped sanctuary/category values. The command exits non-zero when errors are found.
 
 If you want to add a hand-curated description, edit the matching record in `sounds.json`, then run the refresh script. The script keeps curated fields by filename.
 
 ### Add NOAA buoy weather
 
 NOAA's buoy API (`https://www.ndbc.noaa.gov/data/realtime2/`) has near-real-time wave height and sea surface temperature for stations near each sanctuary. You could show current conditions alongside the historical recordings.
+
+### Offline shell
+
+When served over HTTP(S), `app.js` registers `sw.js`. The service worker caches the app shell (`index.html`, catalog wrappers, sanctuary metadata, live-source status, manifest, and core scripts) with relative URLs so the same files work under a GitHub Pages project path. External audio and icon CDN requests are not pre-cached.
 
 ---
 
@@ -182,7 +219,7 @@ NOAA's buoy API (`https://www.ndbc.noaa.gov/data/realtime2/`) has near-real-time
 
 ```bash
 git init
-git add index.html app.js app-core.mjs sounds.js sounds.json sanctuaries.js live-sources.js catalog-overrides.json scripts tests spectrograms README.md
+git add index.html app.js app-core.mjs sounds.js sounds.json sanctuaries.js live-sources.js audio-artifacts.js audio-artifacts.json site.webmanifest sw.js catalog-overrides.json scripts tests spectrograms waveforms README.md
 git commit -m "ocean jukebox"
 gh repo create ocean-jukebox --public --push --source=.
 # then enable Pages in repo Settings → Pages → deploy from main
@@ -203,6 +240,8 @@ Buy `oceanjukebox.com` (~$12/yr), point the DNS to your host, done.
 - Vanilla HTML/CSS/JS — no framework, no bundler
 - Node.js script for catalog refresh and tests
 - [Tabler Icons](https://tabler.io/icons) (webfont, loaded from jsDelivr CDN)
+- [Leaflet](https://leafletjs.com/) with OpenStreetMap tiles for the sanctuary map
+- Service worker and web app manifest for a cached static app shell
 - Audio from NOAA's SanctSound archive (public domain, streamed on demand)
 - CSS `prefers-color-scheme` for automatic dark mode
 

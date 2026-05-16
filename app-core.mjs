@@ -36,6 +36,10 @@ export function buildSpectrogramPath(track) {
   return `spectrograms/${trackId(track)}.png`;
 }
 
+export function buildWaveformPath(track) {
+  return `waveforms/${trackId(track)}.png`;
+}
+
 export function parseRoute(search = '') {
   const params = new URLSearchParams(search);
   return {
@@ -215,6 +219,69 @@ export function buildTrackDetail(track) {
   };
 }
 
+function seededPeakValue(seed, index) {
+  const value = Math.sin((seed + index * 17.17) * 12.9898) * 43758.5453;
+  return Math.abs(value - Math.floor(value));
+}
+
+export function normalizeWaveformPeaks(peaks = [], targetLength = 64) {
+  const values = peaks
+    .map(value => Number(value))
+    .filter(value => Number.isFinite(value))
+    .map(value => Math.max(0, Math.min(1, value)));
+
+  if (!values.length) return Array.from({ length: targetLength }, () => 0);
+  if (values.length === targetLength) return values;
+
+  return Array.from({ length: targetLength }, (_, index) => {
+    const start = Math.floor((index / targetLength) * values.length);
+    const end = Math.max(start + 1, Math.floor(((index + 1) / targetLength) * values.length));
+    const bucket = values.slice(start, end);
+    return Math.max(...bucket);
+  });
+}
+
+export function buildPreviewWaveform(track, targetLength = 64) {
+  const id = trackId(track);
+  const seed = [...id].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return Array.from({ length: targetLength }, (_, index) => {
+    const envelope = Math.sin((index / Math.max(1, targetLength - 1)) * Math.PI);
+    const texture = 0.35 + seededPeakValue(seed, index) * 0.65;
+    return Number(Math.max(0.08, envelope * texture).toFixed(3));
+  });
+}
+
+export function buildAcousticProfile(track, probe = {}) {
+  const durationSeconds = Number.isFinite(probe.durationSeconds) ? Number(probe.durationSeconds.toFixed(2)) : null;
+  const sampleRate = Number.isFinite(probe.sampleRate) ? probe.sampleRate : null;
+  const channels = Number.isFinite(probe.channels) ? probe.channels : null;
+  return {
+    recordedYear: recordingYear(track) || null,
+    category: track.category || 'unknown',
+    sanctuary: track.sanctuary || 'Unknown sanctuary',
+    site: track.site || 'Unknown site',
+    deployment: track.deployment || 'Unknown deployment',
+    variant: track.variant || 'original',
+    durationSeconds,
+    sampleRate,
+    channels,
+  };
+}
+
+export function buildAudioArtifact(track, { probe = {}, peaks = [], generatedAt = '' } = {}) {
+  const normalizedPeaks = peaks.length ? normalizeWaveformPeaks(peaks) : buildPreviewWaveform(track);
+  return {
+    id: trackId(track),
+    filename: track.filename,
+    spectrogramPath: buildSpectrogramPath(track),
+    waveformPath: buildWaveformPath(track),
+    waveformPeaks: normalizedPeaks,
+    acousticProfile: buildAcousticProfile(track, probe),
+    analysisStatus: peaks.length ? 'analyzed' : 'preview',
+    generatedAt,
+  };
+}
+
 export function buildLiveSourceCards(sources = []) {
   return sources.map(source => {
     const playable = source.status === 'online' && Boolean(source.streamUrl);
@@ -222,11 +289,59 @@ export function buildLiveSourceCards(sources = []) {
       id: source.id,
       name: source.name,
       status: source.status,
+      ...(source.statusLabel ? { statusLabel: source.statusLabel } : {}),
+      ...(source.statusCode !== undefined ? { statusCode: source.statusCode } : {}),
+      ...(source.statusDetail ? { statusDetail: source.statusDetail } : {}),
+      ...(source.checkedAt ? { checkedAt: source.checkedAt } : {}),
       playable,
       actionLabel: playable ? 'Open stream' : 'Check source',
       url: playable ? source.streamUrl : source.pageUrl,
     };
   });
+}
+
+export function normalizeLiveSourceStatus(result) {
+  const checkedAt = result.checkedAt;
+  const statusCode = Number.isInteger(result.statusCode) ? result.statusCode : 0;
+  if (result.ok && result.kind === 'stream') {
+    return {
+      status: 'online',
+      statusCode,
+      statusLabel: 'Stream reachable',
+      statusDetail: 'Direct stream URL responded to the status check.',
+      checkedAt,
+    };
+  }
+  if (result.ok) {
+    return {
+      status: 'source-page',
+      statusCode,
+      statusLabel: 'Source page reachable',
+      statusDetail: 'Source page responded, but no direct live stream URL is configured.',
+      checkedAt,
+    };
+  }
+  return {
+    status: 'offline',
+    statusCode,
+    statusLabel: 'Unavailable',
+    statusDetail: result.error ? `Status check failed: ${result.error}` : 'Source did not respond successfully to the status check.',
+    checkedAt,
+  };
+}
+
+export function buildStaticCacheManifest() {
+  return [
+    './',
+    './index.html',
+    './app.js',
+    './sounds.js',
+    './sanctuaries.js',
+    './live-sources.js',
+    './audio-artifacts.js',
+    './catalog-overrides.json',
+    './site.webmanifest',
+  ];
 }
 
 export function buildVariantGroups(tracks) {
@@ -285,6 +400,11 @@ function separateMapPins(pins, minGap = 12) {
   });
 }
 
+function sanctuaryCoordinates(sanctuary) {
+  if (Array.isArray(sanctuary.coordinates)) return sanctuary.coordinates;
+  return [sanctuary.lat || 0, sanctuary.lon ?? sanctuary.lng ?? 0];
+}
+
 export function buildMapPins(sanctuaries, tracks, activeSanctuary = 'all') {
   const counts = new Map();
   tracks.forEach(track => {
@@ -293,7 +413,7 @@ export function buildMapPins(sanctuaries, tracks, activeSanctuary = 'all') {
   });
 
   const bounds = sanctuaries.reduce((acc, sanctuary) => {
-    const [lat, lng] = sanctuary.coordinates || [0, 0];
+    const [lat, lng] = sanctuaryCoordinates(sanctuary);
     return {
       minLat: Math.min(acc.minLat, lat),
       maxLat: Math.max(acc.maxLat, lat),
@@ -308,7 +428,7 @@ export function buildMapPins(sanctuaries, tracks, activeSanctuary = 'all') {
   });
 
   const pins = sanctuaries.map(sanctuary => {
-    const [lat, lng] = sanctuary.coordinates || [0, 0];
+    const [lat, lng] = sanctuaryCoordinates(sanctuary);
     const position = projectMapPosition({ lat, lng }, bounds);
     return {
       ...sanctuary,
@@ -324,6 +444,38 @@ export function buildMapPins(sanctuaries, tracks, activeSanctuary = 'all') {
   return separateMapPins(pins);
 }
 
+export function recordingYear(track) {
+  if (!track.recordedAt) return '';
+  const year = new Date(track.recordedAt).getUTCFullYear();
+  return Number.isFinite(year) ? String(year) : '';
+}
+
+export function buildYearOptions(tracks) {
+  const years = [...new Set(tracks.map(recordingYear).filter(Boolean))]
+    .sort((a, b) => Number(b) - Number(a));
+  return ['all', ...years];
+}
+
+export function buildFilteredMapPins(
+  sanctuaries,
+  tracks,
+  { category = 'all', year = 'all', activeSanctuary = 'all' } = {},
+) {
+  const filtered = tracks.filter(track => (
+    (category === 'all' || track.category === category)
+    && (year === 'all' || recordingYear(track) === year)
+  ));
+  return buildMapPins(sanctuaries, filtered, activeSanctuary);
+}
+
 export function formatCount(count) {
   return `${count} ${count === 1 ? 'recording' : 'recordings'}`;
+}
+
+export function buildMapPinSummary(pin) {
+  if (!pin) return 'No sanctuary map metadata available.';
+  const displayName = pin.displayName || pin.name;
+  const region = pin.region ? ` in ${pin.region}` : '';
+  const note = pin.note ? ` ${pin.note}` : '';
+  return `${displayName}: ${formatCount(pin.count)}${region}.${note}`;
 }

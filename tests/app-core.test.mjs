@@ -5,14 +5,24 @@ import vm from 'node:vm';
 
 import {
   buildRouteState,
+  buildAcousticProfile,
+  buildAudioArtifact,
   buildLiveSourceCards,
+  buildFilteredMapPins,
   buildMapPins,
+  buildMapPinSummary,
+  buildPreviewWaveform,
   buildSpectrogramPath,
+  buildStaticCacheManifest,
+  buildWaveformPath,
+  buildYearOptions,
   buildVariantGroups,
   buildTrackDetail,
   createCatalogState,
   formatDate,
+  normalizeLiveSourceStatus,
   normalizeRoute,
+  normalizeWaveformPeaks,
   parseRoute,
   projectMapPosition,
   serializeRoute,
@@ -77,6 +87,72 @@ test('builds static spectrogram path from track id', () => {
     buildSpectrogramPath({ filename: 'SanctSound_GR03_02_hurricane_20190904T221437Z.mp4' }),
     'spectrograms/SanctSound_GR03_02_hurricane_20190904T221437Z.png',
   );
+});
+
+test('builds static waveform path from track id', () => {
+  assert.equal(
+    buildWaveformPath({ filename: 'SanctSound_GR03_02_hurricane_20190904T221437Z.mp4' }),
+    'waveforms/SanctSound_GR03_02_hurricane_20190904T221437Z.png',
+  );
+});
+
+test('normalizes waveform peaks into fixed display buckets', () => {
+  assert.deepEqual(normalizeWaveformPeaks([0, 0.25, 0.75, 2], 2), [0.25, 1]);
+  assert.deepEqual(normalizeWaveformPeaks([], 3), [0, 0, 0]);
+});
+
+test('builds deterministic preview waveform peaks', () => {
+  const first = buildPreviewWaveform({ filename: 'a.mp4' }, 8);
+  const second = buildPreviewWaveform({ filename: 'a.mp4' }, 8);
+
+  assert.equal(first.length, 8);
+  assert.deepEqual(first, second);
+  assert.ok(first.every(value => value >= 0 && value <= 1));
+});
+
+test('builds acoustic profile metadata from catalog and probe data', () => {
+  assert.deepEqual(
+    buildAcousticProfile(
+      {
+        filename: 'a.mp4',
+        category: 'whale',
+        sanctuary: 'Monterey Bay',
+        site: 'MB01',
+        deployment: '02',
+        variant: 'enhanced',
+        recordedAt: '2020-05-01T00:00:00Z',
+      },
+      { durationSeconds: 12.345, sampleRate: 48000, channels: 2 },
+    ),
+    {
+      recordedYear: '2020',
+      category: 'whale',
+      sanctuary: 'Monterey Bay',
+      site: 'MB01',
+      deployment: '02',
+      variant: 'enhanced',
+      durationSeconds: 12.35,
+      sampleRate: 48000,
+      channels: 2,
+    },
+  );
+});
+
+test('builds complete audio artifact records', () => {
+  const artifact = buildAudioArtifact(
+    {
+      filename: 'SanctSound_MB01_02_bluewhale_20200501T000000Z.mp4',
+      category: 'whale',
+      sanctuary: 'Monterey Bay',
+      recordedAt: '2020-05-01T00:00:00Z',
+    },
+    { generatedAt: '2026-05-15T00:00:00.000Z', peaks: [0, 0.5, 1] },
+  );
+
+  assert.equal(artifact.id, 'SanctSound_MB01_02_bluewhale_20200501T000000Z');
+  assert.equal(artifact.analysisStatus, 'analyzed');
+  assert.equal(artifact.waveformPeaks.length, 64);
+  assert.equal(artifact.acousticProfile.recordedYear, '2020');
 });
 
 test('builds track detail with source URL and fallback metadata', () => {
@@ -146,6 +222,46 @@ test('builds map pins with recording counts and active sanctuary state', () => {
   );
 });
 
+test('filters map counts by category and recording year', () => {
+  const pins = buildFilteredMapPins(
+    [{ name: 'Monterey Bay', lat: 36.8, lon: -121.9 }],
+    [
+      { sanctuary: 'Monterey Bay', category: 'whale', recordedAt: '2020-05-01T00:00:00Z' },
+      { sanctuary: 'Monterey Bay', category: 'weather', recordedAt: '2020-06-01T00:00:00Z' },
+      { sanctuary: 'Monterey Bay', category: 'whale', recordedAt: '2019-05-01T00:00:00Z' },
+    ],
+    { category: 'whale', year: '2020', activeSanctuary: 'Monterey Bay' },
+  );
+
+  assert.equal(pins[0].count, 1);
+  assert.equal(pins[0].active, true);
+});
+
+test('builds available recording years from catalog dates', () => {
+  assert.deepEqual(
+    buildYearOptions([
+      { recordedAt: '2020-05-01T00:00:00Z' },
+      { recordedAt: '2019-05-01T00:00:00Z' },
+      { recordedAt: null },
+      { recordedAt: 'invalid-date' },
+    ]),
+    ['all', '2020', '2019'],
+  );
+});
+
+test('builds useful map marker summary text for filtered pins', () => {
+  assert.equal(
+    buildMapPinSummary({
+      name: 'Monterey Bay',
+      displayName: 'Monterey Bay National Marine Sanctuary',
+      region: 'West Coast',
+      note: 'Deep submarine canyon habitat.',
+      count: 3,
+    }),
+    'Monterey Bay National Marine Sanctuary: 3 recordings in West Coast. Deep submarine canyon habitat.',
+  );
+});
+
 test('builds live source cards with playable stream or source check action', () => {
   assert.deepEqual(
     buildLiveSourceCards([
@@ -183,6 +299,68 @@ test('builds live source cards with playable stream or source check action', () 
       },
     ],
   );
+});
+
+test('normalizes live source status without overstating page-only sources', () => {
+  assert.deepEqual(
+    normalizeLiveSourceStatus({
+      ok: true,
+      kind: 'stream',
+      statusCode: 200,
+      checkedAt: '2026-05-15T00:00:00Z',
+    }),
+    {
+      status: 'online',
+      statusCode: 200,
+      statusLabel: 'Stream reachable',
+      statusDetail: 'Direct stream URL responded to the status check.',
+      checkedAt: '2026-05-15T00:00:00Z',
+    },
+  );
+
+  assert.deepEqual(
+    normalizeLiveSourceStatus({
+      ok: true,
+      kind: 'page',
+      statusCode: 200,
+      checkedAt: '2026-05-15T00:00:00Z',
+    }),
+    {
+      status: 'source-page',
+      statusCode: 200,
+      statusLabel: 'Source page reachable',
+      statusDetail: 'Source page responded, but no direct live stream URL is configured.',
+      checkedAt: '2026-05-15T00:00:00Z',
+    },
+  );
+
+  assert.deepEqual(
+    normalizeLiveSourceStatus({
+      ok: false,
+      kind: 'page',
+      statusCode: 503,
+      checkedAt: '2026-05-15T00:00:00Z',
+    }),
+    {
+      status: 'offline',
+      statusCode: 503,
+      statusLabel: 'Unavailable',
+      statusDetail: 'Source did not respond successfully to the status check.',
+      checkedAt: '2026-05-15T00:00:00Z',
+    },
+  );
+});
+
+test('builds service worker cache manifest with required static files', () => {
+  assert.deepEqual(buildStaticCacheManifest().slice(0, 7), [
+    './',
+    './index.html',
+    './app.js',
+    './sounds.js',
+    './sanctuaries.js',
+    './live-sources.js',
+    './audio-artifacts.js',
+  ]);
 });
 
 test('projects map coordinates into a padded visible range', () => {

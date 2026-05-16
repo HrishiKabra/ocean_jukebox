@@ -1,0 +1,9 @@
+{
+  "name": "Ocean Jukebox",
+  "short_name": "Ocean Jukebox",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#141712",
+  "theme_color": "#315f4b"
+}

@@ -4,6 +4,38 @@ import { fileURLToPath } from 'node:url';
 const SOURCE_URL = 'https://sanctsound.ioos.us/sounds.html';
 const NOAA_BASE = 'https://sanctsound.ioos.us/files/';
 
+const REQUIRED_TRACK_FIELDS = [
+  'filename',
+  'url',
+  'sanctuary',
+  'category',
+  'label',
+  'description',
+];
+
+const DEFAULT_SANCTUARIES = [
+  'Channel Islands',
+  'Florida Keys',
+  "Gray's Reef",
+  'Hawaiian Islands',
+  'Monterey Bay',
+  'Olympic Coast',
+  'Papahānaumokuākea',
+  'Stellwagen Bank',
+];
+
+const DEFAULT_CATEGORIES = [
+  'dolphin',
+  'fish',
+  'human',
+  'invertebrate',
+  'marine mammal',
+  'soundscape',
+  'vessel',
+  'weather',
+  'whale',
+];
+
 const SITE_SANCTUARIES = {
   CI: 'Channel Islands',
   FK: 'Florida Keys',
@@ -100,6 +132,24 @@ export function applyOverrides(tracks, overrides = {}) {
     ...track,
     ...(overrides[track.filename] || {}),
   }));
+}
+
+export function backfillVariantDescriptions(tracks) {
+  const descriptionsByGroup = new Map();
+  for (const track of tracks) {
+    if (!isBlank(track.description) && !isBlank(track.groupKey)) {
+      descriptionsByGroup.set(track.groupKey, track.description);
+    }
+  }
+  return tracks.map(track => {
+    if (!isBlank(track.description) || isBlank(track.groupKey) || !descriptionsByGroup.has(track.groupKey)) {
+      return track;
+    }
+    return {
+      ...track,
+      description: descriptionsByGroup.get(track.groupKey),
+    };
+  });
 }
 
 export function parseTrackMetadata(filename) {
@@ -250,6 +300,194 @@ export function parseCuratedCatalogJson(json) {
   }));
 }
 
+function isBlank(value) {
+  return value === null || value === undefined || String(value).trim() === '';
+}
+
+function trackIdentity(track, fallback = 'unknown') {
+  return track?.id || track?.filename || fallback;
+}
+
+function isValidUrl(value, filename) {
+  try {
+    const url = new URL(value);
+    if (!['http:', 'https:'].includes(url.protocol)) return false;
+    if (filename && url.href !== NOAA_BASE + filename && !url.pathname.endsWith(`/${filename}`)) {
+      return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function isValidTimestamp(value) {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(value)) {
+    return false;
+  }
+  const parsed = new Date(value);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().replace('.000Z', 'Z') === value;
+}
+
+function makeIssue({ code, severity = 'error', track, field, message }) {
+  return { code, severity, track, field, message };
+}
+
+export function validateCatalog(catalog, {
+  generatedAt = new Date().toISOString(),
+  sanctuaries = DEFAULT_SANCTUARIES,
+  categories = DEFAULT_CATEGORIES,
+} = {}) {
+  const tracks = Array.isArray(catalog?.tracks) ? catalog.tracks : [];
+  const sanctuarySet = new Set(sanctuaries);
+  const categorySet = new Set(categories);
+  const filenameCounts = new Map();
+  const idCounts = new Map();
+  const seenFilenames = new Set();
+  const reportedFilenames = new Set();
+  const seenIds = new Set();
+  const reportedIds = new Set();
+  const issues = [];
+
+  for (const track of tracks) {
+    if (!isBlank(track?.filename)) {
+      filenameCounts.set(track.filename, (filenameCounts.get(track.filename) || 0) + 1);
+    }
+    if (!isBlank(track?.id)) {
+      idCounts.set(track.id, (idCounts.get(track.id) || 0) + 1);
+    }
+  }
+
+  for (const [index, track] of tracks.entries()) {
+    const identity = trackIdentity(track, `track[${index}]`);
+
+    for (const field of REQUIRED_TRACK_FIELDS) {
+      if (isBlank(track?.[field])) {
+        issues.push(makeIssue({
+          code: `missing_${field.replace(/[A-Z]/g, char => `_${char.toLowerCase()}`)}`,
+          track: identity,
+          field,
+          message: `Track is missing required ${field} metadata.`,
+        }));
+      }
+    }
+
+    if (!isBlank(track?.url) && !isValidUrl(track.url, track.filename)) {
+      issues.push(makeIssue({
+        code: 'invalid_url',
+        track: identity,
+        field: 'url',
+        message: `Track URL is malformed or does not match its filename: ${track.url}`,
+      }));
+    }
+
+    if (isBlank(track?.recordedAt) && /^SanctSound_/i.test(track?.filename || '')) {
+      issues.push(makeIssue({
+        code: 'missing_recorded_at',
+        track: identity,
+        field: 'recordedAt',
+        message: 'Track is missing required recordedAt metadata.',
+      }));
+    }
+
+    if (!isBlank(track?.recordedAt) && !isValidTimestamp(track.recordedAt)) {
+      issues.push(makeIssue({
+        code: 'invalid_recorded_at',
+        track: identity,
+        field: 'recordedAt',
+        message: `Track recordedAt must be an ISO UTC timestamp without milliseconds: ${track.recordedAt}`,
+      }));
+    }
+
+    if (!isBlank(track?.sanctuary) && !sanctuarySet.has(track.sanctuary)) {
+      issues.push(makeIssue({
+        code: 'unknown_sanctuary',
+        track: identity,
+        field: 'sanctuary',
+        message: `Track sanctuary is not mapped in this repo: ${track.sanctuary}`,
+      }));
+    }
+
+    if (!isBlank(track?.category) && !categorySet.has(track.category)) {
+      issues.push(makeIssue({
+        code: 'unknown_category',
+        track: identity,
+        field: 'category',
+        message: `Track category is not mapped in this repo: ${track.category}`,
+      }));
+    }
+
+    if (!isBlank(track?.filename) && filenameCounts.get(track.filename) > 1 && seenFilenames.has(track.filename) && !reportedFilenames.has(track.filename)) {
+      issues.push(makeIssue({
+        code: 'duplicate_filename',
+        track: track.filename,
+        field: 'filename',
+        message: `Filename appears ${filenameCounts.get(track.filename)} times in the catalog.`,
+      }));
+      reportedFilenames.add(track.filename);
+    }
+    if (!isBlank(track?.filename)) seenFilenames.add(track.filename);
+
+    if (!isBlank(track?.id) && idCounts.get(track.id) > 1 && seenIds.has(track.id) && !reportedIds.has(track.id)) {
+      issues.push(makeIssue({
+        code: 'duplicate_id',
+        track: track.id,
+        field: 'id',
+        message: `Track id appears ${idCounts.get(track.id)} times in the catalog.`,
+      }));
+      reportedIds.add(track.id);
+    }
+    if (!isBlank(track?.id)) seenIds.add(track.id);
+  }
+
+  const errorCount = issues.filter(issue => issue.severity === 'error').length;
+  const warningCount = issues.filter(issue => issue.severity === 'warning').length;
+
+  return {
+    generatedAt,
+    ok: errorCount === 0,
+    summary: {
+      trackCount: tracks.length,
+      issueCount: issues.length,
+      errorCount,
+      warningCount,
+    },
+    issues,
+  };
+}
+
+export function renderCatalogReport(report) {
+  const lines = [
+    '# Ocean Jukebox Catalog Validation Report',
+    '',
+    `- Generated: ${report.generatedAt}`,
+    `- Status: ${report.ok ? 'PASS' : 'FAIL'}`,
+    `- Tracks: ${report.summary.trackCount}`,
+    `- Errors: ${report.summary.errorCount}`,
+    `- Warnings: ${report.summary.warningCount}`,
+    '',
+  ];
+
+  if (report.issues.length === 0) {
+    lines.push('No catalog issues found.', '');
+    return lines.join('\n');
+  }
+
+  lines.push('| Severity | Code | Track | Field | Message |');
+  lines.push('|---|---|---|---|---|');
+  for (const issue of report.issues) {
+    lines.push([
+      issue.severity,
+      issue.code,
+      issue.track,
+      issue.field,
+      issue.message,
+    ].map(value => String(value).replace(/\|/g, '\\|')).join(' | ').replace(/^/, '| ').replace(/$/, ' |'));
+  }
+  lines.push('');
+  return lines.join('\n');
+}
+
 async function main() {
   const catalogedAt = new Date().toISOString();
   const response = await fetch(SOURCE_URL);
@@ -270,9 +508,11 @@ async function main() {
   } catch {
     overrides = {};
   }
-  const tracks = applyOverrides(
-    mergeCatalogs(parseSanctSoundHtml(sourceHtml, catalogedAt), curated),
-    overrides,
+  const tracks = backfillVariantDescriptions(
+    applyOverrides(
+      mergeCatalogs(parseSanctSoundHtml(sourceHtml, catalogedAt), curated),
+      overrides,
+    ),
   );
   const catalog = {
     title: 'Ocean Jukebox Catalog',
@@ -288,7 +528,12 @@ async function main() {
     new URL('../sounds.js', import.meta.url),
     `window.OCEAN_JUKEBOX_CATALOG = ${json};\n`,
   );
+  const report = validateCatalog(catalog, { generatedAt: catalogedAt });
+  await writeFile(new URL('../catalog-report.json', import.meta.url), `${JSON.stringify(report, null, 2)}\n`);
+  await writeFile(new URL('../catalog-report.md', import.meta.url), renderCatalogReport(report));
   console.log(`Wrote sounds.json and sounds.js with ${tracks.length} tracks.`);
+  console.log(`Catalog validation ${report.ok ? 'passed' : 'failed'}: ${report.summary.errorCount} errors, ${report.summary.warningCount} warnings.`);
+  if (!report.ok) process.exitCode = 1;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

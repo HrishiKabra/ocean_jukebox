@@ -42,6 +42,7 @@
     catalog: window.OCEAN_JUKEBOX_CATALOG || FALLBACK_CATALOG,
     sanctuaries: window.OCEAN_JUKEBOX_SANCTUARIES || [],
     liveSources: window.OCEAN_JUKEBOX_LIVE_SOURCES || [],
+    audioArtifacts: window.OCEAN_JUKEBOX_AUDIO_ARTIFACTS || { artifacts: {} },
     tracks: [],
     category: 'all',
     sanctuary: 'all',
@@ -56,6 +57,8 @@
     playing: false,
     selectedYear: 'all',
     isApplyingRoute: false,
+    leaflet: null,
+    leafletLayer: null,
   };
 
   function byId(id) {
@@ -99,6 +102,11 @@
 
   function buildSpectrogramPath(track) {
     return `spectrograms/${trackId(track)}.png`;
+  }
+
+  function currentAudioArtifact(track) {
+    const artifacts = state.audioArtifacts.artifacts || {};
+    return artifacts[trackId(track)] || null;
   }
 
   function parseRoute(search = '') {
@@ -168,6 +176,9 @@
     if (state.isApplyingRoute) return;
     if (!window.history || !window.history.replaceState) return;
     const currentTrack = state.tracks[state.currentIndex];
+    const routeTrack = state.activeTab === 'map' && !trackMatchesMapFilters(currentTrack)
+      ? null
+      : currentTrack;
     const query = serializeRoute(buildRouteState({
       activeTab: state.activeTab,
       category: state.category,
@@ -175,7 +186,7 @@
       query: state.query,
       sort: state.sort,
       selectedYear: state.selectedYear,
-      currentTrack,
+      currentTrack: routeTrack,
     }));
     const nextUrl = `${window.location.pathname}${query}${window.location.hash}`;
     if (nextUrl === `${window.location.pathname}${window.location.search}${window.location.hash}`) return;
@@ -187,8 +198,20 @@
     }
   }
 
+  function recordingYear(track) {
+    if (!track.recordedAt) return '';
+    const year = new Date(track.recordedAt).getUTCFullYear();
+    return Number.isFinite(year) ? String(year) : '';
+  }
+
+  function buildYearOptions(tracks) {
+    const years = [...new Set(tracks.map(recordingYear).filter(Boolean))]
+      .sort((a, b) => Number(b) - Number(a));
+    return ['all', ...years];
+  }
+
   function yearList() {
-    return ['all'];
+    return buildYearOptions(state.tracks);
   }
 
   function applyRoute(route) {
@@ -217,6 +240,7 @@
     syncControlsFromState();
     buildFilters();
     recomputeVisible();
+    if (state.activeTab === 'map') syncCurrentTrackToMapFilters();
     renderTrackList();
     setTrack(state.currentIndex, { sync: false });
     setTab(state.activeTab, { sync: false });
@@ -226,6 +250,8 @@
     els.query.value = state.query;
     els.sanctuarySelect.value = state.sanctuary;
     els.sortSelect.value = state.sort;
+    if (els.mapCategoryFilter) els.mapCategoryFilter.value = state.category;
+    if (els.mapYearFilter) els.mapYearFilter.value = state.selectedYear;
   }
 
   function setTab(tabName, options = {}) {
@@ -286,6 +312,23 @@
     }
   }
 
+  function trackMatchesMapFilters(track) {
+    if (!track) return false;
+    return (state.category === 'all' || track.category === state.category)
+      && (state.sanctuary === 'all' || track.sanctuary === state.sanctuary)
+      && (state.selectedYear === 'all' || recordingYear(track) === state.selectedYear);
+  }
+
+  function syncCurrentTrackToMapFilters() {
+    if (trackMatchesMapFilters(state.tracks[state.currentIndex])) return false;
+    const nextIndex = state.tracks.findIndex(track => trackMatchesMapFilters(track));
+    if (nextIndex >= 0) {
+      state.currentIndex = nextIndex;
+      return true;
+    }
+    return false;
+  }
+
   function categoryList() {
     const fromCatalog = [...new Set(state.tracks.map(track => track.category))].sort();
     return ['all', ...fromCatalog.filter(category => category !== 'all')];
@@ -306,10 +349,13 @@
 
   window.OCEAN_JUKEBOX_ROUTE_HELPERS = Object.freeze({
     buildLiveSourceCards,
+    buildFilteredMapPins,
     buildMapPins,
+    buildMapPinSummary,
     buildSpectrogramPath,
     buildTrackDetail,
     buildRouteState,
+    buildYearOptions,
     normalizeRoute,
     parseRoute,
     projectMapPosition,
@@ -329,6 +375,31 @@
     els.waveform.classList.toggle('active', value);
     els.playIcon.className = value ? 'ti ti-player-pause' : 'ti ti-player-play';
     els.playButton.setAttribute('aria-label', value ? 'Pause' : 'Play');
+  }
+
+  function renderWaveform(track) {
+    if (!els.waveform) return;
+    const artifact = track ? currentAudioArtifact(track) : null;
+    const peaks = artifact?.waveformPeaks || [];
+    const fallback = Array.from({ length: 32 }, (_, index) => 0.12 + Math.sin((index / 31) * Math.PI) * 0.42);
+    const values = peaks.length ? peaks : fallback;
+
+    els.waveform.innerHTML = '';
+    values.forEach(value => {
+      const bar = document.createElement('span');
+      bar.className = 'bar';
+      bar.style.height = `${Math.max(4, Math.round(Number(value) * 34))}px`;
+      els.waveform.appendChild(bar);
+    });
+    els.waveform.setAttribute(
+      'aria-label',
+      artifact ? `Waveform preview generated ${formatDate(state.audioArtifacts.generatedAt)}` : 'Generated waveform preview',
+    );
+  }
+
+  function formatDuration(seconds) {
+    if (!Number.isFinite(seconds)) return 'Preview only';
+    return formatTime(seconds);
   }
 
   function mediaUrl(track) {
@@ -418,6 +489,11 @@
     });
   }
 
+  function sanctuaryCoordinates(sanctuary) {
+    if (Array.isArray(sanctuary.coordinates)) return sanctuary.coordinates;
+    return [sanctuary.lat || 0, sanctuary.lon ?? sanctuary.lng ?? 0];
+  }
+
   function buildMapPins(sanctuaries, tracks, activeSanctuary = 'all') {
     const counts = new Map();
     tracks.forEach(track => {
@@ -426,7 +502,7 @@
     });
 
     const bounds = sanctuaries.reduce((acc, sanctuary) => {
-      const [lat, lng] = sanctuary.coordinates || [0, 0];
+      const [lat, lng] = sanctuaryCoordinates(sanctuary);
       return {
         minLat: Math.min(acc.minLat, lat),
         maxLat: Math.max(acc.maxLat, lat),
@@ -441,7 +517,7 @@
     });
 
     const pins = sanctuaries.map(sanctuary => {
-      const [lat, lng] = sanctuary.coordinates || [0, 0];
+      const [lat, lng] = sanctuaryCoordinates(sanctuary);
       const position = projectMapPosition({ lat, lng }, bounds);
       return {
         ...sanctuary,
@@ -457,8 +533,28 @@
     return separateMapPins(pins);
   }
 
+  function buildFilteredMapPins(
+    sanctuaries,
+    tracks,
+    { category = 'all', year = 'all', activeSanctuary = 'all' } = {},
+  ) {
+    const filtered = tracks.filter(track => (
+      (category === 'all' || track.category === category)
+      && (year === 'all' || recordingYear(track) === year)
+    ));
+    return buildMapPins(sanctuaries, filtered, activeSanctuary);
+  }
+
+  function buildMapPinSummary(pin) {
+    if (!pin) return 'No sanctuary map metadata available.';
+    const displayName = pin.displayName || pin.name;
+    const region = pin.region ? ` in ${pin.region}` : '';
+    const note = pin.note ? ` ${pin.note}` : '';
+    return `${displayName}: ${formatCount(pin.count)}${region}.${note}`;
+  }
+
   function appendLiveMeta(parent, label, value) {
-    if (!value) return;
+    if (value === undefined || value === null || value === '') return;
     const item = document.createElement('span');
     item.textContent = `${label}: ${value}`;
     parent.appendChild(item);
@@ -489,7 +585,8 @@
 
       const status = document.createElement('span');
       status.className = `live-status ${source.status}`;
-      status.textContent = source.status;
+      status.textContent = source.statusLabel || source.status;
+      if (source.statusDetail) status.title = source.statusDetail;
       header.appendChild(status);
       card.appendChild(header);
 
@@ -502,6 +599,9 @@
       meta.className = 'live-meta';
       appendLiveMeta(meta, 'Latency', source.latency);
       appendLiveMeta(meta, 'Location', source.location);
+      if (source.checkedAt) appendLiveMeta(meta, 'Checked', formatDate(source.checkedAt));
+      if (source.statusCode !== undefined) appendLiveMeta(meta, 'HTTP', source.statusCode);
+      appendLiveMeta(meta, 'Status', source.statusDetail);
       card.appendChild(meta);
 
       const link = document.createElement('a');
@@ -516,54 +616,85 @@
     });
   }
 
+  function initLeafletMap() {
+    if (state.leaflet || !window.L || !els.leafletMap) return;
+    state.leaflet = L.map(els.leafletMap, { scrollWheelZoom: false }).setView([32, -118], 3);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 9,
+      attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(state.leaflet);
+    state.leafletLayer = L.layerGroup().addTo(state.leaflet);
+  }
+
+  function markerHtml(pin) {
+    return `<div class="ocean-marker-dot${pin.active ? ' active' : ''}">${pin.count}</div>`;
+  }
+
+  function popupHtml(pin) {
+    const displayName = pin.displayName || pin.name;
+    const note = pin.note ? `<br>${pin.note}` : '';
+    return `<strong>${displayName}</strong><br>${formatCount(pin.count)} for the current map filters.${note}`;
+  }
+
   function renderMap() {
-    if (!els.mapCanvas || !els.mapSummary) return;
+    if (!els.leafletMap || !els.mapSummary) return;
+    initLeafletMap();
+    if (!state.leaflet || !state.leafletLayer) {
+      els.mapSummary.textContent = 'Map tiles are unavailable in this browser session.';
+      return;
+    }
+
     const currentTrack = state.tracks[state.currentIndex];
     const activeSanctuary = state.sanctuary !== 'all'
       ? state.sanctuary
       : currentTrack && currentTrack.sanctuary
         ? currentTrack.sanctuary
         : 'all';
-    const pins = buildMapPins(state.sanctuaries, state.tracks, activeSanctuary);
+    const pins = buildFilteredMapPins(state.sanctuaries, state.tracks, {
+      category: state.category,
+      year: state.selectedYear,
+      activeSanctuary,
+    });
 
-    els.mapCanvas.innerHTML = '';
+    state.leafletLayer.clearLayers();
     if (!pins.length) {
       els.mapSummary.textContent = 'No sanctuary map metadata available.';
       return;
     }
 
     pins.forEach(pin => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      const labelPlacement = pin.y > 62 ? ' label-north' : '';
-      button.className = `map-pin${labelPlacement}${pin.active ? ' active' : ''}${pin.count ? '' : ' empty'}`;
-      button.style.left = `${pin.x}%`;
-      button.style.top = `${pin.y}%`;
-      button.dataset.sanctuary = pin.name;
-      button.setAttribute('aria-pressed', pin.active ? 'true' : 'false');
-      button.setAttribute('aria-label', `${pin.name}, ${formatCount(pin.count)}`);
-      button.innerHTML = `
-        <span class="pin-dot">${pin.count}</span>
-        <span class="pin-label">
-          <strong>${pin.name}</strong>
-          <span>${pin.region} · ${formatCount(pin.count)}</span>
-        </span>
-      `;
-      button.addEventListener('click', () => {
-        state.sanctuary = pin.name;
-        syncControlsFromState();
-        recomputeVisible();
-        renderTrackList();
-        renderMap();
-        syncUrl('pushState');
+      const icon = L.divIcon({
+        className: 'ocean-marker',
+        html: markerHtml(pin),
+        iconSize: [34, 34],
+        iconAnchor: [17, 17],
       });
-      els.mapCanvas.appendChild(button);
+      const marker = L.marker([pin.lat, pin.lng], { icon })
+        .bindPopup(popupHtml(pin))
+        .on('click', () => {
+          state.sanctuary = pin.name;
+          state.leaflet.setView([pin.lat, pin.lng], pin.zoom || 7);
+          syncControlsFromState();
+          recomputeVisible();
+          const changedTrack = syncCurrentTrackToMapFilters();
+          renderTrackList();
+          if (changedTrack) setTrack(state.currentIndex, { sync: false });
+          renderMap();
+          syncUrl('pushState');
+        });
+      state.leafletLayer.addLayer(marker);
     });
 
-    const activePin = pins.find(pin => pin.active);
-    els.mapSummary.textContent = activePin
-      ? `${activePin.name}: ${activePin.note} ${formatCount(activePin.count)} in the archive.`
-      : `${pins.length} sanctuary listening regions mapped from the current archive.`;
+    const activePin = pins.find(pin => pin.active)
+      || pins.find(pin => pin.count > 0)
+      || pins[0];
+    els.mapSummary.textContent = buildMapPinSummary(activePin);
+    if (activePin && activePin.active) {
+      state.leaflet.setView([activePin.lat, activePin.lng], activePin.zoom || 7);
+    } else if (pins.length > 1) {
+      state.leaflet.fitBounds(pins.map(pin => [pin.lat, pin.lng]), { padding: [28, 28], maxZoom: 4 });
+    }
+    window.setTimeout(() => state.leaflet.invalidateSize(), 0);
   }
 
   function renderVariantAlternates(track) {
@@ -606,6 +737,12 @@
     els.detailRecorded.textContent = detail.recorded;
     els.detailSite.textContent = detail.site;
     els.detailDeployment.textContent = detail.deployment;
+    const artifact = currentAudioArtifact(track);
+    const profile = artifact?.acousticProfile;
+    els.detailDuration.textContent = formatDuration(profile?.durationSeconds);
+    els.detailProfile.textContent = profile
+      ? `${artifact.analysisStatus === 'analyzed' ? 'Analyzed' : 'Preview'} · ${profile.recordedYear || 'unknown year'} · ${profile.variant || 'original'}`
+      : 'Catalog metadata';
     els.detailFilename.textContent = detail.filename;
     els.detailDescription.textContent = detail.description;
     els.detailSourceLink.href = sourceUrl;
@@ -684,7 +821,9 @@
     els.site.textContent = track.site || 'Unknown site';
     els.filename.textContent = track.filename;
     els.audio.src = mediaUrl(track);
+    els.status.textContent = 'Loading audio metadata...';
     els.audio.load();
+    renderWaveform(track);
     highlightCurrent();
     if (!els.detailPanel.hidden) renderTrackDetail();
     if (options.sync !== false) syncUrl(options.history);
@@ -758,6 +897,28 @@
       option.textContent = sanctuary === 'all' ? 'All sanctuaries' : sanctuary;
       els.sanctuarySelect.appendChild(option);
     });
+
+    if (els.mapCategoryFilter) {
+      els.mapCategoryFilter.innerHTML = '';
+      categoryList().forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = CATEGORY_LABELS[category] || category;
+        els.mapCategoryFilter.appendChild(option);
+      });
+    }
+
+    if (els.mapYearFilter) {
+      els.mapYearFilter.innerHTML = '';
+      yearList().forEach(year => {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year === 'all' ? 'All years' : year;
+        els.mapYearFilter.appendChild(option);
+      });
+    }
+
+    syncControlsFromState();
   }
 
   function renderTrackList() {
@@ -851,6 +1012,30 @@
       if (state.activeTab === 'map') renderMap();
       syncUrl('pushState');
     });
+    if (els.mapCategoryFilter) {
+      els.mapCategoryFilter.addEventListener('change', () => {
+        state.category = els.mapCategoryFilter.value;
+        buildFilters();
+        recomputeVisible();
+        const changedTrack = syncCurrentTrackToMapFilters();
+        renderTrackList();
+        if (changedTrack) setTrack(state.currentIndex, { sync: false });
+        renderMap();
+        updateMeta();
+        syncUrl('pushState');
+      });
+    }
+    if (els.mapYearFilter) {
+      els.mapYearFilter.addEventListener('change', () => {
+        state.selectedYear = els.mapYearFilter.value;
+        syncControlsFromState();
+        const changedTrack = syncCurrentTrackToMapFilters();
+        if (changedTrack) setTrack(state.currentIndex, { sync: false });
+        highlightCurrent();
+        renderMap();
+        syncUrl('pushState');
+      });
+    }
     els.progress.addEventListener('input', () => {
       els.audio.currentTime = Number(els.progress.value);
     });
@@ -859,6 +1044,9 @@
     els.audio.addEventListener('ended', () => navigate(1));
     els.audio.addEventListener('timeupdate', updateProgress);
     els.audio.addEventListener('loadedmetadata', updateProgress);
+    els.audio.addEventListener('canplay', () => {
+      els.status.textContent = '';
+    });
     if (els.tabs) {
       els.tabs.forEach(tab => {
         tab.addEventListener('click', () => setTab(tab.dataset.tab, { history: 'pushState' }));
@@ -898,6 +1086,8 @@
       detailRecorded: byId('detail-recorded'),
       detailSite: byId('detail-site'),
       detailDeployment: byId('detail-deployment'),
+      detailDuration: byId('detail-duration'),
+      detailProfile: byId('detail-profile'),
       detailFilename: byId('detail-filename'),
       detailDescription: byId('detail-description'),
       detailSourceLink: byId('detail-source-link'),
@@ -924,7 +1114,9 @@
       status: byId('status'),
       archivePanel: byId('archive-panel'),
       mapPanel: byId('map-panel'),
-      mapCanvas: byId('map-canvas'),
+      leafletMap: byId('leaflet-map'),
+      mapCategoryFilter: byId('map-category-filter'),
+      mapYearFilter: byId('map-year-filter'),
       mapSummary: byId('map-summary'),
       livePanel: byId('live-panel'),
       liveGrid: byId('live-grid'),
@@ -935,8 +1127,16 @@
     });
   }
 
+  function registerServiceWorker() {
+    if (!('serviceWorker' in navigator)) return;
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+
   function init() {
     cacheElements();
+    registerServiceWorker();
     state.tracks = state.catalog.tracks || [];
     state.variantGroups = buildVariantGroupsForBrowser(state.tracks);
     state.order = state.tracks.map((_, index) => index);

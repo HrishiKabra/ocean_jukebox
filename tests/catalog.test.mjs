@@ -3,11 +3,14 @@ import assert from 'node:assert/strict';
 
 import {
   applyOverrides,
+  backfillVariantDescriptions,
   buildGroupKey,
   mergeCatalogs,
   parseCuratedCatalogJson,
   parseSanctSoundHtml,
   parseTrackMetadata,
+  renderCatalogReport,
+  validateCatalog,
 } from '../scripts/catalog.mjs';
 
 test('parses SanctSound media entries with headings, section category, sanctuary, and timestamp', () => {
@@ -219,4 +222,149 @@ test('reads curated metadata from an existing generated catalog', () => {
     label: 'Haddock knocks',
     description: 'Curated haddock note.',
   }]);
+});
+
+test('validates catalog metadata, identity, URL, timestamp, sanctuary, and category issues', () => {
+  const report = validateCatalog({
+    tracks: [
+      {
+        filename: 'SanctSound_MB01_01_bluewhale_20181123T203257Z.mp4',
+        url: 'https://sanctsound.ioos.us/files/SanctSound_MB01_01_bluewhale_20181123T203257Z.mp4',
+        sanctuary: 'Monterey Bay',
+        category: 'whale',
+        label: 'Blue whale',
+        description: 'Low frequency blue whale calls.',
+        recordedAt: '2018-11-23T20:32:57Z',
+      },
+      {
+        filename: 'SanctSound_MB01_01_bluewhale_20181123T203257Z.mp4',
+        url: 'notaurl',
+        sanctuary: 'Missing Sanctuary',
+        category: 'mystery',
+        label: '',
+        description: '',
+        recordedAt: 'not-a-date',
+      },
+      {
+        filename: 'SanctSound_FK01_01_missingtimestamp_20190101T000000Z.mp4',
+        url: 'https://sanctsound.ioos.us/files/SanctSound_FK01_01_missingtimestamp_20190101T000000Z.mp4',
+        sanctuary: 'Florida Keys',
+        category: 'fish',
+        label: 'No timestamp',
+        description: 'Missing recordedAt.',
+      },
+      {
+        id: 'custom-id',
+        filename: 'custom-a.mp4',
+        url: 'https://sanctsound.ioos.us/files/custom-a.mp4',
+        sanctuary: 'Florida Keys',
+        category: 'fish',
+        label: 'Custom A',
+        description: 'Valid custom track.',
+        recordedAt: '2019-01-01T00:00:00Z',
+      },
+      {
+        id: 'custom-id',
+        filename: 'custom-b.mp4',
+        url: 'https://sanctsound.ioos.us/files/custom-b.mp4',
+        sanctuary: 'Florida Keys',
+        category: 'fish',
+        label: 'Custom B',
+        description: 'Duplicate id.',
+        recordedAt: '2019-01-02T00:00:00Z',
+      },
+    ],
+  }, {
+    generatedAt: '2026-05-15T00:00:00.000Z',
+    sanctuaries: ['Monterey Bay', 'Florida Keys'],
+    categories: ['whale', 'fish'],
+  });
+
+  assert.equal(report.ok, false);
+  assert.equal(report.summary.trackCount, 5);
+  assert.equal(report.summary.errorCount, 9);
+  assert.deepEqual(
+    report.issues.map(issue => [issue.code, issue.severity, issue.track]),
+    [
+      ['missing_label', 'error', 'SanctSound_MB01_01_bluewhale_20181123T203257Z.mp4'],
+      ['missing_description', 'error', 'SanctSound_MB01_01_bluewhale_20181123T203257Z.mp4'],
+      ['invalid_url', 'error', 'SanctSound_MB01_01_bluewhale_20181123T203257Z.mp4'],
+      ['invalid_recorded_at', 'error', 'SanctSound_MB01_01_bluewhale_20181123T203257Z.mp4'],
+      ['unknown_sanctuary', 'error', 'SanctSound_MB01_01_bluewhale_20181123T203257Z.mp4'],
+      ['unknown_category', 'error', 'SanctSound_MB01_01_bluewhale_20181123T203257Z.mp4'],
+      ['duplicate_filename', 'error', 'SanctSound_MB01_01_bluewhale_20181123T203257Z.mp4'],
+      ['missing_recorded_at', 'error', 'SanctSound_FK01_01_missingtimestamp_20190101T000000Z.mp4'],
+      ['duplicate_id', 'error', 'custom-id'],
+    ],
+  );
+});
+
+test('allows nonstandard legacy filenames without recordedAt while validating supplied timestamps', () => {
+  const report = validateCatalog({
+    tracks: [{
+      filename: 'haddock.mp4',
+      url: 'https://sanctsound.ioos.us/files/haddock.mp4',
+      sanctuary: 'Stellwagen Bank',
+      category: 'fish',
+      label: 'Haddock knocks',
+      description: 'Legacy NOAA example clip without an encoded timestamp.',
+      recordedAt: null,
+    }],
+  }, {
+    generatedAt: '2026-05-15T00:00:00.000Z',
+    sanctuaries: ['Stellwagen Bank'],
+    categories: ['fish'],
+  });
+
+  assert.equal(report.ok, true);
+});
+
+test('backfills enhanced variant descriptions from the original grouped clip', () => {
+  const tracks = backfillVariantDescriptions([
+    {
+      filename: 'original.mp4',
+      groupKey: 'MB01-01-bluewhale-20181123T203257Z',
+      variant: 'original',
+      description: 'Low frequency blue whale calls.',
+    },
+    {
+      filename: 'enhanced.wav',
+      groupKey: 'MB01-01-bluewhale-20181123T203257Z',
+      variant: 'enhanced',
+      description: '',
+    },
+  ]);
+
+  assert.equal(tracks[1].description, 'Low frequency blue whale calls.');
+});
+
+test('renders deterministic markdown report summary', () => {
+  const report = validateCatalog({
+    tracks: [{
+      filename: 'SanctSound_MB01_01_bluewhale_20181123T203257Z.mp4',
+      url: 'https://sanctsound.ioos.us/files/SanctSound_MB01_01_bluewhale_20181123T203257Z.mp4',
+      sanctuary: 'Monterey Bay',
+      category: 'whale',
+      label: 'Blue whale',
+      description: 'Low frequency blue whale calls.',
+      recordedAt: '2018-11-23T20:32:57Z',
+    }],
+  }, {
+    generatedAt: '2026-05-15T00:00:00.000Z',
+    sanctuaries: ['Monterey Bay'],
+    categories: ['whale'],
+  });
+
+  assert.equal(renderCatalogReport(report), [
+    '# Ocean Jukebox Catalog Validation Report',
+    '',
+    '- Generated: 2026-05-15T00:00:00.000Z',
+    '- Status: PASS',
+    '- Tracks: 1',
+    '- Errors: 0',
+    '- Warnings: 0',
+    '',
+    'No catalog issues found.',
+    '',
+  ].join('\n'));
 });
