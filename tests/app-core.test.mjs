@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 
 import {
+  buildRouteState,
   buildLiveSourceCards,
   buildMapPins,
   buildSpectrogramPath,
@@ -230,6 +231,7 @@ test('parses shareable route state from query params', () => {
       query: 'dorian',
       sort: 'newest',
       tab: 'archive',
+      year: 'all',
     },
   );
 });
@@ -243,6 +245,7 @@ test('serializes shareable route state while omitting defaults', () => {
       query: '',
       sort: 'curated',
       tab: 'archive',
+      year: 'all',
     }),
     '?track=SanctSound_GR03_02_hurricane_20190904T221437Z&category=weather',
   );
@@ -265,11 +268,12 @@ test('serializes non-empty route query with q parameter', () => {
 test('normalizes invalid route values to defaults', () => {
   assert.deepEqual(
     normalizeRoute(
-      parseRoute('?category=bogus&sanctuary=bogus&sort=bogus&tab=bogus&q=dorian'),
+      parseRoute('?category=bogus&sanctuary=bogus&sort=bogus&tab=bogus&q=dorian&year=1776'),
       {
         categories: ['all', 'weather'],
         sanctuaries: ['all', "Gray's Reef"],
         tabs: ['archive', 'map'],
+        years: ['all', '2019'],
       },
     ),
     {
@@ -279,6 +283,7 @@ test('normalizes invalid route values to defaults', () => {
       query: 'dorian',
       sort: 'curated',
       tab: 'archive',
+      year: 'all',
     },
   );
 });
@@ -286,11 +291,12 @@ test('normalizes invalid route values to defaults', () => {
 test('normalizes route while preserving valid catalog values', () => {
   assert.deepEqual(
     normalizeRoute(
-      parseRoute('?track=SanctSound_GR03_02_hurricane_20190904T221437Z&category=weather&sanctuary=Gray%27s%20Reef&q=dorian&sort=newest&tab=map'),
+      parseRoute('?track=SanctSound_GR03_02_hurricane_20190904T221437Z&category=weather&sanctuary=Gray%27s%20Reef&q=dorian&sort=newest&tab=map&year=2019'),
       {
         categories: ['all', 'weather'],
         sanctuaries: ['all', "Gray's Reef"],
         tabs: ['archive', 'map'],
+        years: ['all', '2019'],
       },
     ),
     {
@@ -300,8 +306,46 @@ test('normalizes route while preserving valid catalog values', () => {
       query: 'dorian',
       sort: 'newest',
       tab: 'map',
+      year: '2019',
     },
   );
+});
+
+test('builds a full route state from app state and active track', () => {
+  const route = buildRouteState({
+    activeTab: 'map',
+    category: 'whale',
+    sanctuary: 'Monterey Bay',
+    query: 'blue',
+    sort: 'newest',
+    selectedYear: '2020',
+    currentTrack: { filename: 'SanctSound_MB01_01_bluewhale_20181123T203257Z.mp4' },
+  });
+
+  assert.deepEqual(route, {
+    tab: 'map',
+    category: 'whale',
+    sanctuary: 'Monterey Bay',
+    query: 'blue',
+    sort: 'newest',
+    year: '2020',
+    track: 'SanctSound_MB01_01_bluewhale_20181123T203257Z',
+  });
+});
+
+test('serializes and parses year filter in route state', () => {
+  const query = serializeRoute({
+    tab: 'map',
+    category: 'weather',
+    sanctuary: 'all',
+    query: '',
+    sort: 'curated',
+    year: '2019',
+    track: '',
+  });
+
+  assert.equal(query, '?category=weather&tab=map&year=2019');
+  assert.equal(parseRoute(query).year, '2019');
 });
 
 test('browser route helper normalizes invalid values before app state uses them', () => {
@@ -321,11 +365,12 @@ test('browser route helper normalizes invalid values before app state uses them'
   vm.runInNewContext(source, sandbox);
 
   const normalized = sandbox.window.OCEAN_JUKEBOX_ROUTE_HELPERS.normalizeRoute(
-    sandbox.window.OCEAN_JUKEBOX_ROUTE_HELPERS.parseRoute('?category=bogus&sanctuary=bogus&tab=bogus'),
+    sandbox.window.OCEAN_JUKEBOX_ROUTE_HELPERS.parseRoute('?category=bogus&sanctuary=bogus&tab=bogus&year=1776'),
     {
       categories: ['all', 'weather'],
       sanctuaries: ['all', "Gray's Reef"],
       tabs: ['archive', 'map'],
+      years: ['all', '2019'],
     },
   );
 
@@ -338,15 +383,17 @@ test('browser route helper normalizes invalid values before app state uses them'
       query: '',
       sort: 'curated',
       tab: 'archive',
+      year: 'all',
     },
   );
 
   const validRoute = sandbox.window.OCEAN_JUKEBOX_ROUTE_HELPERS.normalizeRoute(
-    sandbox.window.OCEAN_JUKEBOX_ROUTE_HELPERS.parseRoute('?category=weather&sanctuary=Gray%27s%20Reef&q=dorian&sort=newest&tab=map'),
+    sandbox.window.OCEAN_JUKEBOX_ROUTE_HELPERS.parseRoute('?category=weather&sanctuary=Gray%27s%20Reef&q=dorian&sort=newest&tab=map&year=2019'),
     {
       categories: ['all', 'weather'],
       sanctuaries: ['all', "Gray's Reef"],
       tabs: ['archive', 'map'],
+      years: ['all', '2019'],
     },
   );
 
@@ -359,6 +406,7 @@ test('browser route helper normalizes invalid values before app state uses them'
       query: 'dorian',
       sort: 'newest',
       tab: 'map',
+      year: '2019',
     },
   );
 });

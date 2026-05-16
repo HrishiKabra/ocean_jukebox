@@ -25,6 +25,7 @@ export const DEFAULT_ROUTE = {
   query: '',
   sort: 'curated',
   tab: 'archive',
+  year: 'all',
 };
 
 export function trackId(track) {
@@ -44,6 +45,7 @@ export function parseRoute(search = '') {
     query: params.get('q') || DEFAULT_ROUTE.query,
     sort: params.get('sort') || DEFAULT_ROUTE.sort,
     tab: params.get('tab') || DEFAULT_ROUTE.tab,
+    year: params.get('year') || DEFAULT_ROUTE.year,
   };
 }
 
@@ -51,7 +53,7 @@ function allowedValue(value, allowed, fallback) {
   return allowed.includes(value) ? value : fallback;
 }
 
-export function normalizeRoute(route, { categories = ['all'], sanctuaries = ['all'], tabs = ['archive'] } = {}) {
+export function normalizeRoute(route, { categories = ['all'], sanctuaries = ['all'], tabs = ['archive'], years = ['all'] } = {}) {
   const sorts = Object.keys(SORT_LABELS);
   return {
     track: route.track || DEFAULT_ROUTE.track,
@@ -60,6 +62,7 @@ export function normalizeRoute(route, { categories = ['all'], sanctuaries = ['al
     query: route.query || DEFAULT_ROUTE.query,
     sort: allowedValue(route.sort, sorts, DEFAULT_ROUTE.sort),
     tab: allowedValue(route.tab, tabs, DEFAULT_ROUTE.tab),
+    year: allowedValue(route.year, years, DEFAULT_ROUTE.year),
   };
 }
 
@@ -71,8 +74,29 @@ export function serializeRoute(route) {
   if (route.sanctuary && route.sanctuary !== DEFAULT_ROUTE.sanctuary) params.set('sanctuary', route.sanctuary);
   if (route.query) params.set('q', route.query);
   if (route.sort && route.sort !== DEFAULT_ROUTE.sort) params.set('sort', route.sort);
+  if (route.year && route.year !== DEFAULT_ROUTE.year) params.set('year', route.year);
   const query = params.toString();
   return query ? `?${query}` : '';
+}
+
+export function buildRouteState({
+  activeTab,
+  category,
+  sanctuary,
+  query,
+  sort,
+  selectedYear,
+  currentTrack,
+}) {
+  return {
+    tab: activeTab || DEFAULT_ROUTE.tab,
+    category: category || DEFAULT_ROUTE.category,
+    sanctuary: sanctuary || DEFAULT_ROUTE.sanctuary,
+    query: query || DEFAULT_ROUTE.query,
+    sort: sort || DEFAULT_ROUTE.sort,
+    year: selectedYear || DEFAULT_ROUTE.year,
+    track: currentTrack ? trackId(currentTrack) : DEFAULT_ROUTE.track,
+  };
 }
 
 function searchable(track) {

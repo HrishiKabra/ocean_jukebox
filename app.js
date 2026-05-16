@@ -26,6 +26,7 @@
     query: '',
     sort: 'curated',
     tab: 'archive',
+    year: 'all',
   };
 
   const FALLBACK_CATALOG = {
@@ -53,6 +54,8 @@
     visibleIndexes: [],
     variantGroups: new Map(),
     playing: false,
+    selectedYear: 'all',
+    isApplyingRoute: false,
   };
 
   function byId(id) {
@@ -107,6 +110,7 @@
       query: params.get('q') || DEFAULT_ROUTE.query,
       sort: params.get('sort') || DEFAULT_ROUTE.sort,
       tab: params.get('tab') || DEFAULT_ROUTE.tab,
+      year: params.get('year') || DEFAULT_ROUTE.year,
     };
   }
 
@@ -114,7 +118,7 @@
     return allowed.includes(value) ? value : fallback;
   }
 
-  function normalizeRoute(route, { categories = ['all'], sanctuaries = ['all'], tabs = ['archive'] } = {}) {
+  function normalizeRoute(route, { categories = ['all'], sanctuaries = ['all'], tabs = ['archive'], years = ['all'] } = {}) {
     const sorts = Object.keys(SORT_LABELS);
     return {
       track: route.track || DEFAULT_ROUTE.track,
@@ -123,6 +127,7 @@
       query: route.query || DEFAULT_ROUTE.query,
       sort: allowedValue(route.sort, sorts, DEFAULT_ROUTE.sort),
       tab: allowedValue(route.tab, tabs, DEFAULT_ROUTE.tab),
+      year: allowedValue(route.year, years, DEFAULT_ROUTE.year),
     };
   }
 
@@ -134,45 +139,87 @@
     if (route.sanctuary && route.sanctuary !== DEFAULT_ROUTE.sanctuary) params.set('sanctuary', route.sanctuary);
     if (route.query) params.set('q', route.query);
     if (route.sort && route.sort !== DEFAULT_ROUTE.sort) params.set('sort', route.sort);
+    if (route.year && route.year !== DEFAULT_ROUTE.year) params.set('year', route.year);
     const query = params.toString();
     return query ? `?${query}` : '';
   }
 
-  function syncUrl() {
+  function buildRouteState({
+    activeTab,
+    category,
+    sanctuary,
+    query,
+    sort,
+    selectedYear,
+    currentTrack,
+  }) {
+    return {
+      tab: activeTab || DEFAULT_ROUTE.tab,
+      category: category || DEFAULT_ROUTE.category,
+      sanctuary: sanctuary || DEFAULT_ROUTE.sanctuary,
+      query: query || DEFAULT_ROUTE.query,
+      sort: sort || DEFAULT_ROUTE.sort,
+      year: selectedYear || DEFAULT_ROUTE.year,
+      track: currentTrack ? trackId(currentTrack) : DEFAULT_ROUTE.track,
+    };
+  }
+
+  function syncUrl(method = 'replaceState') {
+    if (state.isApplyingRoute) return;
     if (!window.history || !window.history.replaceState) return;
     const currentTrack = state.tracks[state.currentIndex];
-    const query = serializeRoute({
-      track: currentTrack ? trackId(currentTrack) : '',
+    const query = serializeRoute(buildRouteState({
+      activeTab: state.activeTab,
       category: state.category,
       sanctuary: state.sanctuary,
       query: state.query,
       sort: state.sort,
-      tab: state.activeTab,
-    });
+      selectedYear: state.selectedYear,
+      currentTrack,
+    }));
     const nextUrl = `${window.location.pathname}${query}${window.location.hash}`;
+    if (nextUrl === `${window.location.pathname}${window.location.search}${window.location.hash}`) return;
     try {
-      window.history.replaceState(null, '', nextUrl);
+      const historyMethod = method === 'pushState' && window.history.pushState ? 'pushState' : 'replaceState';
+      window.history[historyMethod](null, '', nextUrl);
     } catch (_error) {
       // Some file:// contexts can reject history updates; playback should still work.
     }
   }
 
+  function yearList() {
+    return ['all'];
+  }
+
   function applyRoute(route) {
+    state.isApplyingRoute = true;
     const normalized = normalizeRoute(route, {
       categories: categoryList(),
       sanctuaries: sanctuaryList(),
       tabs: tabList(),
+      years: yearList(),
     });
     state.category = normalized.category;
     state.sanctuary = normalized.sanctuary;
     state.query = normalized.query;
     state.sort = normalized.sort;
     state.activeTab = normalized.tab;
+    state.selectedYear = normalized.year;
 
     const routeTrackIndex = state.tracks.findIndex(track => trackId(track) === normalized.track);
     if (routeTrackIndex !== -1) {
       state.currentIndex = routeTrackIndex;
     }
+    state.isApplyingRoute = false;
+  }
+
+  function renderAll() {
+    syncControlsFromState();
+    buildFilters();
+    recomputeVisible();
+    renderTrackList();
+    setTrack(state.currentIndex, { sync: false });
+    setTab(state.activeTab, { sync: false });
   }
 
   function syncControlsFromState() {
@@ -206,7 +253,7 @@
     if (state.activeTab === 'map') renderMap();
     if (state.activeTab === 'live') renderLiveSources();
     if (state.activeTab === 'spectrogram') renderSpectrogram();
-    if (options.sync !== false) syncUrl();
+    if (options.sync !== false) syncUrl(options.history);
   }
 
   function sortedIndexes(indexes) {
@@ -262,6 +309,7 @@
     buildMapPins,
     buildSpectrogramPath,
     buildTrackDetail,
+    buildRouteState,
     normalizeRoute,
     parseRoute,
     projectMapPosition,
@@ -507,7 +555,7 @@
         recomputeVisible();
         renderTrackList();
         renderMap();
-        syncUrl();
+        syncUrl('pushState');
       });
       els.mapCanvas.appendChild(button);
     });
@@ -639,7 +687,7 @@
     els.audio.load();
     highlightCurrent();
     if (!els.detailPanel.hidden) renderTrackDetail();
-    if (options.sync !== false) syncUrl();
+    if (options.sync !== false) syncUrl(options.history);
     if (state.activeTab === 'map') renderMap();
     if (state.activeTab === 'spectrogram') renderSpectrogram();
     if (options.autoplay) {
@@ -698,7 +746,7 @@
         renderTrackList();
         if (state.activeTab === 'map') renderMap();
         updateMeta();
-        syncUrl();
+        syncUrl('pushState');
       });
       els.categoryBar.appendChild(button);
     });
@@ -746,7 +794,7 @@
           <i class="ti ti-player-play t-play-icon" aria-hidden="true"></i>
         `;
         row.addEventListener('click', () => {
-          setTrack(index, { autoplay: true });
+          setTrack(index, { autoplay: true, history: 'pushState' });
         });
         els.trackList.appendChild(row);
       });
@@ -777,7 +825,7 @@
       state.shuffled = !state.shuffled;
       els.shuffleButton.classList.toggle('active-btn', state.shuffled);
       shuffleOrder();
-      syncUrl();
+      syncUrl('pushState');
     });
     els.detailsButton.addEventListener('click', openTrackDetail);
     els.detailCloseButton.addEventListener('click', closeTrackDetail);
@@ -794,14 +842,14 @@
       recomputeVisible();
       renderTrackList();
       if (state.activeTab === 'map') renderMap();
-      syncUrl();
+      syncUrl('pushState');
     });
     els.sortSelect.addEventListener('change', () => {
       state.sort = els.sortSelect.value;
       recomputeVisible();
       renderTrackList();
       if (state.activeTab === 'map') renderMap();
-      syncUrl();
+      syncUrl('pushState');
     });
     els.progress.addEventListener('input', () => {
       els.audio.currentTime = Number(els.progress.value);
@@ -813,9 +861,13 @@
     els.audio.addEventListener('loadedmetadata', updateProgress);
     if (els.tabs) {
       els.tabs.forEach(tab => {
-        tab.addEventListener('click', () => setTab(tab.dataset.tab));
+        tab.addEventListener('click', () => setTab(tab.dataset.tab, { history: 'pushState' }));
       });
     }
+    window.addEventListener('popstate', () => {
+      applyRoute(parseRoute(window.location.search));
+      renderAll();
+    });
     els.audio.addEventListener('waiting', () => {
       els.status.textContent = 'Loading audio...';
     });
