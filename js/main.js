@@ -1,5 +1,5 @@
 import { cacheElements } from './dom.js';
-import { createAppState, recomputeVisible } from './app-state.js';
+import { createAppState, currentTrack, recomputeVisible } from './app-state.js';
 import { applyCurrentLocationRoute, bindRouteEvents, syncUrl } from './routes.js';
 import { registerServiceWorker } from './service-worker.js';
 import {
@@ -50,6 +50,7 @@ function init() {
 
   if (els.detailsButton) {
     els.detailsButton.addEventListener('click', () => {
+      if (!currentTrack(state)) return;
       renderTrackDetail(state, els, actions);
       openTrackDetail(els);
     });

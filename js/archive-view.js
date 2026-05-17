@@ -248,12 +248,13 @@ export function renderTrackList(state, els, actions) {
 
     indexes.forEach(index => {
       const track = state.tracks[index];
+      const item = document.createElement('div');
+      item.setAttribute('role', 'listitem');
       const row = document.createElement('button');
       row.className = `trow${index === state.currentIndex ? ' now' : ''}`;
       row.dataset.index = String(index);
       row.dataset.trackIndex = String(index);
       row.type = 'button';
-      row.setAttribute('role', 'listitem');
       row.setAttribute('aria-label', `${track.label} - ${track.sanctuary}`);
       row.innerHTML = `
         <span class="t-num">${String(index + 1).padStart(2, '0')}</span>
@@ -271,7 +272,8 @@ export function renderTrackList(state, els, actions) {
         event.preventDefault();
         actions.setTrack(index, { autoplay: true, history: 'pushState' });
       });
-      els.trackList.appendChild(row);
+      item.appendChild(row);
+      els.trackList.appendChild(item);
     });
   });
 }
