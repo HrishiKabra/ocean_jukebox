@@ -27,7 +27,7 @@
     },
     "generatedAt": {
       "type": "string",
-      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z$"
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
     },
     "archiveNote": {
       "type": "string",
@@ -53,6 +53,10 @@
         "description"
       ],
       "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
         "filename": {
           "type": "string",
           "minLength": 1
@@ -66,6 +70,7 @@
           "minLength": 1
         },
         "category": {
+          "type": "string",
           "enum": [
             "dolphin",
             "fish",
@@ -120,6 +125,7 @@
           ]
         },
         "variant": {
+          "type": "string",
           "enum": [
             "original",
             "enhanced"
@@ -131,6 +137,7 @@
           "pattern": "^[A-Za-z0-9-]+$"
         },
         "sourceType": {
+          "type": "string",
           "enum": [
             "audio",
             "video"
@@ -142,7 +149,7 @@
         },
         "catalogedAt": {
           "type": "string",
-          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z$"
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
         }
       }
     }
