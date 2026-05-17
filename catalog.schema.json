@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/ocean-jukebox/catalog.schema.json",
+  "title": "Ocean Jukebox Catalog",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "title",
+    "source",
+    "baseUrl",
+    "generatedAt",
+    "archiveNote",
+    "tracks"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "string",
+      "pattern": "^https?://"
+    },
+    "baseUrl": {
+      "type": "string",
+      "pattern": "^https?://"
+    },
+    "generatedAt": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z$"
+    },
+    "archiveNote": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tracks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/track"
+      }
+    }
+  },
+  "$defs": {
+    "track": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "filename",
+        "url",
+        "sanctuary",
+        "category",
+        "label",
+        "description"
+      ],
+      "properties": {
+        "filename": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https?://"
+        },
+        "sanctuary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "enum": [
+            "dolphin",
+            "fish",
+            "human",
+            "invertebrate",
+            "marine mammal",
+            "soundscape",
+            "vessel",
+            "weather",
+            "whale"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "recordedAt": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+            }
+          ]
+        },
+        "site": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^[A-Z]{2}\\d{2}$"
+            }
+          ]
+        },
+        "deployment": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^\\d{2}$"
+            }
+          ]
+        },
+        "variant": {
+          "enum": [
+            "original",
+            "enhanced"
+          ]
+        },
+        "groupKey": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9-]+$"
+        },
+        "sourceType": {
+          "enum": [
+            "audio",
+            "video"
+          ]
+        },
+        "sourcePage": {
+          "type": "string",
+          "pattern": "^https?://"
+        },
+        "catalogedAt": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{3})?Z$"
+        }
+      }
+    }
+  }
+}

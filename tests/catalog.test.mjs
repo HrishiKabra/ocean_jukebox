@@ -12,6 +12,7 @@ import {
   renderCatalogReport,
   validateCatalog,
 } from '../scripts/catalog.mjs';
+import { validateValue } from '../scripts/validate-catalog-schema.mjs';
 
 test('parses SanctSound media entries with headings, section category, sanctuary, and timestamp', () => {
   const html = `
@@ -367,4 +368,22 @@ test('renders deterministic markdown report summary', () => {
     'No catalog issues found.',
     '',
   ].join('\n'));
+});
+
+test('reports schema required and enum errors with catalog paths', () => {
+  const errors = validateValue({
+    category: 'fish',
+  }, {
+    type: 'object',
+    required: ['filename', 'category'],
+    properties: {
+      filename: { type: 'string' },
+      category: { enum: ['whale'] },
+    },
+  });
+
+  assert.deepEqual(errors, [
+    '$.filename is required.',
+    '$.category must be one of: whale.',
+  ]);
 });
