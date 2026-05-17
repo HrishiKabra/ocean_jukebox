@@ -43,7 +43,14 @@ export function setTrack(state, els, actions, index, options = {}) {
 }
 
 export function playPause(state, els) {
-  if (!currentTrack(state) || !els.audio) return;
+  if (!currentTrack(state)) {
+    setText(els.status, 'No recording is selected for playback.');
+    return;
+  }
+  if (!els.audio) {
+    setText(els.status, 'Audio playback is unavailable in this browser.');
+    return;
+  }
 
   if (!state.playing) {
     els.audio.play()
