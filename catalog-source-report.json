@@ -1,0 +1,32 @@
+{
+  "checkedAt": "2026-05-17T09:27:01.632Z",
+  "totalCatalogTracks": 131,
+  "checkedTracks": 3,
+  "ok": true,
+  "results": [
+    {
+      "filename": "SanctSound_FK02_01_atlanticmidshipmanandsnappingshrimp_20190313T073628Z.mp4",
+      "label": "Midshipman courtship hum",
+      "url": "https://sanctsound.ioos.us/files/SanctSound_FK02_01_atlanticmidshipmanandsnappingshrimp_20190313T073628Z.mp4",
+      "ok": true,
+      "status": 200,
+      "method": "HEAD"
+    },
+    {
+      "filename": "SanctSound_FK01_01_blackgrouper_20190105T163326Z.mp4",
+      "label": "Black grouper",
+      "url": "https://sanctsound.ioos.us/files/SanctSound_FK01_01_blackgrouper_20190105T163326Z.mp4",
+      "ok": true,
+      "status": 200,
+      "method": "HEAD"
+    },
+    {
+      "filename": "SanctSound_CI01_01_bocaccio_20181101T100353Z.mp4",
+      "label": "Bocaccio",
+      "url": "https://sanctsound.ioos.us/files/SanctSound_CI01_01_bocaccio_20181101T100353Z.mp4",
+      "ok": true,
+      "status": 200,
+      "method": "HEAD"
+    }
+  ]
+}
