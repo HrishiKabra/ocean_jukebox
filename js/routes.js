@@ -2,6 +2,7 @@ import {
   buildRouteState,
   normalizeRoute,
   parseRoute,
+  recordingYear,
   serializeRoute,
   trackId,
 } from '../app-core.mjs';
@@ -14,12 +15,6 @@ import {
   tabList,
   yearList,
 } from './app-state.js';
-
-function recordingYear(track) {
-  if (!track?.recordedAt) return '';
-  const year = new Date(track.recordedAt).getUTCFullYear();
-  return Number.isFinite(year) ? String(year) : '';
-}
 
 export function trackMatchesMapFilters(state, track) {
   if (!track) return false;
@@ -43,7 +38,6 @@ export function applyRoute(state, route) {
   state.sort = normalized.sort;
   state.activeTab = normalized.tab;
   state.selectedYear = normalized.year;
-  recomputeVisible(state);
 
   if (normalized.track) {
     const routeTrackIndex = state.tracks.findIndex(track => trackId(track) === normalized.track);
@@ -52,6 +46,7 @@ export function applyRoute(state, route) {
     }
   }
 
+  recomputeVisible(state);
   state.isApplyingRoute = false;
 }
 
