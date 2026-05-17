@@ -16,18 +16,24 @@ export function mediaUrl(track) {
   return track?.url || '';
 }
 
+export function syncCurrentTrackSource(state, els) {
+  const track = currentTrack(state);
+  if (!track || !els.audio) return false;
+
+  const src = mediaUrl(track);
+  if ((els.audio.getAttribute('src') || '') === src) return false;
+
+  els.audio.src = src;
+  setText(els.status, 'Loading audio metadata...');
+  els.audio.load();
+  return true;
+}
+
 export function setTrack(state, els, actions, index, options = {}) {
   if (!state.tracks[index]) return;
 
   state.currentIndex = index;
-  const track = state.tracks[index];
-  const src = mediaUrl(track);
-
-  if (els.audio) {
-    els.audio.src = src;
-    setText(els.status, 'Loading audio metadata...');
-    els.audio.load();
-  }
+  syncCurrentTrackSource(state, els);
 
   actions.renderAll();
   if (options.sync !== false) syncUrl(state, options.history);

@@ -8,6 +8,7 @@ import {
   playPause,
   setTrack,
   shuffleOrder,
+  syncCurrentTrackSource,
 } from './player.js';
 import {
   buildFilters,
@@ -41,6 +42,7 @@ function init() {
     renderTrackList(state, els, actions);
     renderTrackDetail(state, els, actions);
     highlightCurrent(state, els);
+    syncCurrentTrackSource(state, els);
   }
 
   const actions = {
