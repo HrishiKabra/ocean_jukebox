@@ -11,6 +11,11 @@ function parsePositiveNumber(value, fallback) {
   return Number.isFinite(number) && number > 0 ? number : fallback;
 }
 
+function readOptionValue(args, index) {
+  const value = args[index + 1];
+  return value && !value.startsWith('--') ? value : null;
+}
+
 export function parseArgs(args) {
   const options = {
     limit: defaultLimit,
@@ -21,13 +26,19 @@ export function parseArgs(args) {
     const arg = args[index];
 
     if (arg === '--limit') {
-      options.limit = parsePositiveNumber(args[index + 1], defaultLimit);
-      index += 1;
+      const value = readOptionValue(args, index);
+      if (value) {
+        options.limit = parsePositiveNumber(value, defaultLimit);
+        index += 1;
+      }
     } else if (arg.startsWith('--limit=')) {
       options.limit = parsePositiveNumber(arg.slice('--limit='.length), defaultLimit);
     } else if (arg === '--timeout-ms') {
-      options.timeoutMs = parsePositiveNumber(args[index + 1], defaultTimeoutMs);
-      index += 1;
+      const value = readOptionValue(args, index);
+      if (value) {
+        options.timeoutMs = parsePositiveNumber(value, defaultTimeoutMs);
+        index += 1;
+      }
     } else if (arg.startsWith('--timeout-ms=')) {
       options.timeoutMs = parsePositiveNumber(arg.slice('--timeout-ms='.length), defaultTimeoutMs);
     }
