@@ -97,7 +97,7 @@ GitHub Pages and static hosts such as Netlify or Vercel are supported. Deploy th
 - **Category, sanctuary, search, and sort controls** — filter to just whales, weather, a sanctuary, a site code, or a filename
 - **Leaflet sanctuary map** — marker counts update by category and recording year
 - **Shareable URLs** — track, category, sanctuary, search, sort, tab, and map year state can be encoded in query parameters
-- **Offline app shell** — a small service worker caches the static explorer shell for repeat visits over HTTP(S)
+- **Offline app shell** — over HTTP(S), `js/main.js` registers `sw.js` to cache the static explorer shell and generated local metadata for repeat visits
 - **Auto-advance** — plays the next track automatically when one ends
 - **Grouped track list** — organized by sanctuary, with sound category labels
 - **Recording metadata** — date, site code, and original filename
@@ -154,7 +154,7 @@ The checker updates `live-sources.js` with `checkedAt`, `status`, `statusCode`, 
 
 ## Spectrograms
 
-The Spectrogram tab looks for static generated PNG assets under `spectrograms/`. If a matching image exists, it is displayed for the active track; otherwise the app shows an empty-state message without a broken image.
+Generated spectrogram and waveform image files are optional enhancements. The Spectrogram tab looks for static generated PNG assets under `spectrograms/`; if a matching image exists, it is displayed for the active track, and otherwise the app shows a non-error empty state without a broken image.
 
 Generate a spectrogram for a SanctSound file with:
 
@@ -170,7 +170,7 @@ Generate waveform preview data and acoustic profile metadata with:
 node scripts/analyze-audio.mjs
 ```
 
-By default this writes deterministic preview artifacts for every checked-in track to `audio-artifacts.json` and `audio-artifacts.js`, which keeps the player waveform and detail panel useful even without local media tooling. To attempt FFmpeg/FFprobe media analysis against the NOAA-hosted files, run:
+By default this writes deterministic preview artifacts for every checked-in track to `audio-artifacts.json` and `audio-artifacts.js`. When media analysis has not been run, the player waveform uses the checked-in preview peak data from `audio-artifacts.js`, which keeps the waveform and detail panel useful without local media tooling. To attempt FFmpeg/FFprobe media analysis against the NOAA-hosted files, run:
 
 ```bash
 node scripts/analyze-audio.mjs --analyze-media
@@ -211,7 +211,7 @@ NOAA's buoy API (`https://www.ndbc.noaa.gov/data/realtime2/`) has near-real-time
 
 ### Offline shell
 
-When served over HTTP(S), `js/main.js` registers `sw.js`. The service worker caches the app shell (`index.html`, catalog wrappers, sanctuary metadata, live-source status, manifest, and core scripts) with relative URLs so the same files work under a GitHub Pages project path. External audio and icon CDN requests are not pre-cached.
+When served over HTTP(S), `js/main.js` registers `sw.js`. The service worker caches the static explorer shell and generated local metadata (`index.html`, catalog wrappers, sanctuary metadata, live-source status, manifest, and core scripts) with relative URLs so the same files work under a GitHub Pages project path. It does not cache NOAA audio, Leaflet tiles, OpenStreetMap data, or CDN-hosted icon/map assets. After a previous visit, the Archive list can be inspected offline, but playback and map tiles still depend on remote sources.
 
 ---
 
