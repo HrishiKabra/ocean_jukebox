@@ -20,6 +20,7 @@ import {
   buildTrackDetail,
   createCatalogState,
   formatDate,
+  getVisibleIndexes,
   normalizeLiveSourceStatus,
   normalizeRoute,
   normalizeWaveformPeaks,
@@ -53,6 +54,25 @@ test('search matches label and sanctuary, then falls back to first result', () =
 
   assert.equal(state.currentIndex, 0);
   assert.deepEqual(state.visibleIndexes, [0]);
+});
+
+test('getVisibleIndexes filters by category sanctuary query and explicit order', () => {
+  const orderedTracks = [
+    { filename: 'a.mp4', label: 'Humpback call', sanctuary: 'Hawaiian Islands', category: 'whale' },
+    { filename: 'b.mp4', label: 'Humpback song', sanctuary: 'Hawaiian Islands', category: 'whale' },
+    { filename: 'c.mp4', label: 'Humpback rain', sanctuary: 'Hawaiian Islands', category: 'weather' },
+  ];
+
+  assert.deepEqual(
+    getVisibleIndexes(orderedTracks, {
+      category: 'whale',
+      sanctuary: 'Hawaiian Islands',
+      query: 'hump',
+      sort: 'curated',
+      order: [1, 0, 2],
+    }),
+    [1, 0],
+  );
 });
 
 test('sorts newest and oldest without losing selected visible track', () => {
@@ -193,6 +213,16 @@ test('groups original and enhanced variants by groupKey', () => {
   assert.equal(groups.get('CI05-04-finwhale').original.filename, 'a.mp4');
   assert.equal(groups.get('CI05-04-finwhale').enhanced.length, 1);
   assert.equal(groups.get('GR01-01-snapshots').enhanced.length, 0);
+});
+
+test('buildVariantGroups treats duplicate originals as enhanced alternatives', () => {
+  const groups = buildVariantGroups([
+    { filename: 'a.mp4', groupKey: 'g', variant: 'original' },
+    { filename: 'b.mp4', groupKey: 'g', variant: 'original' },
+  ]);
+
+  assert.equal(groups.get('g').original.filename, 'a.mp4');
+  assert.deepEqual(groups.get('g').enhanced.map(track => track.filename), ['b.mp4']);
 });
 
 test('builds map pins with recording counts and active sanctuary state', () => {
