@@ -20,6 +20,7 @@ import {
   buildTrackDetail,
   createCatalogState,
   formatDate,
+  getVisibleIndexes,
   normalizeLiveSourceStatus,
   normalizeRoute,
   normalizeWaveformPeaks,
@@ -352,14 +353,17 @@ test('normalizes live source status without overstating page-only sources', () =
 });
 
 test('builds service worker cache manifest with required static files', () => {
-  assert.deepEqual(buildStaticCacheManifest().slice(0, 7), [
+  assert.deepEqual(buildStaticCacheManifest().slice(0, 10), [
     './',
     './index.html',
-    './app.js',
     './sounds.js',
     './sanctuaries.js',
     './live-sources.js',
     './audio-artifacts.js',
+    './catalog-overrides.json',
+    './site.webmanifest',
+    './js/main.js',
+    './js/app-state.js',
   ]);
 });
 
@@ -587,4 +591,27 @@ test('browser route helper normalizes invalid values before app state uses them'
       year: '2019',
     },
   );
+});
+
+test('getVisibleIndexes filters by category sanctuary query and explicit order', () => {
+  assert.deepEqual(
+    getVisibleIndexes(tracks, {
+      category: 'whale',
+      sanctuary: 'Hawaiian Islands',
+      query: 'hump',
+      sort: 'curated',
+      order: [2, 1, 0],
+    }),
+    [0],
+  );
+});
+
+test('buildVariantGroups treats duplicate originals as enhanced alternatives', () => {
+  const groups = buildVariantGroups([
+    { filename: 'a.mp4', groupKey: 'g', variant: 'original' },
+    { filename: 'b.mp4', groupKey: 'g', variant: 'original' },
+  ]);
+
+  assert.equal(groups.get('g').original.filename, 'a.mp4');
+  assert.deepEqual(groups.get('g').enhanced.map(track => track.filename), ['b.mp4']);
 });
