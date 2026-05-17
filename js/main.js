@@ -21,19 +21,41 @@ import {
   syncControlsFromState,
   updateMeta,
 } from './archive-view.js';
+import { renderLiveSources } from './live-view.js';
+import { renderMap } from './map-view.js';
+import { renderSpectrogram } from './spectrogram-view.js';
+
+function tabNames(els) {
+  const tabs = els.tabs ? els.tabs.map(tab => tab.dataset.tab).filter(Boolean) : [];
+  return tabs.length ? tabs : ['archive', 'map', 'live', 'spectrogram'];
+}
+
+function setTab(state, els, actions, tabName, options = {}) {
+  const allowed = tabNames(els);
+  state.activeTab = allowed.includes(tabName) ? tabName : 'archive';
+
+  if (els.tabs) {
+    els.tabs.forEach(tab => {
+      const selected = tab.dataset.tab === state.activeTab;
+      tab.classList.toggle('on', selected);
+      tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+      tab.tabIndex = selected ? 0 : -1;
+    });
+  }
+
+  if (els.archivePanel) els.archivePanel.hidden = state.activeTab !== 'archive';
+  if (els.mapPanel) els.mapPanel.hidden = state.activeTab !== 'map';
+  if (els.livePanel) els.livePanel.hidden = state.activeTab !== 'live';
+  if (els.spectrogramPanel) els.spectrogramPanel.hidden = state.activeTab !== 'spectrogram';
+
+  if (options.sync !== false) syncUrl(state, options.history || 'replaceState');
+  actions.renderAll();
+}
 
 function init() {
   const els = cacheElements();
   const state = createAppState();
   applyCurrentLocationRoute(state);
-
-  function setTab(tabName, options = {}) {
-    const tabs = els.tabs ? els.tabs.map(tab => tab.dataset.tab).filter(Boolean) : [];
-    const allowed = tabs.length ? tabs : ['archive', 'map', 'live', 'spectrogram'];
-    state.activeTab = allowed.includes(tabName) ? tabName : 'archive';
-    syncControlsFromState(state, els);
-    if (options.sync !== false) syncUrl(state, options.history);
-  }
 
   function renderAll() {
     syncControlsFromState(state, els);
@@ -43,12 +65,15 @@ function init() {
     renderTrackDetail(state, els, actions);
     highlightCurrent(state, els);
     syncCurrentTrackSource(state, els);
+    if (state.activeTab === 'map') renderMap(state, els, actions);
+    if (state.activeTab === 'live') renderLiveSources(state, els);
+    if (state.activeTab === 'spectrogram') renderSpectrogram(state, els);
   }
 
   const actions = {
     renderAll,
     setTrack: (index, options = {}) => setTrack(state, els, actions, index, options),
-    setTab,
+    setTab: (tabName, options = {}) => setTab(state, els, actions, tabName, options),
     playPause: () => playPause(state, els),
     navigate: delta => navigate(state, els, actions, delta),
     shuffleOrder: () => shuffleOrder(state, els, actions),
@@ -92,8 +117,22 @@ function init() {
     });
   }
   if (els.tabs) {
-    els.tabs.forEach(tab => {
+    els.tabs.forEach((tab, index) => {
       tab.addEventListener('click', () => actions.setTab(tab.dataset.tab, { history: 'pushState' }));
+      tab.addEventListener('keydown', event => {
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        const last = els.tabs.length - 1;
+        const nextIndex = event.key === 'Home'
+          ? 0
+          : event.key === 'End'
+            ? last
+            : event.key === 'ArrowRight'
+              ? Math.min(last, index + 1)
+              : Math.max(0, index - 1);
+        els.tabs[nextIndex].focus();
+        actions.setTab(els.tabs[nextIndex].dataset.tab, { history: 'pushState' });
+      });
     });
   }
   bindPlayerEvents(state, els, actions);
