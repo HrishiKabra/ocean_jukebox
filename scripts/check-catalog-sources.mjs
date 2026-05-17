@@ -54,7 +54,6 @@ export async function fetchWithTimeout(url, options = {}) {
 export async function checkSource(track, { timeoutMs = defaultTimeoutMs } = {}) {
   const baseResult = {
     filename: track.filename,
-    label: track.label,
     url: track.url,
   };
 
@@ -131,7 +130,7 @@ async function main() {
   const reachable = report.results.filter(result => result.ok).length;
   const unavailable = report.results.length - reachable;
 
-  console.log(`Checked ${report.checkedTracks} catalog source(s).`);
+  console.log(`Checked ${report.results.length} catalog source${report.results.length === 1 ? '' : 's'}.`);
   console.log(`Reachable: ${reachable}`);
   console.log(`Unavailable: ${unavailable}`);
 
