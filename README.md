@@ -76,15 +76,15 @@ FK  = Florida Keys
 
 ## Running it
 
-No build step. No dependencies to install. Just open `index.html` in any modern browser:
+No build step. No dependencies to install. Serve the repo over HTTP so the ES modules load correctly:
 
 ```bash
-open index.html
-# or
-python3 -m http.server 8000  # then visit localhost:8000
+python3 -m http.server 8000
 ```
 
-If you want to self-host on GitHub Pages, Netlify, Vercel, or any static host, deploy the full static asset set in this repo root. `index.html` depends on `js/main.js`, the supporting modules in `js/`, `app-core.mjs`, `sounds.js`, `sanctuaries.js`, `live-sources.js`, `audio-artifacts.js`, `site.webmanifest`, `sw.js`, and optional generated files in `spectrograms/` and `waveforms/`. The audio streams from NOAA either way.
+Then visit `http://localhost:8000`.
+
+GitHub Pages and static hosts such as Netlify or Vercel are supported. Deploy the full static asset set in this repo root. `index.html` depends on `js/main.js`, the supporting modules in `js/`, `app-core.mjs`, `sounds.js`, `sanctuaries.js`, `live-sources.js`, `audio-artifacts.js`, `site.webmanifest`, `sw.js`, and optional generated files in `spectrograms/` and `waveforms/`. The audio streams from NOAA either way.
 
 ---
 
