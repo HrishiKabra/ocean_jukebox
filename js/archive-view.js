@@ -57,12 +57,6 @@ function updateSelectedTrack(state, els, track) {
   setText(els.date, formatDate(track.recordedAt));
   setText(els.site, track.site || 'Unknown site');
   setText(els.filename, track.filename || 'Unknown file');
-  if (els.audio) {
-    const src = mediaUrl(state, track);
-    if (els.audio.getAttribute('src') !== src) {
-      els.audio.src = src;
-    }
-  }
   renderWaveform(state, els, track);
 }
 

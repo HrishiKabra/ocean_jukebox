@@ -3,6 +3,13 @@ import { createAppState, currentTrack, recomputeVisible } from './app-state.js';
 import { applyCurrentLocationRoute, bindRouteEvents, syncUrl } from './routes.js';
 import { registerServiceWorker } from './service-worker.js';
 import {
+  bindPlayerEvents,
+  navigate,
+  playPause,
+  setTrack,
+  shuffleOrder,
+} from './player.js';
+import {
   buildFilters,
   closeTrackDetail,
   copySourceUrl,
@@ -38,14 +45,11 @@ function init() {
 
   const actions = {
     renderAll,
-    setTrack(index, options = {}) {
-      if (!state.tracks[index]) return;
-      state.currentIndex = index;
-      renderAll();
-      if (options.sync !== false) syncUrl(state, options.history);
-    },
+    setTrack: (index, options = {}) => setTrack(state, els, actions, index, options),
     setTab,
-    playPause() {},
+    playPause: () => playPause(state, els),
+    navigate: delta => navigate(state, els, actions, delta),
+    shuffleOrder: () => shuffleOrder(state, els, actions),
   };
 
   if (els.detailsButton) {
@@ -90,14 +94,20 @@ function init() {
       tab.addEventListener('click', () => actions.setTab(tab.dataset.tab, { history: 'pushState' }));
     });
   }
-  if (els.playButton) {
-    els.playButton.addEventListener('click', () => actions.playPause());
-  }
+  bindPlayerEvents(state, els, actions);
 
   bindRouteEvents(state, () => {
-    renderAll();
+    if (currentTrack(state)) {
+      actions.setTrack(state.currentIndex, { sync: false });
+    } else {
+      renderAll();
+    }
   });
-  renderAll();
+  if (currentTrack(state)) {
+    actions.setTrack(state.currentIndex, { sync: false });
+  } else {
+    renderAll();
+  }
 
   if (!state.tracks.length && els.catalogMeta) {
     els.catalogMeta.textContent = `${state.tracks.length} NOAA SanctSound recordings loaded.`;
