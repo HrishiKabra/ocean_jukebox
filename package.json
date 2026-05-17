@@ -1,0 +1,15 @@
+{
+  "name": "ocean-jukebox",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "validate:catalog": "node scripts/validate-catalog.mjs",
+    "catalog:refresh": "node scripts/catalog.mjs",
+    "analyze:audio": "node scripts/analyze-audio.mjs",
+    "check:catalog-sources": "node scripts/check-catalog-sources.mjs",
+    "test:browser": "playwright test"
+  },
+  "devDependencies": {}
+}
