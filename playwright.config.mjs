@@ -1,6 +1,6 @@
 export default {
   testDir: './tests',
-  testMatch: /browser-smoke\.test\.mjs/,
+  testMatch: /browser-smoke\.spec\.mjs/,
   use: {
     baseURL: 'http://127.0.0.1:4173',
     browserName: 'chromium',

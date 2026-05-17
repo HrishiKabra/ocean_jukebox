@@ -1,11 +1,121 @@
 import { expect, test } from '@playwright/test';
 
+const LEAFLET_STUB = `
+(() => {
+  function chainableMap(element) {
+    return {
+      element,
+      setView() { return this; },
+      fitBounds() { return this; },
+      invalidateSize() { return this; },
+    };
+  }
+
+  window.L = {
+    map(element) {
+      element.classList.add('leaflet-container');
+      return chainableMap(element);
+    },
+    tileLayer() {
+      return {
+        addTo(map) {
+          const layer = document.createElement('div');
+          layer.className = 'leaflet-layer';
+          map.element.appendChild(layer);
+          return this;
+        },
+      };
+    },
+    layerGroup() {
+      return {
+        map: null,
+        addTo(map) {
+          this.map = map;
+          return this;
+        },
+        clearLayers() {
+          this.map?.element.querySelectorAll('.leaflet-marker-icon').forEach(marker => marker.remove());
+        },
+        addLayer(marker) {
+          marker.addTo(this.map);
+        },
+      };
+    },
+    divIcon(options) {
+      return options;
+    },
+    marker(_coords, options = {}) {
+      return {
+        popupHtml: '',
+        clickHandler: null,
+        bindPopup(html) {
+          this.popupHtml = html;
+          return this;
+        },
+        on(eventName, handler) {
+          if (eventName === 'click') this.clickHandler = handler;
+          return this;
+        },
+        addTo(map) {
+          const marker = document.createElement('button');
+          marker.type = 'button';
+          marker.className = \`leaflet-marker-icon \${options.icon?.className || ''}\`.trim();
+          marker.innerHTML = options.icon?.html || '';
+          marker.dataset.popupHtml = this.popupHtml;
+          if (this.clickHandler) marker.addEventListener('click', this.clickHandler);
+          map.element.appendChild(marker);
+          return this;
+        },
+      };
+    },
+  };
+})();
+`;
+
 function countFromText(value) {
   const match = String(value).match(/\d+/);
   return match ? Number(match[0]) : 0;
 }
 
 test.beforeEach(async ({ page }) => {
+  await page.route('**/*', async route => {
+    const url = route.request().url();
+    const parsed = new URL(url);
+
+    if (url === 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js') {
+      await route.fulfill({
+        contentType: 'application/javascript',
+        body: LEAFLET_STUB,
+      });
+      return;
+    }
+
+    if (
+      url === 'https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css'
+      || url === 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
+    ) {
+      await route.fulfill({
+        contentType: 'text/css',
+        body: '',
+      });
+      return;
+    }
+
+    if (parsed.hostname.endsWith('.tile.openstreetmap.org')) {
+      await route.abort();
+      return;
+    }
+
+    if (parsed.origin !== 'http://127.0.0.1:4173') {
+      await route.abort();
+      return;
+    }
+
+    await route.continue();
+  });
+
+  await page.addInitScript({ content: LEAFLET_STUB });
+
   await page.addInitScript(() => {
     HTMLMediaElement.prototype.load = function load() {
       this.dispatchEvent(new Event('loadedmetadata'));
@@ -60,7 +170,10 @@ test('map live and spectrogram tabs render stable visible states', async ({ page
   await page.getByRole('tab', { name: /map/i }).click();
   await expect(page.locator('#map-panel')).toBeVisible();
   await expect(page.locator('#leaflet-map')).toBeVisible();
-  await expect(page.locator('#map-summary')).toContainText(/recording|Map assets|metadata/i);
+  await expect(page.locator('#map-summary')).toContainText(/recording/i);
+  const markers = page.locator('#leaflet-map .leaflet-marker-icon.ocean-marker .ocean-marker-dot');
+  await expect(markers.first()).toBeVisible();
+  expect(await markers.count()).toBeGreaterThan(0);
 
   await page.getByRole('tab', { name: /live/i }).click();
   await expect(page.locator('#live-panel')).toBeVisible();
