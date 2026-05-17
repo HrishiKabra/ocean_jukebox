@@ -10,7 +10,7 @@ A jukebox for the ocean. 131 real underwater recordings from NOAA's National Mar
 
 ## What it is
 
-Ocean Jukebox is a static web app that pulls audio directly from NOAA's publicly accessible SanctSound archive. No backend, no API key, no server. You open `index.html` and it works.
+Ocean Jukebox is a static web app that pulls audio directly from NOAA's publicly accessible SanctSound archive. It has no custom backend and no API key, but it must be served over HTTP(S) with GitHub Pages, another static host, or a local static server so the ES modules load correctly.
 
 The SanctSound project was a collaboration between NOAA's Office of National Marine Sanctuaries and the U.S. Navy, deploying hydrophones (underwater microphones) across seven national marine sanctuaries and one marine monument from 2018 to 2022. The resulting recordings are public domain.
 
@@ -84,7 +84,7 @@ python3 -m http.server 8000
 
 Then visit `http://localhost:8000`.
 
-GitHub Pages and static hosts such as Netlify or Vercel are supported. Deploy the full static asset set in this repo root. `index.html` depends on `js/main.js`, the supporting modules in `js/`, `app-core.mjs`, `sounds.js`, `sanctuaries.js`, `live-sources.js`, `audio-artifacts.js`, `site.webmanifest`, `sw.js`, and optional generated files in `spectrograms/` and `waveforms/`. The audio streams from NOAA either way.
+GitHub Pages and static hosts such as Netlify or Vercel are supported. Deploy the full static asset set in this repo root. `index.html` depends on `js/main.js`, the supporting modules in `js/`, `app-core.mjs`, `sounds.js`, `sanctuaries.js`, `live-sources.js`, `audio-artifacts.js`, `site.webmanifest`, `sw.js`, and optional generated spectrogram PNGs in `spectrograms/`. The audio streams from NOAA either way.
 
 ---
 
@@ -154,7 +154,7 @@ The checker updates `live-sources.js` with `checkedAt`, `status`, `statusCode`, 
 
 ## Spectrograms
 
-Generated spectrogram and waveform image files are optional enhancements. The Spectrogram tab looks for static generated PNG assets under `spectrograms/`; if a matching image exists, it is displayed for the active track, and otherwise the app shows a non-error empty state without a broken image.
+Generated spectrogram PNG files are optional enhancements. The Spectrogram tab looks for static generated PNG assets under `spectrograms/`; if a matching image exists, it is displayed for the active track, and otherwise the app shows a non-error empty state without a broken image.
 
 Generate a spectrogram for a SanctSound file with:
 
@@ -191,7 +191,7 @@ node scripts/catalog.mjs
 That command fetches [sanctsound.ioos.us/sounds.html](https://sanctsound.ioos.us/sounds.html), parses the media entries, preserves curated labels/descriptions already present in `sounds.json`, backfills enhanced-variant descriptions from their original clips, validates the result, and writes:
 
 - `sounds.json` — readable catalog data
-- `sounds.js` — browser-friendly catalog wrapper so `index.html` still works when opened directly from disk
+- `sounds.js` — browser-friendly catalog wrapper loaded by the HTTP-served app
 - `catalog-report.json` — machine-readable validation report
 - `catalog-report.md` — concise human-readable validation report
 
@@ -221,7 +221,7 @@ When served over HTTP(S), `js/main.js` registers `sw.js`. The service worker cac
 
 ```bash
 git init
-git add index.html js app-core.mjs sounds.js sounds.json sanctuaries.js live-sources.js audio-artifacts.js audio-artifacts.json site.webmanifest sw.js catalog-overrides.json scripts tests spectrograms waveforms README.md
+git add index.html js app-core.mjs sounds.js sounds.json sanctuaries.js live-sources.js audio-artifacts.js audio-artifacts.json site.webmanifest sw.js catalog-overrides.json scripts tests spectrograms README.md
 git commit -m "ocean jukebox"
 gh repo create ocean-jukebox --public --push --source=.
 # then enable Pages in repo Settings → Pages → deploy from main
