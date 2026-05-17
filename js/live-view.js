@@ -9,6 +9,16 @@ function appendLiveMeta(parent, label, value) {
   parent.appendChild(item);
 }
 
+function safeHttpUrl(value) {
+  if (typeof value !== 'string' || !value.trim()) return '';
+  try {
+    const url = new URL(value.trim());
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : '';
+  } catch (_error) {
+    return '';
+  }
+}
+
 export function renderLiveSources(state, els) {
   if (!els.liveGrid) return;
 
@@ -59,13 +69,22 @@ export function renderLiveSources(state, els) {
     appendLiveMeta(meta, 'Status', source.statusDetail);
     card.appendChild(meta);
 
-    const link = document.createElement('a');
-    link.className = 'ctrl live-link';
-    link.href = source.url || source.pageUrl || '#';
-    link.target = '_blank';
-    link.rel = 'noopener';
-    link.textContent = source.actionLabel;
-    card.appendChild(link);
+    const safeUrl = safeHttpUrl(source.url || source.pageUrl);
+    if (safeUrl) {
+      const link = document.createElement('a');
+      link.className = 'ctrl live-link';
+      link.href = safeUrl;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.textContent = source.actionLabel;
+      card.appendChild(link);
+    } else {
+      const disabled = document.createElement('span');
+      disabled.className = 'ctrl live-link disabled';
+      disabled.setAttribute('aria-disabled', 'true');
+      disabled.textContent = source.actionLabel || 'Source unavailable';
+      card.appendChild(disabled);
+    }
 
     els.liveGrid.appendChild(card);
   });

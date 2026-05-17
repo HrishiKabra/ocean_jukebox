@@ -128,8 +128,8 @@ function init() {
           : event.key === 'End'
             ? last
             : event.key === 'ArrowRight'
-              ? Math.min(last, index + 1)
-              : Math.max(0, index - 1);
+              ? (index + 1) % els.tabs.length
+              : (index - 1 + els.tabs.length) % els.tabs.length;
         els.tabs[nextIndex].focus();
         actions.setTab(els.tabs[nextIndex].dataset.tab, { history: 'pushState' });
       });

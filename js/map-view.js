@@ -10,6 +10,15 @@ import { syncUrl } from './routes.js';
 
 const MAP_UNAVAILABLE = 'Map assets are unavailable. The recording catalog is still usable from the Archive tab.';
 
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
 function populateOptions(select, options, labelFor) {
   if (!select) return;
   const selected = select.value;
@@ -78,13 +87,14 @@ export function initLeafletMap(state, els) {
 }
 
 export function markerHtml(pin) {
-  return `<div class="ocean-marker-dot${pin.active ? ' active' : ''}">${pin.count}</div>`;
+  return `<div class="ocean-marker-dot${pin.active ? ' active' : ''}">${escapeHtml(pin.count)}</div>`;
 }
 
 export function popupHtml(pin) {
-  const displayName = pin.displayName || pin.name;
-  const note = pin.note ? `<br>${pin.note}` : '';
-  return `<strong>${displayName}</strong><br>${formatCount(pin.count)} for the current map filters.${note}`;
+  const displayName = escapeHtml(pin.displayName || pin.name);
+  const count = escapeHtml(formatCount(pin.count));
+  const note = pin.note ? `<br>${escapeHtml(pin.note)}` : '';
+  return `<strong>${displayName}</strong><br>${count} for the current map filters.${note}`;
 }
 
 export function renderMap(state, els, actions) {
