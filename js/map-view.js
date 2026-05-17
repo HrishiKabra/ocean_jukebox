@@ -6,7 +6,7 @@ import {
 } from '../app-core.mjs';
 
 import { currentTrack, recomputeVisible, yearList } from './app-state.js';
-import { syncUrl } from './routes.js';
+import { syncUrl, trackMatchesMapFilters } from './routes.js';
 
 const MAP_UNAVAILABLE = 'Map assets are unavailable. The recording catalog is still usable from the Archive tab.';
 
@@ -32,6 +32,17 @@ function populateOptions(select, options, labelFor) {
   if (options.includes(selected)) select.value = selected;
 }
 
+function reconcileCurrentTrackToMapFilters(state) {
+  const selected = currentTrack(state);
+  if (trackMatchesMapFilters(state, selected)) return selected;
+
+  const nextIndex = state.tracks.findIndex(track => trackMatchesMapFilters(state, track));
+  if (nextIndex < 0) return null;
+
+  state.currentIndex = nextIndex;
+  return currentTrack(state);
+}
+
 function renderMapFilters(state, els, actions) {
   populateOptions(
     els.mapCategoryFilter,
@@ -51,6 +62,7 @@ function renderMapFilters(state, els, actions) {
       els.mapCategoryFilter.addEventListener('change', () => {
         state.category = els.mapCategoryFilter.value;
         recomputeVisible(state);
+        reconcileCurrentTrackToMapFilters(state);
         syncUrl(state, 'pushState');
         actions.renderAll();
       });
@@ -64,6 +76,7 @@ function renderMapFilters(state, els, actions) {
       els.mapYearFilter.addEventListener('change', () => {
         state.selectedYear = els.mapYearFilter.value;
         recomputeVisible(state);
+        reconcileCurrentTrackToMapFilters(state);
         syncUrl(state, 'pushState');
         actions.renderAll();
       });
@@ -107,10 +120,12 @@ export function renderMap(state, els, actions) {
     return;
   }
 
-  const activeTrack = currentTrack(state);
-  const activeSanctuary = state.sanctuary !== 'all'
-    ? state.sanctuary
-    : activeTrack?.sanctuary || 'all';
+  const activeTrack = reconcileCurrentTrackToMapFilters(state);
+  const activeSanctuary = activeTrack
+    ? state.sanctuary !== 'all'
+      ? state.sanctuary
+      : activeTrack.sanctuary || 'all'
+    : 'all';
   const pins = buildFilteredMapPins(state.sanctuaries, state.tracks, {
     category: state.category,
     year: state.selectedYear,
