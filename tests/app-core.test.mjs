@@ -1,7 +1,5 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import vm from 'node:vm';
 
 import {
   buildRouteState,
@@ -382,14 +380,26 @@ test('normalizes live source status without overstating page-only sources', () =
 });
 
 test('builds service worker cache manifest with required static files', () => {
-  assert.deepEqual(buildStaticCacheManifest().slice(0, 7), [
+  assert.deepEqual(buildStaticCacheManifest(), [
     './',
     './index.html',
-    './app.js',
     './sounds.js',
     './sanctuaries.js',
     './live-sources.js',
     './audio-artifacts.js',
+    './catalog-overrides.json',
+    './site.webmanifest',
+    './js/main.js',
+    './js/app-state.js',
+    './js/archive-view.js',
+    './js/dom.js',
+    './js/live-view.js',
+    './js/map-view.js',
+    './js/player.js',
+    './js/routes.js',
+    './js/service-worker.js',
+    './js/spectrogram-view.js',
+    './app-core.mjs',
   ]);
 });
 
@@ -556,24 +566,9 @@ test('serializes and parses year filter in route state', () => {
   assert.equal(parseRoute(query).year, '2019');
 });
 
-test('browser route helper normalizes invalid values before app state uses them', () => {
-  const source = fs.readFileSync(new URL('../app.js', import.meta.url), 'utf8');
-  const sandbox = {
-    URLSearchParams,
-    window: { OCEAN_JUKEBOX_CATALOG: { tracks: [] } },
-    document: {
-      addEventListener() {},
-      querySelectorAll() {
-        return [];
-      },
-    },
-  };
-  sandbox.window.window = sandbox.window;
-  sandbox.window.document = sandbox.document;
-  vm.runInNewContext(source, sandbox);
-
-  const normalized = sandbox.window.OCEAN_JUKEBOX_ROUTE_HELPERS.normalizeRoute(
-    sandbox.window.OCEAN_JUKEBOX_ROUTE_HELPERS.parseRoute('?category=bogus&sanctuary=bogus&tab=bogus&year=1776'),
+test('route helpers normalize invalid values before app state uses them', () => {
+  const normalized = normalizeRoute(
+    parseRoute('?category=bogus&sanctuary=bogus&tab=bogus&year=1776'),
     {
       categories: ['all', 'weather'],
       sanctuaries: ['all', "Gray's Reef"],
@@ -595,8 +590,8 @@ test('browser route helper normalizes invalid values before app state uses them'
     },
   );
 
-  const validRoute = sandbox.window.OCEAN_JUKEBOX_ROUTE_HELPERS.normalizeRoute(
-    sandbox.window.OCEAN_JUKEBOX_ROUTE_HELPERS.parseRoute('?category=weather&sanctuary=Gray%27s%20Reef&q=dorian&sort=newest&tab=map&year=2019'),
+  const validRoute = normalizeRoute(
+    parseRoute('?category=weather&sanctuary=Gray%27s%20Reef&q=dorian&sort=newest&tab=map&year=2019'),
     {
       categories: ['all', 'weather'],
       sanctuaries: ['all', "Gray's Reef"],

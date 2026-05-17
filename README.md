@@ -84,7 +84,7 @@ open index.html
 python3 -m http.server 8000  # then visit localhost:8000
 ```
 
-If you want to self-host on GitHub Pages, Netlify, Vercel, or any static host, deploy the full static asset set in this repo root. `index.html` depends on `app.js`, `sounds.js`, `sanctuaries.js`, `live-sources.js`, `audio-artifacts.js`, `site.webmanifest`, `sw.js`, and optional generated files in `spectrograms/` and `waveforms/`. The audio streams from NOAA either way.
+If you want to self-host on GitHub Pages, Netlify, Vercel, or any static host, deploy the full static asset set in this repo root. `index.html` depends on `js/main.js`, the supporting modules in `js/`, `app-core.mjs`, `sounds.js`, `sanctuaries.js`, `live-sources.js`, `audio-artifacts.js`, `site.webmanifest`, `sw.js`, and optional generated files in `spectrograms/` and `waveforms/`. The audio streams from NOAA either way.
 
 ---
 
@@ -211,7 +211,7 @@ NOAA's buoy API (`https://www.ndbc.noaa.gov/data/realtime2/`) has near-real-time
 
 ### Offline shell
 
-When served over HTTP(S), `app.js` registers `sw.js`. The service worker caches the app shell (`index.html`, catalog wrappers, sanctuary metadata, live-source status, manifest, and core scripts) with relative URLs so the same files work under a GitHub Pages project path. External audio and icon CDN requests are not pre-cached.
+When served over HTTP(S), `js/main.js` registers `sw.js`. The service worker caches the app shell (`index.html`, catalog wrappers, sanctuary metadata, live-source status, manifest, and core scripts) with relative URLs so the same files work under a GitHub Pages project path. External audio and icon CDN requests are not pre-cached.
 
 ---
 
@@ -221,7 +221,7 @@ When served over HTTP(S), `app.js` registers `sw.js`. The service worker caches 
 
 ```bash
 git init
-git add index.html app.js app-core.mjs sounds.js sounds.json sanctuaries.js live-sources.js audio-artifacts.js audio-artifacts.json site.webmanifest sw.js catalog-overrides.json scripts tests spectrograms waveforms README.md
+git add index.html js app-core.mjs sounds.js sounds.json sanctuaries.js live-sources.js audio-artifacts.js audio-artifacts.json site.webmanifest sw.js catalog-overrides.json scripts tests spectrograms waveforms README.md
 git commit -m "ocean jukebox"
 gh repo create ocean-jukebox --public --push --source=.
 # then enable Pages in repo Settings → Pages → deploy from main

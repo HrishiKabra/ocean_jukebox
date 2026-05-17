@@ -334,13 +334,23 @@ export function buildStaticCacheManifest() {
   return [
     './',
     './index.html',
-    './app.js',
     './sounds.js',
     './sanctuaries.js',
     './live-sources.js',
     './audio-artifacts.js',
     './catalog-overrides.json',
     './site.webmanifest',
+    './js/main.js',
+    './js/app-state.js',
+    './js/archive-view.js',
+    './js/dom.js',
+    './js/live-view.js',
+    './js/map-view.js',
+    './js/player.js',
+    './js/routes.js',
+    './js/service-worker.js',
+    './js/spectrogram-view.js',
+    './app-core.mjs',
   ];
 }
 
