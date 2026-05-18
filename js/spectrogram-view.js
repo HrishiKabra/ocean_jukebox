@@ -3,6 +3,7 @@ import { currentTrack } from './app-state.js';
 
 export function renderSpectrogram(state, els) {
   if (!els.spectrogramPanel || !els.spectrogramEmpty || !els.spectrogramImg) return;
+
   const track = currentTrack(state);
   els.spectrogramImg.hidden = true;
   els.spectrogramEmpty.hidden = true;

@@ -6,57 +6,126 @@ import {
 } from '../app-core.mjs';
 
 import { currentTrack, recomputeVisible, yearList } from './app-state.js';
-import { syncUrl } from './routes.js';
+import { syncUrl, trackMatchesMapFilters } from './routes.js';
+
+const MAP_UNAVAILABLE = 'Map assets are unavailable. The recording catalog is still usable from the Archive tab.';
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function populateOptions(select, options, labelFor) {
+  if (!select) return;
+  const selected = select.value;
+  select.innerHTML = '';
+  options.forEach(value => {
+    const option = document.createElement('option');
+    option.value = value;
+    option.textContent = labelFor(value);
+    select.appendChild(option);
+  });
+  if (options.includes(selected)) select.value = selected;
+}
+
+function reconcileCurrentTrackToMapFilters(state) {
+  const selected = currentTrack(state);
+  if (trackMatchesMapFilters(state, selected)) return selected;
+
+  const nextIndex = state.tracks.findIndex(track => trackMatchesMapFilters(state, track));
+  if (nextIndex < 0) return null;
+
+  state.currentIndex = nextIndex;
+  return currentTrack(state);
+}
+
+function renderMapFilters(state, els, actions) {
+  populateOptions(
+    els.mapCategoryFilter,
+    ['all', ...new Set(state.tracks.map(track => track.category).filter(Boolean).sort())],
+    category => (category === 'all' ? 'All categories' : CATEGORY_LABELS[category] || category),
+  );
+  populateOptions(
+    els.mapYearFilter,
+    yearList(state),
+    year => (year === 'all' ? 'All years' : year),
+  );
+
+  if (els.mapCategoryFilter) {
+    els.mapCategoryFilter.value = state.category;
+    if (!els.mapCategoryFilter.dataset.mapViewBound) {
+      els.mapCategoryFilter.dataset.mapViewBound = 'true';
+      els.mapCategoryFilter.addEventListener('change', () => {
+        state.category = els.mapCategoryFilter.value;
+        recomputeVisible(state);
+        reconcileCurrentTrackToMapFilters(state);
+        syncUrl(state, 'pushState');
+        actions.renderAll();
+      });
+    }
+  }
+
+  if (els.mapYearFilter) {
+    els.mapYearFilter.value = state.selectedYear;
+    if (!els.mapYearFilter.dataset.mapViewBound) {
+      els.mapYearFilter.dataset.mapViewBound = 'true';
+      els.mapYearFilter.addEventListener('change', () => {
+        state.selectedYear = els.mapYearFilter.value;
+        recomputeVisible(state);
+        reconcileCurrentTrackToMapFilters(state);
+        syncUrl(state, 'pushState');
+        actions.renderAll();
+      });
+    }
+  }
+}
+
+export function initLeafletMap(state, els) {
+  if (state.leaflet || !els.leafletMap) return;
+  if (!window.L) {
+    if (els.mapSummary) els.mapSummary.textContent = MAP_UNAVAILABLE;
+    return;
+  }
+
+  state.leaflet = window.L.map(els.leafletMap, { scrollWheelZoom: false }).setView([32, -118], 3);
+  window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 9,
+    attribution: '&copy; OpenStreetMap contributors',
+  }).addTo(state.leaflet);
+  state.leafletLayer = window.L.layerGroup().addTo(state.leaflet);
+}
 
 export function markerHtml(pin) {
-  return `<div class="ocean-marker-dot${pin.active ? ' active' : ''}">${pin.count}</div>`;
+  return `<div class="ocean-marker-dot${pin.active ? ' active' : ''}">${escapeHtml(pin.count)}</div>`;
 }
 
 export function popupHtml(pin) {
-  const displayName = pin.displayName || pin.name;
-  const note = pin.note ? `<br>${pin.note}` : '';
-  return `<strong>${displayName}</strong><br>${formatCount(pin.count)} for the current map filters.${note}`;
-}
-
-function formatDate(value) {
-  if (!value) return 'Unknown date';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return 'Unknown date';
-  return new Intl.DateTimeFormat('en', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    timeZone: 'UTC',
-  }).format(date);
+  const displayName = escapeHtml(pin.displayName || pin.name);
+  const count = escapeHtml(formatCount(pin.count));
+  const note = pin.note ? `<br>${escapeHtml(pin.note)}` : '';
+  return `<strong>${displayName}</strong><br>${count} for the current map filters.${note}`;
 }
 
 export function renderMap(state, els, actions) {
   if (!els.leafletMap || !els.mapSummary) return;
+  renderMapFilters(state, els, actions);
+  initLeafletMap(state, els);
 
-  if (!state.leaflet) {
-    if (!window.L) {
-      els.mapSummary.textContent = 'Map assets are unavailable. The recording catalog is still usable from the Archive tab.';
-      return;
-    }
-    state.leaflet = L.map(els.leafletMap, { scrollWheelZoom: false }).setView([32, -118], 3);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 9,
-      attribution: '&copy; OpenStreetMap contributors',
-    }).addTo(state.leaflet);
-    state.leafletLayer = L.layerGroup().addTo(state.leaflet);
-  }
-
-  if (!state.leafletLayer) {
-    els.mapSummary.textContent = 'Map tiles are unavailable in this browser session.';
+  if (!state.leaflet || !state.leafletLayer || !window.L) {
+    els.mapSummary.textContent = MAP_UNAVAILABLE;
     return;
   }
 
-  const track = currentTrack(state);
-  const activeSanctuary = state.sanctuary !== 'all'
-    ? state.sanctuary
-    : track && track.sanctuary
-      ? track.sanctuary
-      : 'all';
+  const activeTrack = reconcileCurrentTrackToMapFilters(state);
+  const activeSanctuary = activeTrack
+    ? state.sanctuary !== 'all'
+      ? state.sanctuary
+      : activeTrack.sanctuary || 'all'
+    : 'all';
   const pins = buildFilteredMapPins(state.sanctuaries, state.tracks, {
     category: state.category,
     year: state.selectedYear,
@@ -70,23 +139,20 @@ export function renderMap(state, els, actions) {
   }
 
   pins.forEach(pin => {
-    const icon = L.divIcon({
+    const icon = window.L.divIcon({
       className: 'ocean-marker',
       html: markerHtml(pin),
       iconSize: [34, 34],
       iconAnchor: [17, 17],
     });
-    const marker = L.marker([pin.lat, pin.lng], { icon })
+    const marker = window.L.marker([pin.lat, pin.lng], { icon })
       .bindPopup(popupHtml(pin))
       .on('click', () => {
         state.sanctuary = pin.name;
-        state.leaflet.setView([pin.lat, pin.lng], pin.zoom || 7);
-        if (els.mapCategoryFilter) els.mapCategoryFilter.value = state.category;
-        if (els.sanctuarySelect) els.sanctuarySelect.value = state.sanctuary;
         recomputeVisible(state);
-        actions.renderAll();
-        renderMap(state, els, actions);
         syncUrl(state, 'pushState');
+        if (state.leaflet) state.leaflet.setView([pin.lat, pin.lng], pin.zoom || 7);
+        actions.renderAll();
       });
     state.leafletLayer.addLayer(marker);
   });
@@ -95,7 +161,8 @@ export function renderMap(state, els, actions) {
     || pins.find(pin => pin.count > 0)
     || pins[0];
   els.mapSummary.textContent = buildMapPinSummary(activePin);
-  if (activePin && activePin.active) {
+
+  if (activePin?.active) {
     state.leaflet.setView([activePin.lat, activePin.lng], activePin.zoom || 7);
   } else if (pins.length > 1) {
     state.leaflet.fitBounds(pins.map(pin => [pin.lat, pin.lng]), { padding: [28, 28], maxZoom: 4 });

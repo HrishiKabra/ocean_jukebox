@@ -17,7 +17,7 @@ export function cacheElements(root = document) {
     description: byId('s-desc', root),
     date: byId('s-date', root),
     site: byId('s-site', root),
-    file: byId('s-file', root),
+    filename: byId('s-file', root),
     waveform: byId('waveform', root),
     prevButton: byId('btn-prev', root),
     playButton: byId('btn-play', root),

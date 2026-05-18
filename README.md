@@ -10,7 +10,7 @@ A jukebox for the ocean. 131 real underwater recordings from NOAA's National Mar
 
 ## What it is
 
-Ocean Jukebox is a static web app that pulls audio directly from NOAA's publicly accessible SanctSound archive. No backend, no API key, no server. You open `index.html` and it works.
+Ocean Jukebox is a static web app that pulls audio directly from NOAA's publicly accessible SanctSound archive. It has no custom backend and no API key, but it must be served over HTTP(S) with GitHub Pages, another static host, or a local static server so the ES modules load correctly.
 
 The SanctSound project was a collaboration between NOAA's Office of National Marine Sanctuaries and the U.S. Navy, deploying hydrophones (underwater microphones) across seven national marine sanctuaries and one marine monument from 2018 to 2022. The resulting recordings are public domain.
 
@@ -76,15 +76,15 @@ FK  = Florida Keys
 
 ## Running it
 
-No build step. No dependencies to install. Just open `index.html` in any modern browser:
+No build step. No dependencies to install. Serve the repo over HTTP so the ES modules load correctly:
 
 ```bash
-open index.html
-# or
-python3 -m http.server 8000  # then visit localhost:8000
+python3 -m http.server 8000
 ```
 
-If you want to self-host on GitHub Pages, Netlify, Vercel, or any static host, deploy the full static asset set in this repo root. `index.html` depends on `app.js`, `sounds.js`, `sanctuaries.js`, `live-sources.js`, `audio-artifacts.js`, `site.webmanifest`, `sw.js`, and optional generated files in `spectrograms/` and `waveforms/`. The audio streams from NOAA either way.
+Then visit `http://localhost:8000`.
+
+GitHub Pages and static hosts such as Netlify or Vercel are supported. Deploy the full static asset set in this repo root. `index.html` depends on `js/main.js`, the supporting modules in `js/`, `app-core.mjs`, `sounds.js`, `sanctuaries.js`, `live-sources.js`, `audio-artifacts.js`, `site.webmanifest`, `sw.js`, and optional generated spectrogram PNGs in `spectrograms/`. The audio streams from NOAA either way.
 
 ---
 
@@ -97,7 +97,7 @@ If you want to self-host on GitHub Pages, Netlify, Vercel, or any static host, d
 - **Category, sanctuary, search, and sort controls** — filter to just whales, weather, a sanctuary, a site code, or a filename
 - **Leaflet sanctuary map** — marker counts update by category and recording year
 - **Shareable URLs** — track, category, sanctuary, search, sort, tab, and map year state can be encoded in query parameters
-- **Offline app shell** — a small service worker caches the static explorer shell for repeat visits over HTTP(S)
+- **Offline app shell** — over HTTP(S), `js/main.js` registers `sw.js` to cache the static explorer shell and generated local metadata for repeat visits
 - **Auto-advance** — plays the next track automatically when one ends
 - **Grouped track list** — organized by sanctuary, with sound category labels
 - **Recording metadata** — date, site code, and original filename
@@ -154,7 +154,7 @@ The checker updates `live-sources.js` with `checkedAt`, `status`, `statusCode`, 
 
 ## Spectrograms
 
-The Spectrogram tab looks for static generated PNG assets under `spectrograms/`. If a matching image exists, it is displayed for the active track; otherwise the app shows an empty-state message without a broken image.
+Generated spectrogram PNG files are optional enhancements. The Spectrogram tab looks for static generated PNG assets under `spectrograms/`; if a matching image exists, it is displayed for the active track, and otherwise the app shows a non-error empty state without a broken image.
 
 Generate a spectrogram for a SanctSound file with:
 
@@ -170,7 +170,7 @@ Generate waveform preview data and acoustic profile metadata with:
 node scripts/analyze-audio.mjs
 ```
 
-By default this writes deterministic preview artifacts for every checked-in track to `audio-artifacts.json` and `audio-artifacts.js`, which keeps the player waveform and detail panel useful even without local media tooling. To attempt FFmpeg/FFprobe media analysis against the NOAA-hosted files, run:
+By default this writes deterministic preview artifacts for every checked-in track to `audio-artifacts.json` and `audio-artifacts.js`. When media analysis has not been run, the player waveform uses the checked-in preview peak data from `audio-artifacts.js`, which keeps the waveform and detail panel useful without local media tooling. To attempt FFmpeg/FFprobe media analysis against the NOAA-hosted files, run:
 
 ```bash
 node scripts/analyze-audio.mjs --analyze-media
@@ -191,7 +191,7 @@ node scripts/catalog.mjs
 That command fetches [sanctsound.ioos.us/sounds.html](https://sanctsound.ioos.us/sounds.html), parses the media entries, preserves curated labels/descriptions already present in `sounds.json`, backfills enhanced-variant descriptions from their original clips, validates the result, and writes:
 
 - `sounds.json` — readable catalog data
-- `sounds.js` — browser-friendly catalog wrapper so `index.html` still works when opened directly from disk
+- `sounds.js` — browser-friendly catalog wrapper loaded by the HTTP-served app
 - `catalog-report.json` — machine-readable validation report
 - `catalog-report.md` — concise human-readable validation report
 
@@ -211,7 +211,7 @@ NOAA's buoy API (`https://www.ndbc.noaa.gov/data/realtime2/`) has near-real-time
 
 ### Offline shell
 
-When served over HTTP(S), `app.js` registers `sw.js`. The service worker caches the app shell (`index.html`, catalog wrappers, sanctuary metadata, live-source status, manifest, and core scripts) with relative URLs so the same files work under a GitHub Pages project path. External audio and icon CDN requests are not pre-cached.
+When served over HTTP(S), `js/main.js` registers `sw.js`. The service worker caches the static explorer shell and generated local metadata (`index.html`, catalog wrappers, sanctuary metadata, live-source status, manifest, and core scripts) with relative URLs so the same files work under a GitHub Pages project path. It does not cache NOAA audio, Leaflet tiles, OpenStreetMap data, or CDN-hosted icon/map assets. After a previous visit, the Archive list can be inspected offline, but playback and map tiles still depend on remote sources.
 
 ---
 
@@ -221,7 +221,7 @@ When served over HTTP(S), `app.js` registers `sw.js`. The service worker caches 
 
 ```bash
 git init
-git add index.html app.js app-core.mjs sounds.js sounds.json sanctuaries.js live-sources.js audio-artifacts.js audio-artifacts.json site.webmanifest sw.js catalog-overrides.json scripts tests spectrograms waveforms README.md
+git add index.html js app-core.mjs sounds.js sounds.json sanctuaries.js live-sources.js audio-artifacts.js audio-artifacts.json site.webmanifest sw.js catalog-overrides.json scripts tests spectrograms README.md
 git commit -m "ocean jukebox"
 gh repo create ocean-jukebox --public --push --source=.
 # then enable Pages in repo Settings → Pages → deploy from main

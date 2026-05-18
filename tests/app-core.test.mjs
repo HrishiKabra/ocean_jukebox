@@ -54,6 +54,25 @@ test('search matches label and sanctuary, then falls back to first result', () =
   assert.deepEqual(state.visibleIndexes, [0]);
 });
 
+test('getVisibleIndexes filters by category sanctuary query and explicit order', () => {
+  const orderedTracks = [
+    { filename: 'a.mp4', label: 'Humpback call', sanctuary: 'Hawaiian Islands', category: 'whale' },
+    { filename: 'b.mp4', label: 'Humpback song', sanctuary: 'Hawaiian Islands', category: 'whale' },
+    { filename: 'c.mp4', label: 'Humpback rain', sanctuary: 'Hawaiian Islands', category: 'weather' },
+  ];
+
+  assert.deepEqual(
+    getVisibleIndexes(orderedTracks, {
+      category: 'whale',
+      sanctuary: 'Hawaiian Islands',
+      query: 'hump',
+      sort: 'curated',
+      order: [1, 0, 2],
+    }),
+    [1, 0],
+  );
+});
+
 test('sorts newest and oldest without losing selected visible track', () => {
   const state = createCatalogState(tracks);
 
@@ -192,6 +211,16 @@ test('groups original and enhanced variants by groupKey', () => {
   assert.equal(groups.get('CI05-04-finwhale').original.filename, 'a.mp4');
   assert.equal(groups.get('CI05-04-finwhale').enhanced.length, 1);
   assert.equal(groups.get('GR01-01-snapshots').enhanced.length, 0);
+});
+
+test('buildVariantGroups treats duplicate originals as enhanced alternatives', () => {
+  const groups = buildVariantGroups([
+    { filename: 'a.mp4', groupKey: 'g', variant: 'original' },
+    { filename: 'b.mp4', groupKey: 'g', variant: 'original' },
+  ]);
+
+  assert.equal(groups.get('g').original.filename, 'a.mp4');
+  assert.deepEqual(groups.get('g').enhanced.map(track => track.filename), ['b.mp4']);
 });
 
 test('builds map pins with recording counts and active sanctuary state', () => {
@@ -351,7 +380,7 @@ test('normalizes live source status without overstating page-only sources', () =
 });
 
 test('builds service worker cache manifest with required static files', () => {
-  assert.deepEqual(buildStaticCacheManifest().slice(0, 10), [
+  assert.deepEqual(buildStaticCacheManifest(), [
     './',
     './index.html',
     './sounds.js',
@@ -362,6 +391,15 @@ test('builds service worker cache manifest with required static files', () => {
     './site.webmanifest',
     './js/main.js',
     './js/app-state.js',
+    './js/archive-view.js',
+    './js/dom.js',
+    './js/live-view.js',
+    './js/map-view.js',
+    './js/player.js',
+    './js/routes.js',
+    './js/service-worker.js',
+    './js/spectrogram-view.js',
+    './app-core.mjs',
   ]);
 });
 
@@ -528,16 +566,49 @@ test('serializes and parses year filter in route state', () => {
   assert.equal(parseRoute(query).year, '2019');
 });
 
-test('getVisibleIndexes filters by category sanctuary query and explicit order', () => {
+test('route helpers normalize invalid values before app state uses them', () => {
+  const normalized = normalizeRoute(
+    parseRoute('?category=bogus&sanctuary=bogus&tab=bogus&year=1776'),
+    {
+      categories: ['all', 'weather'],
+      sanctuaries: ['all', "Gray's Reef"],
+      tabs: ['archive', 'map'],
+      years: ['all', '2019'],
+    },
+  );
+
   assert.deepEqual(
     getVisibleIndexes(tracks, {
       category: 'whale',
       sanctuary: 'Hawaiian Islands',
       query: 'hump',
       sort: 'curated',
-      order: [2, 1, 0],
-    }),
-    [0],
+      tab: 'archive',
+      year: 'all',
+    },
+  );
+
+  const validRoute = normalizeRoute(
+    parseRoute('?category=weather&sanctuary=Gray%27s%20Reef&q=dorian&sort=newest&tab=map&year=2019'),
+    {
+      categories: ['all', 'weather'],
+      sanctuaries: ['all', "Gray's Reef"],
+      tabs: ['archive', 'map'],
+      years: ['all', '2019'],
+    },
+  );
+
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(validRoute)),
+    {
+      track: '',
+      category: 'weather',
+      sanctuary: "Gray's Reef",
+      query: 'dorian',
+      sort: 'newest',
+      tab: 'map',
+      year: '2019',
+    },
   );
 });
 

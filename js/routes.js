@@ -2,7 +2,9 @@ import {
   buildRouteState,
   normalizeRoute,
   parseRoute,
+  recordingYear,
   serializeRoute,
+  trackId,
 } from '../app-core.mjs';
 
 import {
@@ -16,9 +18,9 @@ import {
 
 export function trackMatchesMapFilters(state, track) {
   if (!track) return false;
-  const matchesCategory = state.category === 'all' || track.category === state.category;
-  const matchesYear = state.selectedYear === 'all' || new Date(track.recordedAt).getUTCFullYear() === Number(state.selectedYear);
-  return matchesCategory && matchesYear;
+  return (state.category === 'all' || track.category === state.category)
+    && (state.sanctuary === 'all' || track.sanctuary === state.sanctuary)
+    && (state.selectedYear === 'all' || recordingYear(track) === state.selectedYear);
 }
 
 export function applyRoute(state, route) {
@@ -36,21 +38,26 @@ export function applyRoute(state, route) {
   state.sort = normalized.sort;
   state.activeTab = normalized.tab;
   state.selectedYear = normalized.year;
-  recomputeVisible(state);
 
   if (normalized.track) {
-    const foundIndex = state.tracks.findIndex(track => track.filename.replace(/\.[^.]*$/, '') === normalized.track);
-    if (foundIndex >= 0) state.currentIndex = foundIndex;
+    const routeTrackIndex = state.tracks.findIndex(track => trackId(track) === normalized.track);
+    if (routeTrackIndex !== -1) {
+      state.currentIndex = routeTrackIndex;
+    }
   }
 
+  recomputeVisible(state);
   state.isApplyingRoute = false;
 }
 
 export function syncUrl(state, method = 'replaceState', win = window) {
   if (state.isApplyingRoute) return;
-  if (!win.history || !win.history.replaceState) return;
+  if (!win.history?.replaceState) return;
+
   const selected = currentTrack(state);
-  const routeTrack = state.activeTab === 'map' && !trackMatchesMapFilters(state, selected) ? null : selected;
+  const routeTrack = state.activeTab === 'map' && !trackMatchesMapFilters(state, selected)
+    ? null
+    : selected;
   const query = serializeRoute(buildRouteState({
     activeTab: state.activeTab,
     category: state.category,
@@ -63,11 +70,12 @@ export function syncUrl(state, method = 'replaceState', win = window) {
   const nextUrl = `${win.location.pathname}${query}${win.location.hash}`;
   const currentUrl = `${win.location.pathname}${win.location.search}${win.location.hash}`;
   if (nextUrl === currentUrl) return;
+
   try {
     const historyMethod = method === 'pushState' && win.history.pushState ? 'pushState' : 'replaceState';
     win.history[historyMethod](null, '', nextUrl);
   } catch (_error) {
-    // Some restricted contexts can reject history updates; playback should still work.
+    // Restricted browser contexts can reject history updates; keep the app usable.
   }
 }
 
@@ -77,7 +85,7 @@ export function applyCurrentLocationRoute(state, win = window) {
 
 export function bindRouteEvents(state, renderAll, win = window) {
   win.addEventListener('popstate', () => {
-    applyRoute(state, parseRoute(win.location.search));
+    applyCurrentLocationRoute(state, win);
     renderAll();
   });
 }
