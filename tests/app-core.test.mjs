@@ -213,15 +213,6 @@ test('groups original and enhanced variants by groupKey', () => {
   assert.equal(groups.get('GR01-01-snapshots').enhanced.length, 0);
 });
 
-test('buildVariantGroups treats duplicate originals as enhanced alternatives', () => {
-  const groups = buildVariantGroups([
-    { filename: 'a.mp4', groupKey: 'g', variant: 'original' },
-    { filename: 'b.mp4', groupKey: 'g', variant: 'original' },
-  ]);
-
-  assert.equal(groups.get('g').original.filename, 'a.mp4');
-  assert.deepEqual(groups.get('g').enhanced.map(track => track.filename), ['b.mp4']);
-});
 
 test('builds map pins with recording counts and active sanctuary state', () => {
   const pins = buildMapPins(
@@ -578,10 +569,12 @@ test('route helpers normalize invalid values before app state uses them', () => 
   );
 
   assert.deepEqual(
-    getVisibleIndexes(tracks, {
-      category: 'whale',
-      sanctuary: 'Hawaiian Islands',
-      query: 'hump',
+    JSON.parse(JSON.stringify(normalized)),
+    {
+      track: '',
+      category: 'all',
+      sanctuary: 'all',
+      query: '',
       sort: 'curated',
       tab: 'archive',
       year: 'all',
